@@ -1,0 +1,106 @@
+const initialPath = '/images/SaboteurImagesSingle/';
+
+const path = {
+  gold: initialPath + 'Gold-reward/',
+  badGuys: initialPath + 'Players/BadGuys/',
+  goodGuys: initialPath + 'Players/Miners/',
+  backCard: initialPath + 'Back_of_cards/',
+  actions: initialPath + 'Actions/',
+  path: initialPath + 'Path/',
+}
+export const GoodGuys =  [
+    path.goodGuys + 1 + '.png',
+    path.goodGuys + 2 + '.png',
+    path.goodGuys + 3 + '.png',
+    path.goodGuys + 4 + '.png',
+    path.goodGuys + 5 + '.png',
+    path.goodGuys + 6 + '.png',
+    path.goodGuys + 7 + '.png',
+  ];
+export const BadGuys =  [
+    path.badGuys + 1 + '.png',
+    path.badGuys + 2 + '.png',
+    path.badGuys + 3 + '.png',
+    path.badGuys + 4 + '.png',
+  ];
+export const Players = [
+  ...GoodGuys,
+  ...BadGuys,
+]
+export const Gold = [
+  path.gold + "gold-reward-1" + '.png',
+  path.gold + "gold-reward-2" + '.png',
+  path.gold + "gold-reward-3" + '.png',
+]
+export const backOfCard = [
+  path.backCard + 'Reward.png',
+  path.backCard + 'players.png',
+  path.backCard + 'winning.png',
+  path.backCard + 'pathOrAction.png',
+  path.backCard + 'start2.png',
+]
+export const Actions = [
+  path.actions + 'destroyPath.png',
+  path.actions + 'map.png',
+  path.actions + 'Felinar/1.png',
+  path.actions + 'Felinar/2.png',
+  path.actions + 'Cart/1.png',
+  path.actions + 'Cart/2.png',
+  path.actions + 'Axe/1.png',
+  path.actions + 'Axe/2.png',
+  path.actions + '2Powers/1.png',
+  path.actions + '2Powers/2.png',
+  path.actions + '2Powers/3.png',
+]
+export const Path = [
+  path.path + 'start.png',
+  path.path + '1.png',
+  path.path + '2.png',
+  path.path + '3.png',
+  path.path + '4.png',
+  path.path + '5.png',
+  path.path + '6.png',
+  path.path + '7.png',
+  path.path + '8.png',
+  path.path + '9.png',
+  path.path + '10.png',
+  path.path + '11.png',
+  path.path + '12.png',
+  path.path + '13.png',
+  path.path + '14.png',
+  path.path + '15.png',
+  path.path + '16.png',
+  path.path + '17.png',
+  path.path + '18.png',
+  path.path + '19.png',
+  path.path + '20.png',
+  path.path + '21.png',
+  path.path + '22.png',
+  path.path + '23.png',
+  path.path + '24.png',
+  path.path + '25.png',
+  path.path + '26.png',
+  path.path + '27.png',
+  path.path + '28.png',
+  path.path + '29.png',
+  path.path + '30.png',
+  path.path + '31.png',
+  path.path + '32.png',
+  path.path + '33.png',
+  path.path + '34.png',
+  path.path + '35.png',
+  path.path + '36.png',
+  path.path + '37.png',
+  path.path + '38.png',
+  path.path + '39.png',
+  path.path + 'gold.png',
+  path.path + 'rock.png',
+  path.path + 'rock2.png',
+  ]
+export const Cards = [
+  ...Path,
+  ...Players,
+  ...Gold,
+  ...backOfCard,
+  ...Actions,
+]
