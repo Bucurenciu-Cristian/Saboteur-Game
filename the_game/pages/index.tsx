@@ -16,16 +16,23 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-
-
           Still Learning this stuff <a href="https://nextjs.org">Next.js!</a>
         </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
         <div className={styles.grid}>
+          <Link href={"/cardsList"}>
+            <a className={styles.card}>
+              <h1> Go to AllCards</h1>
+            </a>
+          </Link>
+        </div>
+        <div className={styles.grid}>
+          <Link href={"/Table"}>
+            <a className={styles.card}>
+              <h1> Go to Table</h1>
+            </a>
+          </Link>
+        </div>
+        {/*<div className={styles.grid}>
           <Link href={"/Ioana/[id]"} as={`/Ioana/1`}>
             <a className={styles.card}>
 
@@ -42,7 +49,7 @@ const Home: NextPage = () => {
               Go Ioana
             </a>
           </Link>
-        </div>
+        </div>*/}
       </main>
 
       <footer className={styles.footer}>
