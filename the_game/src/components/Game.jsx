@@ -71,10 +71,10 @@ function Game() {
                     onClick={(i) => handleClick(i)}
                 />
             </div>
-            <div className="game-info">
-                <div>{status}</div>
-                <ol>{moves}</ol>
-            </div>
+            {/*<div className="game-info">*/}
+            {/*    <div>{status}</div>*/}
+            {/*    <ol>{moves}</ol>*/}
+            {/*</div>*/}
         </div>
     );
 }

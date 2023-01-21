@@ -1,10 +1,10 @@
 import React from 'react';
-import Tile from "../../src/components/Tile";
+import {Button} from "@mui/material";
+import Square from "../../src/components/Square";
 
 const Game = () => {
-    const matrice = Array(5).fill().map(() => Array(7).fill(<Tile/>))
+    const matrice = Array(5).fill().map(() => Array(7).fill(<Square/>))
     console.log(matrice)
-    
     return (
         <div>
             {matrice.map((row, i) => {
@@ -12,7 +12,7 @@ const Game = () => {
                     <div key={`${i}`}>
                         {row.map((column, j) => {
                             return (
-                                <div key={`${i}${j}`} style={{display:"inline"}}>
+                                <div key={`${i}${j}`}>
                                     {column} {"   "}
                                 </div>
                             );
