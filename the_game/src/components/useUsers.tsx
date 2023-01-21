@@ -7,6 +7,7 @@ const useUsers: () => any[] = () => {
       .then(res => res.json())
       .then(setUsers)
   }, []);
+
   return users;
 };
 export default useUsers;
