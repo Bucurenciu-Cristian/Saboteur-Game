@@ -1,12 +1,20 @@
 import Image from 'next/image'
-import {backOfCard, Players} from "../../src/components/Cards";
+import profilePic from '../../public/images/SaboteurImagesSingle/Path/start.png'
+
+import {
+  Actions,
+  backOfCard,
+  giveMeACard,
+  Gold,
+  Path,
+  PathAndAction,
+  Players, shuffle, shuffleCards, randomPlayers, RandomCardsWinning, randomCardsInHand
+} from "../../src/components/Cards";
 import {useMemo} from "react";
-import {join} from 'path';
-import {promises as fs} from "fs";
 
 const Page = () => {
-  const width = 75;
-  const height = width * 1.5;
+  const width = 100;
+  const height = width * 1.45;
 
   function getDiv(item: []) {
     return <div>
@@ -27,29 +35,29 @@ const Page = () => {
       [images]
     );
   }
-
+  const test = giveMeACard(Players);
+  const test1 = shuffleCards(Players);
+  console.log(Path.length)
   return (
     <>
-      <RenderUsingMemo images={backOfCard}/>
-      <RenderUsingMemo images={Players}/>
+      <RenderUsingMemo images={Path}/>
     </>
   );
 }
 
 
 //Still in progress, this is not doing much yet
-export async function getStaticProps() {
-
-  const fileContent = fs.readFile(join(__dirname, ''), {encoding: 'utf8'});
-
-  fileContent
-    .then(data =>  console.log(data))
-    .catch(err => console.log('Error  ', err))
+/*export async function getStaticProps() {
+  //
+  // const fileContent = fs.readFile(join(__dirname, ''), {encoding: 'utf8'});
+  //
+  // fileContent
+  //   .then(data =>  console.log(data))
+  //   .catch(err => console.log('Error  ', err))
 
   const dir = process.cwd();
-  console.log(dir);
   return {
     props: {dir}
   }
-}
+}*/
 export default Page;

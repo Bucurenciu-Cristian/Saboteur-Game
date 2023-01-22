@@ -2,17 +2,17 @@ import React, {useEffect, useState} from 'react';
 import Square from "./Square";
 import ShowBoard from "./ShowBoard";
 import Image from "next/image";
-import {Cards} from "./Cards";
+import {Cards, frontCardGold, frontCardRock1, frontCardRock2, frontCardStart, RandomCardsWinning} from "./Cards";
 
 const useBeginningMatrix = () => {
     const rowsFromMatrix = 5;
     const columnsFromMatrix = 9;
     //TODO La ultimul fill trebuie sa introduci un obiect gol de tipul pe care il vei gandi mai tarziu.
     const [matrix, setMatrix] = useState(Array(rowsFromMatrix).fill().map(() => Array(columnsFromMatrix).fill(null)));
-    const start = <Image key={1} src={Cards[0]} layout={"fill"}/>;
-    const goal = <Image key={1} src={Cards[1]} layout={"fill"}/>;
-    const rock = <Image key={1} src={Cards[2]} layout={"fill"}/>;
-    const rock1 = <Image key={1} src={Cards[3]} layout={"fill"}/>;
+    const start = <Image src={frontCardStart} layout={"fill"}/>;
+    const goal = <Image src={RandomCardsWinning[0].src} layout={"fill"}/>;
+    const rock = <Image src={RandomCardsWinning[1].src} layout={"fill"}/>;
+    const rock1 = <Image src={RandomCardsWinning[2].src} layout={"fill"}/>;
     const copyOfMatrix = [...matrix];
     //TODO Aici trebuie sa ajungi sa faci cu setMatrix, nu direct cu Matrix[x][y]
     copyOfMatrix[rowsFromMatrix - 3][rowsFromMatrix - 5] = start;
