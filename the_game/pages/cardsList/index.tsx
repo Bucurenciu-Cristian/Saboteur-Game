@@ -1,46 +1,80 @@
 import Image from 'next/image'
-import profilePic from '../../public/images/SaboteurImagesSingle/Path/start.png'
-
+import pathOrAction from '../../public/images/SaboteurImagesSingle/Back_of_cards/pathOrAction.png'
+import {Fragment, useMemo, useState} from "react";
+import {Button} from "react-bootstrap";
 import {
-  Actions,
-  backOfCard,
-  giveMeACard,
-  Gold,
-  Path,
-  PathAndAction,
-  Players, shuffle, shuffleCards, randomPlayers, RandomCardsWinning, randomCardsInHand
+  randomfirstCardsInHand,
+  randomRestCardsInHand
 } from "../../src/components/Cards";
-import {useMemo} from "react";
+import {getDiv, helpWithTheRender} from "../../src/functions.tsx";
+import {imageSize} from "../../src/variables";
+import {CardsType} from "../../src/Types/CardsType";
+
+const ImageList = ({ item }: CardsType[]) => {
+  const [rotations, setRotations] = useState(Array(item.length).fill(0));
+
+  return (
+    <div>
+      {item.map((image: CardsType, index: number) => (
+        <Fragment key={index}>
+          <Image
+            src={image.src}
+            width={imageSize.width}
+            alt="random"
+            height={imageSize.height}
+            quality={30}
+            style={{ transform: `rotate(${rotations[index]}deg)` }}
+            onClick={() => {
+              const newRotations = [...rotations];
+              newRotations[index] += 180;
+              setRotations(newRotations);
+            }}
+          />
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
 
 const Page = () => {
-  const width = 100;
-  const height = width * 1.45;
+  const [cardsFromHand, setCardsFromHand] = useState<CardsType[]>(randomfirstCardsInHand);
+  const [cardsFromDeck, setCardsFromDeck] = useState<CardsType[]>(randomRestCardsInHand);
 
-  function getDiv(item: []) {
-    return <div>
-      {item.map((image, index) =>
-        (
-          <Image key={index}
-                 src={image.src}
-                 width={width}
-                 alt="random"
-                 height={height}
-          />
-        ))}
-    </div>;
-  }
+
   function RenderUsingMemo({images}: { images: [] }) {
     return useMemo(
-      () => getDiv(images),
-      [images]
-    );
+      //This is fast, but doesn't rotate the images.
+      // () => getDiv(images),
+      // This is slow, but rotates the images.
+      () => <ImageList item={images}/>,
+
+      [images, helpWithTheRender]);
   }
-  const test = giveMeACard(Players);
-  const test1 = shuffleCards(Players);
-  console.log(Path.length)
+
+  const handleANewCard = () => {
+    const card = cardsFromDeck.shift()
+    //TODO: In this case, The Saboteurs are the winners.
+    if (card === undefined) throw new Error('No more cards')
+    setCardsFromHand([...cardsFromHand, card])
+    setCardsFromDeck(cardsFromDeck)
+  };
+
   return (
     <>
-      <RenderUsingMemo images={Path}/>
+      <Button onClick={handleANewCard}>
+        <RenderUsingMemo images={[pathOrAction]}/>
+      </Button>
+      <br/>
+      <br/>
+
+      <RenderUsingMemo images={cardsFromHand}/>
+
+      <br/>
+      <br/>
+      <br/>
+      {/*<RenderUsingMemo images={cardsFromDeck}/>*/}
+
     </>
   );
 }

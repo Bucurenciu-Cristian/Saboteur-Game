@@ -79,15 +79,17 @@ import thirtySeven from '../../../public/images/SaboteurImagesSingle/Path/37.png
 import thirtyEight from '../../../public/images/SaboteurImagesSingle/Path/38.png'
 import thirtyNine from '../../../public/images/SaboteurImagesSingle/Path/39.png'
 
+import {noOfPlayers, typeOfCard} from "../../variables";
+import {
+  withdrawTheCardsFromTheDeck,
+  howManyCardsEachPlayerCanHave,
+  isBetween3and10,
+  tellMeNoPlayers,
+  shuffleCards
+} from "../../functions";
+import {PathCard} from "../../Types/PathCard";
+import {CardsType} from "../../Types/CardsType";
 
-
-
-const initialPath = '/images/SaboteurImagesSingle/';
-
-const path = {
-  path: initialPath + 'Path/',
-}
-const extension = '.png';
 
 const backCardReward = reward;
 const backCardPlayers = players;
@@ -103,21 +105,21 @@ export const backOfCard = [
 ];
 
 //All
-const frontCardMiner1 = Miner1;
-const frontCardMiner2 = Miner2;
-const frontCardMiner3 = Miner3;
-const frontCardMiner4 = Miner4;
-const frontCardMiner5 = Miner5;
-const frontCardMiner6 = Miner6;
-const frontCardMiner7 = Miner7;
+const frontMinerRed = Miner1;
+const frontMinerBlue = Miner2;
+const frontMinerGreen = Miner3;
+const frontMinerYellow = Miner4;
+const frontMinerViolet = Miner5;
+const frontMinerBrown = Miner6;
+const frontMinerBlueDark = Miner7;
 export const GoodGuys = [
-  {src: frontCardMiner1, back: backCardPlayers},
-  {src: frontCardMiner2, back: backCardPlayers},
-  {src: frontCardMiner3, back: backCardPlayers},
-  {src: frontCardMiner4, back: backCardPlayers},
-  {src: frontCardMiner5, back: backCardPlayers},
-  {src: frontCardMiner6, back: backCardPlayers},
-  {src: frontCardMiner7, back: backCardPlayers},
+  {src: frontMinerRed, back: backCardPlayers},
+  {src: frontMinerBlue, back: backCardPlayers},
+  {src: frontMinerGreen, back: backCardPlayers},
+  {src: frontMinerYellow, back: backCardPlayers},
+  {src: frontMinerViolet, back: backCardPlayers},
+  {src: frontMinerBrown, back: backCardPlayers},
+  {src: frontMinerBlueDark, back: backCardPlayers},
 ];
 //All
 const frontCardBadGuyBlue = BadGuy1;
@@ -190,72 +192,90 @@ const countFrontCardTypes = {
   cardAndFelinar: 1
 }
 
-type Created = { src: string; back: string; };
-export const Actions: Created[] = [];
+export const Actions: CardsType[] = [];
 frontCardTypes.forEach(frontCard => {
   for (let i = 0; i < countFrontCardTypes[frontCard.type]; i++) {
-    Actions.push({src: frontCard.src, back: backCardPathOrAction});
+    Actions.push({src: frontCard.src, back: backCardPathOrAction, typeOfCard: typeOfCard.action});
   }
 });
 
-export const Path = [
+const dictionary = {
+  "NSC": 0b10101,
+  "EWC": 0b01011,
+  "NESWC": 0b11111,
+  "NS": 0b10100,
+  "EW": 0b01010,
+  "NESW": 0b11110,
+  "NC": 0b10001,
+  "EC": 0b00101,
+  "NESC": 0b11101,
+  "NEWC": 0b11011,
+  "SWC": 0b00111,
+  "NES": 0b11100,
+  "NE": 0b11000,
+  "NW": 0b10010,
+  "ESW": 0b01110,
+  "ESC": 0b01101,
+  "NWC": 0b10011,
+}
+//
+export const Path: PathCard[] = [
   //NSC
-  {src: One, back: backCardPathOrAction},
-  {src: Two, back: backCardPathOrAction},
-  {src: Three, back: backCardPathOrAction},
-  {src: Three, back: backCardPathOrAction},
+  {src: One, back: backCardPathOrAction, type: 'NSC', code: dictionary.NSC, typeOfCard: typeOfCard.path},
+  {src: Two, back: backCardPathOrAction, type: 'NSC', code: dictionary.NSC, typeOfCard: typeOfCard.path},
+  {src: Three, back: backCardPathOrAction, type: 'NSC', code: dictionary.NSC, typeOfCard: typeOfCard.path},
+  {src: Three, back: backCardPathOrAction, type: 'NSC', code: dictionary.NSC, typeOfCard: typeOfCard.path},
 
   //EWC
-  {src: Four, back: backCardPathOrAction},
-  {src: Five, back: backCardPathOrAction},
-  {src: Eight, back: backCardPathOrAction},
+  {src: Four, back: backCardPathOrAction, type: 'EWC', code: dictionary.EWC, typeOfCard: typeOfCard.path},
+  {src: Five, back: backCardPathOrAction, type: 'EWC', code: dictionary.EWC, typeOfCard: typeOfCard.path},
+  {src: Eight, back: backCardPathOrAction, type: 'EWC', code: dictionary.EWC, typeOfCard: typeOfCard.path},
 
   //NESWC
-  {src: Eleven, back: backCardPathOrAction},
-  {src: twentyThree, back: backCardPathOrAction},
-  {src: thirtyFive, back: backCardPathOrAction},
-  {src: Twelve, back: backCardPathOrAction},
-  {src: Thirtheen, back: backCardPathOrAction},
+  {src: Eleven, back: backCardPathOrAction, type: 'NESWC', code: dictionary.NESWC, typeOfCard: typeOfCard.path},
+  {src: twentyThree, back: backCardPathOrAction, type: 'NESWC', code: dictionary.NESWC, typeOfCard: typeOfCard.path},
+  {src: thirtyFive, back: backCardPathOrAction, type: 'NESWC', code: dictionary.NESWC, typeOfCard: typeOfCard.path},
+  {src: Twelve, back: backCardPathOrAction, type: 'NESWC', code: dictionary.NESWC, typeOfCard: typeOfCard.path},
+  {src: Thirtheen, back: backCardPathOrAction, type: 'NESWC', code: dictionary.NESWC, typeOfCard: typeOfCard.path},
 
   //ESC
-  {src: Nine, back: backCardPathOrAction},
-  {src: Ten, back: backCardPathOrAction},
-  {src: SevenTeen, back: backCardPathOrAction},
+  {src: Nine, back: backCardPathOrAction, type: 'ESC', code: dictionary.ESC, typeOfCard: typeOfCard.path},
+  {src: Ten, back: backCardPathOrAction, type: 'ESC', code: dictionary.ESC, typeOfCard: typeOfCard.path},
+  {src: SevenTeen, back: backCardPathOrAction, type: 'ESC', code: dictionary.ESC, typeOfCard: typeOfCard.path},
   //NWC
-  {src: EightTeen, back: backCardPathOrAction},
+  {src: EightTeen, back: backCardPathOrAction, type: 'ESC', code: dictionary.ESC, typeOfCard: typeOfCard.path},
 
   //NESC
-  {src: nineteen, back: backCardPathOrAction},
-  {src: twenty, back: backCardPathOrAction},
-  {src: Fourteen, back: backCardPathOrAction},
-  {src: twentyOne, back: backCardPathOrAction},
-  {src: twentyTwo, back: backCardPathOrAction},
+  {src: nineteen, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
+  {src: twenty, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
+  {src: Fourteen, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
+  {src: twentyOne, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
+  {src: twentyTwo, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
   //NEWC
-  {src: twentyFour, back: backCardPathOrAction},
-  {src: twentyFive, back: backCardPathOrAction},
-  {src: twentySix, back: backCardPathOrAction},
-  {src: thirtyFour, back: backCardPathOrAction},
-  {src: thirtyNine, back: backCardPathOrAction},
+  {src: twentyFour, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
+  {src: twentyFive, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
+  {src: twentySix, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
+  {src: thirtyFour, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
+  {src: thirtyNine, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
 
   //SWC
-  {src: thirtySeven, back: backCardPathOrAction},
-  {src: thirtyEight, back: backCardPathOrAction},
-  {src: twentyNine, back: backCardPathOrAction},
-  {src: thirty, back: backCardPathOrAction},
-  {src: thirtyOne, back: backCardPathOrAction},
+  {src: thirtySeven, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
+  {src: thirtyEight, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
+  {src: twentyNine, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
+  {src: thirty, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
+  {src: thirtyOne, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
 
 
   //Blocaje
-  {src: Six, back: backCardPathOrAction, code: 0x01110},
-  {src: Seven, back: backCardPathOrAction},
-  {src: Fiftheen, back: backCardPathOrAction},
-  {src: Sixteen, back: backCardPathOrAction},
-  {src: twentySeven, back: backCardPathOrAction},
-  {src: twentyEight, back: backCardPathOrAction},
-  {src: thirtyTwo, back: backCardPathOrAction},
-  {src: thirtyThree, back: backCardPathOrAction},
-  {src: thirtySix, back: backCardPathOrAction},
-
+  {src: Six, back: backCardPathOrAction, type: 'ESW', code: dictionary.ESW, typeOfCard: typeOfCard.path},
+  {src: Seven, back: backCardPathOrAction, type: 'NW', code: dictionary.NW, typeOfCard: typeOfCard.path},
+  {src: Fiftheen, back: backCardPathOrAction, type: 'NS', code: dictionary.NS, typeOfCard: typeOfCard.path},
+  {src: Sixteen, back: backCardPathOrAction, type: 'EW', code: dictionary.EW, typeOfCard: typeOfCard.path},
+  {src: twentySeven, back: backCardPathOrAction, type: 'EC', code: dictionary.EC, typeOfCard: typeOfCard.path},
+  {src: twentyEight, back: backCardPathOrAction, type: 'NC', code: dictionary.NC, typeOfCard: typeOfCard.path},
+  {src: thirtyTwo, back: backCardPathOrAction, type: 'NESW', code: dictionary.NESW, typeOfCard: typeOfCard.path},
+  {src: thirtyThree, back: backCardPathOrAction, type: 'NES', code: dictionary.NES, typeOfCard: typeOfCard.path},
+  {src: thirtySix, back: backCardPathOrAction, type: 'NE', code: dictionary.NE, typeOfCard: typeOfCard.path},
 
 ]
 export const Players = [
@@ -273,104 +293,30 @@ export const PathAndAction = [
   ...Path,
   ...Actions,
 ]
-export const giveMeACard = (cards: Created[]) => {
-  const random = Math.floor(Math.random() * cards.length);
-  const created = cards[random];
-  return created;
+
+
+
+
+export let randomMiners: CardsType[];
+export let deckOfCardsRandom: CardsType[];
+export let deckOfCards: number;
+export let randomfirstCardsInHand: CardsType[];
+export let randomRestCardsInHand: CardsType[];
+export let RandomCardsWinning: CardsType[];
+
+if (isBetween3and10(noOfPlayers)) {
+  randomMiners = shuffleCards(tellMeNoPlayers(noOfPlayers));
+
+  deckOfCardsRandom = shuffleCards(PathAndAction);
+
+  deckOfCards = howManyCardsEachPlayerCanHave(noOfPlayers);
+
+  [randomfirstCardsInHand, randomRestCardsInHand] = withdrawTheCardsFromTheDeck(deckOfCardsRandom, noOfPlayers, deckOfCards);
+
+  RandomCardsWinning = shuffleCards(CardsWinning);
 }
-const giveMeTheFirstCards = (cards: Created[], NoPlayers: number, NoOfCards: number) => {
-  const firstCards = [];
-  for (let i = 0; i < NoPlayers * NoOfCards; i++) {
-    firstCards.push(giveMeACard(cards));
-  }
-  return firstCards;
+else{
+  throw new Error('Value must be between 3 and 10');
 }
 
-export const shuffleCards = (cards: Created[]) => {
-  const newArray = [...cards]
-  const length = newArray.length
-  for (let start = 0; start < length; start++) {
-    const randomPosition = Math.floor((newArray.length - start) * Math.random())
-    const randomItem = newArray.splice(randomPosition, 1)
-
-    newArray.push(...randomItem)
-  }
-  return newArray
-}
-const tellMeNoPlayers = (NoPlayers: number) => {
-  switch (NoPlayers) {
-    case 3:
-      return [
-        ...GoodGuys.slice(0, 3),
-        ...BadGuys.slice(0, 1)
-      ]
-    case 4:
-      return [
-        ...GoodGuys.slice(0, 4),
-        ...BadGuys.slice(0, 1)
-      ]
-    case 5:
-      return [
-        ...GoodGuys.slice(0, 4),
-        ...BadGuys.slice(0, 2),
-      ]
-    case 6:
-      return [
-        ...GoodGuys.slice(0, 5),
-        ...BadGuys.slice(0, 2),
-      ]
-    case 7:
-      return [
-        ...GoodGuys.slice(0, 5),
-        ...BadGuys.slice(0, 3),
-      ]
-    case 8:
-      return [
-        ...GoodGuys.slice(0, 6),
-        ...BadGuys.slice(0, 3),
-      ]
-    case 9:
-      return [
-        ...GoodGuys,
-        ...BadGuys.slice(0, 3),
-      ]
-    case 10:
-      return [
-        ...GoodGuys,
-        ...BadGuys,
-      ]
-    default:
-      return [
-        ...GoodGuys.slice(0, 1),
-        ...BadGuys.slice(0, 1),
-      ]
-  }
-}
-const noOfCardsIntoHandsDependingOnthePlayers = (NoPlayers: number) => {
-  switch (NoPlayers) {
-    case 3:
-    case 4:
-    case 5:
-      return 6
-    case 6:
-    case 7:
-      return 5
-    case 8:
-    case 9:
-    case 10:
-      return 4
-    default:
-      return 0
-  }
-}
-const noPlayers = 6;
-export const randomPlayers = shuffleCards(tellMeNoPlayers(noPlayers));
-export const deckOfCardsRandom = shuffleCards(PathAndAction);
-const cards1 = noOfCardsIntoHandsDependingOnthePlayers(noPlayers);
-
-export const deckOfCards = cards1;
-
-export const randomCardsInHand = giveMeTheFirstCards(deckOfCardsRandom, deckOfCards, noPlayers);
-
-export const RandomCardsWinning = shuffleCards(CardsWinning);
 
