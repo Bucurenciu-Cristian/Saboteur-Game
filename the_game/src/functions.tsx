@@ -121,7 +121,7 @@ export const helpWithTheRender = (prevImages: CardsType[], nextImages: CardsType
 
 export function getDiv(item: []) {
   return <div>
-    {item.map((image, index) =>
+    {item.map((image:CardsType, index) =>
       (
         <Image key={index}
                src={image.src}
