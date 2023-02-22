@@ -1,28 +1,32 @@
-import Image from 'next/image'
+import Image, {StaticImageData} from 'next/image'
 import pathOrAction from '../../public/images/SaboteurImagesSingle/Back_of_cards/pathOrAction.png'
 import {Fragment, useMemo, useState} from "react";
 import {Button} from "react-bootstrap";
 import {
+  Players,
   randomfirstCardsInHand,
   randomRestCardsInHand
 } from "../../src/components/Cards";
-import {getDiv, helpWithTheRender} from "../../src/functions.tsx";
+import {helpWithTheRender} from "../../src/functions";
 import {imageSize} from "../../src/variables";
 import {CardsType} from "../../src/Types/CardsType";
-
-const ImageList = ({ item }: CardsType[]) => {
+import Link from "next/link";
+import styles from "../../styles/Home.module.css";
+interface ImageListProps {
+  item: CardsType[]
+}
+const ImageList = ({item}: ImageListProps) => {
   const [rotations, setRotations] = useState(Array(item.length).fill(0));
 
   return (
     <div>
-      {item.map((image: CardsType, index: number) => (
+      {item && item.map((image: CardsType, index: number) => (
         <Fragment key={index}>
           <Image
             src={image.src}
             width={imageSize.width}
             alt="random"
             height={imageSize.height}
-            quality={30}
             style={{ transform: `rotate(${rotations[index]}deg)` }}
             onClick={() => {
               const newRotations = [...rotations];
@@ -37,44 +41,56 @@ const ImageList = ({ item }: CardsType[]) => {
 }
 
 
+const NewCard = (props: { onClick: () => void, drawACard: { src: any } }) => <Button onClick={props.onClick}>
+  <RenderUsingMemo images={[props.drawACard]}/>
+</Button>;
+const RenderUsingMemo = ({images}: { images: CardsType[] }) => useMemo(
+  //This is fast, but doesn't rotate the images.
+  // () => getDiv(images),
+  // This is slow, but rotates the images.
+  () => <ImageList item={images}/>,
+
+  [images, helpWithTheRender]);
 const Page = () => {
   const [cardsFromHand, setCardsFromHand] = useState<CardsType[]>(randomfirstCardsInHand);
   const [cardsFromDeck, setCardsFromDeck] = useState<CardsType[]>(randomRestCardsInHand);
 
-
-  function RenderUsingMemo({images}: { images: [] }) {
-    return useMemo(
-      //This is fast, but doesn't rotate the images.
-      // () => getDiv(images),
-      // This is slow, but rotates the images.
-      () => <ImageList item={images}/>,
-
-      [images, helpWithTheRender]);
-  }
-
   const handleANewCard = () => {
-    const card = cardsFromDeck.shift()
+    //TODO: Here you will decide if you will go with pop or unshift
+    const card = cardsFromDeck.pop()
     //TODO: In this case, The Saboteurs are the winners.
     if (card === undefined) throw new Error('No more cards')
     setCardsFromHand([...cardsFromHand, card])
-    setCardsFromDeck(cardsFromDeck)
+    setCardsFromDeck([...cardsFromDeck])
   };
 
+  const drawACard = {src: pathOrAction};
   return (
     <>
-      <Button onClick={handleANewCard}>
-        <RenderUsingMemo images={[pathOrAction]}/>
-      </Button>
+      <NewCard onClick={handleANewCard} drawACard={drawACard}/>
       <br/>
       <br/>
-
+      {/*
+      cardsFromHand.map((players, index) =>
+        (
+        <RenderUsingMemo key={index} images={players}/>
+        )
+      )
+      */}
       <RenderUsingMemo images={cardsFromHand}/>
 
       <br/>
       <br/>
       <br/>
       {/*<RenderUsingMemo images={cardsFromDeck}/>*/}
-
+      <h1>Continue with the logic of the table</h1>
+      <h1>__NESWC</h1>
+      <h1>0b11111</h1>
+      <Link href={"/Table"}>
+        <Button>
+          <h1>Go to the table</h1>
+        </Button>
+      </Link>
     </>
   );
 }
