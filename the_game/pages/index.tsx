@@ -3,9 +3,22 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Link from "next/link";
+import {useEffect, useState} from "react";
+import {Simulate} from "react-dom/test-utils";
+import input = Simulate.input;
+
+
 
 const Home: NextPage = () => {
-  return (
+    const [hello, setHello] = useState(null);
+
+    useEffect(() => {
+        fetch('/api/hello')
+            .then(res => res.json())
+            .then(setHello)
+    }, []);
+
+    return (
     <div className={styles.container}>
       <Head>
         <title>Create Next App</title>
@@ -15,41 +28,23 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Still Learning this stuff <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+          <div className={styles.grid}>
+              {hello && <h1>{JSON.stringify(hello)}</h1>}
+          </div>
         <div className={styles.grid}>
           <Link href={"/cardsList"}>
             <a className={styles.card}>
-              <h1> Go to AllCards</h1>
+              <h1>CardsList</h1>
             </a>
           </Link>
         </div>
         <div className={styles.grid}>
           <Link href={"/Table"}>
             <a className={styles.card}>
-              <h1> Go to Table</h1>
+              <h1>Table</h1>
             </a>
           </Link>
         </div>
-        {/*<div className={styles.grid}>
-          <Link href={"/Ioana/[id]"} as={`/Ioana/1`}>
-            <a className={styles.card}>
-
-              <h2> Go to ID 1</h2>
-
-            </a>
-
-          </Link>
-        </div>
-        <div className={styles.grid}>
-
-          <Link href={"/Ioana"}>
-            <a className={styles.card}>
-              Go Ioana
-            </a>
-          </Link>
-        </div>*/}
       </main>
 
       <footer className={styles.footer}>
