@@ -86,6 +86,7 @@ const Page = () => {
       <h1>Continue with the logic of the table</h1>
       <h1>__N E S W C R</h1>
       <h1>0b1 1 1 1 1 0</h1>
+        <h1>0b1 1 1 1 1 0</h1>
 
       Adauga inca un padding la table
       <Link href={"/Table"}>
