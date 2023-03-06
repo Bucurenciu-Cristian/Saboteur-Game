@@ -19,7 +19,9 @@
     "next-optimized-images": "^2.6.2",
     "react": "18.2.0",
     "react-bootstrap": "^2.5.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "socket.io": "^4.6.1",
+    "socket.io-client": "^4.6.1"
   },
   "devDependencies": {
     "@supercharge/promise-pool": "^2.3.2",
