@@ -202,25 +202,6 @@ Object.entries(countFrontCardTypes).forEach(([frontCardType, count]) => {
     });
   }
 });
-/*
-"NSC": 0b10101 = 21 (in decimal)
-"EWC": 0b01011 = 11 (in decimal)
-"NESWC": 0b11111 = 31 (in decimal)
-"NS": 0b10100 = 20 (in decimal)
-"EW": 0b01010 = 10 (in decimal)
-"NESW": 0b11110 = 30 (in decimal)
-"NC": 0b10001 = 17 (in decimal)
-"EC": 0b00101 = 5 (in decimal)
-"NESC": 0b11101 = 29 (in decimal)
-"NEWC": 0b11011 = 27 (in decimal)
-"SWC": 0b00111 = 7 (in decimal)
-"NES": 0b11100 = 28 (in decimal)
-"NE": 0b11000 = 24 (in decimal)
-"NW": 0b10010 = 18 (in decimal)
-"ESW": 0b01110 = 14 (in decimal)
-"ESC": 0b01101 = 13 (in decimal)
-"NWC": 0b10011 = 19 (in decimal)
-* */
 const dictionary = {
   NSC: 0b10101,
   "EWC": 0b01011,
@@ -315,9 +296,6 @@ export const PathAndAction = [
   ...Path,
   ...Actions,
 ]
-
-
-
 
 export let randomMiners: CardsType[];
 export let deckOfCardsRandom: CardsType[];

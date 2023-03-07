@@ -5,8 +5,8 @@ import Image from "next/image";
 import {Cards, frontCardGold, frontCardRock1, frontCardRock2, frontCardStart, RandomCardsWinning} from "./Cards";
 
 const useBeginningMatrix = () => {
-    const rowsFromMatrix = 5;
-    const columnsFromMatrix = 9;
+    const rowsFromMatrix = 6;
+    const columnsFromMatrix = 10;
     //TODO La ultimul fill trebuie sa introduci un obiect gol de tipul pe care il vei gandi mai tarziu.
     const [matrix, setMatrix] = useState(Array(rowsFromMatrix).fill().map(() => Array(columnsFromMatrix).fill(null)));
     const start = <Image src={frontCardStart} layout={"fill"}/>;
@@ -15,48 +15,21 @@ const useBeginningMatrix = () => {
     const rock1 = <Image src={RandomCardsWinning[2].src} layout={"fill"}/>;
     const copyOfMatrix = [...matrix];
     //TODO Aici trebuie sa ajungi sa faci cu setMatrix, nu direct cu Matrix[x][y]
-    copyOfMatrix[rowsFromMatrix - 3][rowsFromMatrix - 5] = start;
-    copyOfMatrix[rowsFromMatrix - 5][columnsFromMatrix - 1] = rock;
-    copyOfMatrix[rowsFromMatrix - 3][columnsFromMatrix - 1] = goal;
-    copyOfMatrix[rowsFromMatrix - 1][columnsFromMatrix - 1] = rock1;
+    copyOfMatrix[rowsFromMatrix - 3][rowsFromMatrix - 5] = {Card: start};
+    copyOfMatrix[rowsFromMatrix - 5][columnsFromMatrix - 1] = {Card: rock};
+    copyOfMatrix[rowsFromMatrix - 3][columnsFromMatrix - 1] = {Card: goal};
+    copyOfMatrix[rowsFromMatrix - 1][columnsFromMatrix - 1] = {Card: rock1};
     useEffect(() => {
         setMatrix(copyOfMatrix);
-    }, [matrix]);
+    }, []);
     return matrix;
 };
 
 
-const Board = (props) => {
+const Board = () => {
     const gameMatrix = useBeginningMatrix();
-    const renderSquare = (i) => {
-        return <Square
-            value={props.squares[i]}
-            onClick={() => props.onClick(i)}
-        />;
-    }
-    const renderSquareUpdated = (i, j) => {
-        return <Square
-            value={gameMatrix[i][j]}
-            onClick={() => console.log(`Locatia este: [${i},${j}]`)}
-        />;
-    };
     return (
         <div>
-            {/*<div className="board-row">
-                {renderSquare(0)}
-                {renderSquare(1)}
-                {renderSquare(2)}
-            </div>
-            <div className="board-row">
-                {renderSquare(3)}
-                {renderSquare(4)}
-                {renderSquare(5)}
-            </div>
-            <div className="board-row">
-                {renderSquare(6)}
-                {renderSquare(7)}
-                {renderSquare(8)}
-            </div>*/}
             <ShowBoard gameMatrix={gameMatrix}/>
         </div>
     );

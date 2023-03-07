@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import Board from "./Board";
 
 const calculateWinner = squares => {
     const lines = [
@@ -66,10 +65,7 @@ function Game() {
     return (
         <div className="game">
             <div className="game-board">
-                <Board
-                    squares={current.squares}
-                    onClick={(i) => handleClick(i)}
-                />
+            
             </div>
             {/*<div className="game-info">*/}
             {/*    <div>{status}</div>*/}
