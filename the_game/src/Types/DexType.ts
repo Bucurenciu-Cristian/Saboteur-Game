@@ -1,4 +1,5 @@
 import {FOT} from "../BusinessLogic/Cards/Actions";
+import {newFormatInterface} from "../BusinessLogic/Logic";
 
 export interface dexType {
     Action: 'A';
@@ -34,4 +35,9 @@ export interface dexType {
 export interface FOTType {
     F: 'F';
     T: 'T'
+}
+
+export interface IMatrix {
+    Card: newFormatInterface;
+    Occupied: boolean;
 }

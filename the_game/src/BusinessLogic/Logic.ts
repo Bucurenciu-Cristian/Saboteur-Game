@@ -2,7 +2,7 @@ import {StaticImageData} from "next/image";
 import {Actions} from "./Cards/Actions";
 import {Dwarfs} from "./Cards/Dwarfs";
 import {AllGold} from "./Cards/Rewards";
-import {allPath, normalPath} from "./Cards/Paths";
+import {allPath} from "./Cards/Paths";
 
 
 type CharTuple = [
@@ -17,6 +17,10 @@ export interface newFormatInterface {
     src: StaticImageData;
 }
 
+export interface ISpecialPath extends newFormatInterface {
+    back?: StaticImageData;
+}
+
 
 export const allTheCards: newFormatInterface[] = [
     /* dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F */
@@ -27,10 +31,6 @@ export const allTheCards: newFormatInterface[] = [
 ];
 
 function isCodeProperty(prop: string): prop is string {
-    // const regex =
-    //   /^B(P[TF]{6}?|L[MS]?|A[TF]{3}[DMGEB]?|R)?|E([PLAR][TF]*|A(TF){2})$/;
-    // const regex =
-    // return regex.test(prop);
     const firstLetter = prop.charAt(0);
     const secondLetter = prop.charAt(1);
     const regexFirst = /^([BE])$/
@@ -45,14 +45,11 @@ function isCodeProperty(prop: string): prop is string {
                     //RGS Optional
                     const regexP = /^([TF]{6}|[RGS])$/;
                     // const regexP = /^([TF]{6})([RGS]?)$/;
-                    console.log("Path")
                     return regexP.test(theRest);
                 case "L":
                     const regexL = /^([MS])$/;
-                    console.log("Dwarfs")
                     return regexL.test(theRest);
                 case "A":
-                    console.log("Actions")
                     const regexA = /^([DMGEB]|[LAC][FT])$/;
                     return regexA.test(theRest);
                 case "R":
@@ -61,7 +58,6 @@ function isCodeProperty(prop: string): prop is string {
                     // FTF means 2 Gold
                     // FFT means 1 Gold
                     const regexR = /^(?=.*T)[TF]{3}$/;
-                    console.log("Rewards")
                     return regexR.test(theRest);
                 default:
                     console.info("Default case");
@@ -95,35 +91,36 @@ function TypeGuardOnCards({code}: newFormatInterface) {
 }
 
 export function checkMyCards() {
-  allTheCards.forEach((obj) => {
-    TypeGuardOnCards(obj);
-  });
-
+    allTheCards.forEach((obj) => {
+        TypeGuardOnCards(obj);
+    });
+    /*
   console.info(1, normalPath[0].code);
   const code = normalPath[0].code?.join("");
   normalPath[0].code = changeOrientation(code);
-  console.info(2, normalPath[0].code);
+  console.info(2, normalPath[0].code);*/
 }
 
-export function changeOrientation(code : string) : CharTuple | string {
-  const secondLetter = code.charAt(1);
-  const eightChar = code?.charAt(7);
-  let codeArr = code.split("");
-  const regexSixth = /^([TF])$/
-  const regexSecond = /^(P)$/
-  if (regexSecond.test(secondLetter) && regexSixth.test(eightChar)) {
-    let [B, P, N, E, S, W, C, R] = [...codeArr];
-    if (R === "T") {
-      R = "F";
-      codeArr = [B, P, N, E, S, W, C, R];
+export function changeOrientation(code: string): CharTuple | string {
+    //This is working from my testing
+    const secondLetter = code.charAt(1);
+    const eightChar = code?.charAt(7);
+    let codeArr = code.split("");
+    const regexSixth = /^([TF])$/
+    const regexSecond = /^(P)$/
+    if (regexSecond.test(secondLetter) && regexSixth.test(eightChar)) {
+        let [B, P, N, E, S, W, C, R] = [...codeArr];
+        if (R === "T") {
+            R = "F";
+            codeArr = [B, P, N, E, S, W, C, R];
+        } else {
+            R = "T";
+            //Changing N with S and E with W
+            codeArr = [B, P, S, W, N, E, C, R];
+        }
+        return codeArr as CharTuple;
     } else {
-      R = "T";
-      //Changing N with S and E with W
-      codeArr = [B, P, S, W, N, E, C, R];
+        console.log("You're not supposed to see this.");
     }
     return codeArr as CharTuple;
-  } else {
-    console.log("You're not supposed to see this.");
-  }
-  return codeArr as CharTuple;
 }

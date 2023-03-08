@@ -2,22 +2,31 @@ import React from 'react';
 import Image from "next/image";
 import {Button} from "@mui/material";
 
-const Square = (props) => {
+const Square = ({Card, onClick, Occupied}) => {
+    
     return (
         <Button
             className="square"
-            onClick={props.onClick}
+            onClick={onClick}
             onMouseOver={e => e.target.style.background = 'red'}
             onMouseLeave={e => e.target.style.background = ''}
             width={50}
-            height={1000}
+            height={100}
         >
-            {(props.imgSrc && <Image
-                src={props.imgSrc}
-                width={1000}
-                height={100}
-            />)}
-            {props.value}
+            {Occupied &&
+                (Card?.back
+                        ? <Image
+                            src={Card?.back}
+                            layout={"fill"}
+                            alt=""
+                        />
+                        : <Image
+                            src={Card?.src}
+                            layout={"fill"}
+                            alt=""
+                        />
+                )
+            }
         </Button>
     );
 };

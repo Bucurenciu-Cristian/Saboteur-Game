@@ -1,13 +1,19 @@
 import React, {useMemo} from "react";
 import Square from "./Square";
+import {IMatrix} from "../Types/DexType";
 
-const ShowBoard = ({gameMatrix}: { gameMatrix: any[][] }) => {
+const ShowBoard = ({gameMatrix}: { gameMatrix: IMatrix[][] }) => {
 
     const renderSquareUpdated = (i: number, j: number) => {
+        let onClick = () => {
+
+            console.log(`Locatia este: [${i},${j}]`);
+        };
         return (
             <Square
-                value={gameMatrix[i][j]?.Card}
-                onClick={() => console.log(`Locatia este: [${i},${j}]`)}
+                Card={gameMatrix[i][j].Card}
+                Occupied={gameMatrix[i][j]?.Occupied}
+                onClick={onClick}
             />
         );
     };
