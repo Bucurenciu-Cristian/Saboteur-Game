@@ -1,55 +1,8 @@
-import reward from '../../public/images/SaboteurImagesSingle/Back_of_cards/reward.png'
-import start2 from '../../public/images/SaboteurImagesSingle/Back_of_cards/start2.png'
-import winning from '../../public/images/SaboteurImagesSingle/Back_of_cards/winning.png'
-import players from '../../public/images/SaboteurImagesSingle/Back_of_cards/players.png'
-import pathOrAction from '../../public/images/SaboteurImagesSingle/Back_of_cards/pathOrAction.png'
-
-import One from "../../public/images/SaboteurImagesSingle/Path/1.png";
-import Two from '../../public/images/SaboteurImagesSingle/Path/2.png'
-import Three from '../../public/images/SaboteurImagesSingle/Path/3.png'
-import Four from '../../public/images/SaboteurImagesSingle/Path/4.png'
-import Five from '../../public/images/SaboteurImagesSingle/Path/5.png'
-import Six from '../../public/images/SaboteurImagesSingle/Path/6.png'
-import Seven from '../../public/images/SaboteurImagesSingle/Path/7.png'
-import Eight from '../../public/images/SaboteurImagesSingle/Path/8.png'
-import Nine from '../../public/images/SaboteurImagesSingle/Path/9.png'
-import Ten from '../../public/images/SaboteurImagesSingle/Path/10.png'
-import Eleven from '../../public/images/SaboteurImagesSingle/Path/11.png'
-import Twelve from '../../public/images/SaboteurImagesSingle/Path/12.png'
-import Thirtheen from '../../public/images/SaboteurImagesSingle/Path/13.png'
-import Fourteen from '../../public/images/SaboteurImagesSingle/Path/14.png'
-import Fiftheen from '../../public/images/SaboteurImagesSingle/Path/15.png'
-import Sixteen from '../../public/images/SaboteurImagesSingle/Path/16.png'
-import SevenTeen from '../../public/images/SaboteurImagesSingle/Path/17.png'
-import EightTeen from '../../public/images/SaboteurImagesSingle/Path/18.png'
-import nineteen from '../../public/images/SaboteurImagesSingle/Path/19.png'
-import twenty from '../../public/images/SaboteurImagesSingle/Path/20.png'
-import twentyOne from '../../public/images/SaboteurImagesSingle/Path/21.png'
-import twentyTwo from '../../public/images/SaboteurImagesSingle/Path/22.png'
-import twentyThree from '../../public/images/SaboteurImagesSingle/Path/23.png'
-import twentyFour from '../../public/images/SaboteurImagesSingle/Path/24.png'
-import twentyFive from '../../public/images/SaboteurImagesSingle/Path/25.png'
-import twentySix from '../../public/images/SaboteurImagesSingle/Path/26.png'
-import twentySeven from '../../public/images/SaboteurImagesSingle/Path/27.png'
-import twentyEight from '../../public/images/SaboteurImagesSingle/Path/28.png'
-import twentyNine from '../../public/images/SaboteurImagesSingle/Path/29.png'
-import thirty from '../../public/images/SaboteurImagesSingle/Path/30.png'
-import thirtyOne from '../../public/images/SaboteurImagesSingle/Path/31.png'
-import thirtyTwo from '../../public/images/SaboteurImagesSingle/Path/32.png'
-import thirtyThree from '../../public/images/SaboteurImagesSingle/Path/33.png'
-import thirtyFour from '../../public/images/SaboteurImagesSingle/Path/34.png'
-import thirtyFive from '../../public/images/SaboteurImagesSingle/Path/35.png'
-import thirtySix from '../../public/images/SaboteurImagesSingle/Path/36.png'
-import thirtySeven from '../../public/images/SaboteurImagesSingle/Path/37.png'
-import thirtyEight from '../../public/images/SaboteurImagesSingle/Path/38.png'
-import thirtyNine from '../../public/images/SaboteurImagesSingle/Path/39.png'
-
-
 import {StaticImageData} from "next/image";
 import {Actions} from "./Cards/Actions";
 import {Dwarfs} from "./Cards/Dwarfs";
 import {AllGold} from "./Cards/Rewards";
-import {allPath} from "./Cards/Paths";
+import {allPath, normalPath} from "./Cards/Paths";
 
 
 type CharTuple = [
@@ -142,7 +95,35 @@ function TypeGuardOnCards({code}: newFormatInterface) {
 }
 
 export function checkMyCards() {
-    allTheCards.forEach((obj) => {
-        TypeGuardOnCards(obj);
-    });
+  allTheCards.forEach((obj) => {
+    TypeGuardOnCards(obj);
+  });
+
+  console.info(1, normalPath[0].code);
+  const code = normalPath[0].code?.join("");
+  normalPath[0].code = changeOrientation(code);
+  console.info(2, normalPath[0].code);
+}
+
+export function changeOrientation(code : string) : CharTuple | string {
+  const secondLetter = code.charAt(1);
+  const eightChar = code?.charAt(7);
+  let codeArr = code.split("");
+  const regexSixth = /^([TF])$/
+  const regexSecond = /^(P)$/
+  if (regexSecond.test(secondLetter) && regexSixth.test(eightChar)) {
+    let [B, P, N, E, S, W, C, R] = [...codeArr];
+    if (R === "T") {
+      R = "F";
+      codeArr = [B, P, N, E, S, W, C, R];
+    } else {
+      R = "T";
+      //Changing N with S and E with W
+      codeArr = [B, P, S, W, N, E, C, R];
+    }
+    return codeArr as CharTuple;
+  } else {
+    console.log("You're not supposed to see this.");
+  }
+  return codeArr as CharTuple;
 }

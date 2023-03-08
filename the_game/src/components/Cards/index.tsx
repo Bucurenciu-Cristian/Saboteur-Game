@@ -248,20 +248,20 @@ export const Path: PathCard[] = [
   //NWC
   {src: EightTeen, back: backCardPathOrAction, type: 'ESC', code: dictionary.ESC, typeOfCard: typeOfCard.path},
 
-  //NESC
+  //NESC //Done
   {src: nineteen, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
   {src: twenty, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
   {src: Fourteen, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
   {src: twentyOne, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
   {src: twentyTwo, back: backCardPathOrAction, type: 'NESC', code: dictionary.NESC, typeOfCard: typeOfCard.path},
-  //NEWC
+  //NEWC //Done
   {src: twentyFour, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
   {src: twentyFive, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
   {src: twentySix, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
   {src: thirtyFour, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
   {src: thirtyNine, back: backCardPathOrAction, type: 'NEWC', code: dictionary.NEWC, typeOfCard: typeOfCard.path},
 
-  //SWC
+  //SWC // Done
   {src: thirtySeven, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
   {src: thirtyEight, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
   {src: twentyNine, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
@@ -269,7 +269,7 @@ export const Path: PathCard[] = [
   {src: thirtyOne, back: backCardPathOrAction, type: 'SWC', code: dictionary.SWC, typeOfCard: typeOfCard.path},
 
 
-  //Blocaje
+  //Blocaje //Done
   {src: Six, back: backCardPathOrAction, type: 'ESW', code: dictionary.ESW, typeOfCard: typeOfCard.path},
   {src: Seven, back: backCardPathOrAction, type: 'NW', code: dictionary.NW, typeOfCard: typeOfCard.path},
   {src: Fiftheen, back: backCardPathOrAction, type: 'NS', code: dictionary.NS, typeOfCard: typeOfCard.path},
