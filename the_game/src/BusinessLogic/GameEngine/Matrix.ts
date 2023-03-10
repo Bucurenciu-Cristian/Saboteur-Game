@@ -9,12 +9,12 @@ export let InitialMatrix: IMatrix[][] = Array(rowsFromMatrix).fill(null).map(() 
     Occupied: false
 }))
 let s = 0;
-InitialMatrix = InitialMatrix.map((row, rowIndex) => {
+/*InitialMatrix = InitialMatrix.map((row, rowIndex) => {
     return row.map((_) => {
         s++;
         return {Card: allTheCards[s], Occupied: true}
     })
-})
+})*/
 InitialMatrix[rowsFromMatrix - 4][columnsFromMatrix - 10] = {Card: SpecialPath[0], Occupied: true};
 InitialMatrix[rowsFromMatrix - 6][columnsFromMatrix - 2] = {Card: SpecialPath[1], Occupied: true};
 InitialMatrix[rowsFromMatrix - 4][columnsFromMatrix - 2] = {Card: SpecialPath[2], Occupied: true};

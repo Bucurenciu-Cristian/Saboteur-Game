@@ -19,7 +19,7 @@ function connectToEmulators({ firebaseApp, auth, firestore }) {
 }
 
 export function getFirebase() {
-    const existingApp = getApps().at(0);
+    const existingApp = getApps()[0];
     if(existingApp) return initialize();
     return connectToEmulators(initialize());
 }
