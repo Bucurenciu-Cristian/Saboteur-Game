@@ -23,6 +23,28 @@ import thirtySix from '../../../public/images/SaboteurImagesSingle/Path/36.png'
 import thirtySeven from '../../../public/images/SaboteurImagesSingle/Path/37.png'
 
 import winning from '../../../public/images/SaboteurImagesSingle/Back_of_cards/winning.png'
+import thirtyEight from "../../../public/images/SaboteurImagesSingle/Path/38.png";
+import twentyNine from "../../../public/images/SaboteurImagesSingle/Path/29.png";
+import thirty from "../../../public/images/SaboteurImagesSingle/Path/30.png";
+import thirtyOne from "../../../public/images/SaboteurImagesSingle/Path/31.png";
+import twenty from "../../../public/images/SaboteurImagesSingle/Path/20.png";
+import Fourteen from "../../../public/images/SaboteurImagesSingle/Path/14.png";
+import twentyOne from "../../../public/images/SaboteurImagesSingle/Path/21.png";
+import twentyTwo from "../../../public/images/SaboteurImagesSingle/Path/22.png";
+import twentyFive from "../../../public/images/SaboteurImagesSingle/Path/25.png";
+import twentySix from "../../../public/images/SaboteurImagesSingle/Path/26.png";
+import thirtyFour from "../../../public/images/SaboteurImagesSingle/Path/34.png";
+import thirtyNine from "../../../public/images/SaboteurImagesSingle/Path/39.png";
+import Two from "../../../public/images/SaboteurImagesSingle/Path/2.png";
+import Three from "../../../public/images/SaboteurImagesSingle/Path/3.png";
+import Five from "../../../public/images/SaboteurImagesSingle/Path/5.png";
+import Eight from "../../../public/images/SaboteurImagesSingle/Path/8.png";
+import twentyThree from "../../../public/images/SaboteurImagesSingle/Path/23.png";
+import thirtyFive from "../../../public/images/SaboteurImagesSingle/Path/35.png";
+import Twelve from "../../../public/images/SaboteurImagesSingle/Path/12.png";
+import Thirtheen from "../../../public/images/SaboteurImagesSingle/Path/13.png";
+import Ten from "../../../public/images/SaboteurImagesSingle/Path/10.png";
+import SevenTeen from "../../../public/images/SaboteurImagesSingle/Path/17.png";
 
 
 let Blocks: newFormatInterface[] = [
@@ -70,19 +92,19 @@ let SWC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
     },
     {
-        src: thirtySeven,
+        src: thirtyEight,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
     },
     {
-        src: thirtySeven,
+        src: twentyNine,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
     },
     {
-        src: thirtySeven,
+        src: thirty,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
     },
     {
-        src: thirtySeven,
+        src: thirtyOne,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
     }
 ];
@@ -90,44 +112,47 @@ let NESC: newFormatInterface[] = [
     {
         src: nineteen,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        // Trebuie sa tin minte pe partea server-ului cartile care sunt in mana la jucatori
+        // Serverul are adevarul absolut in toata combinatia asta.
+
     },
     {
-        src: nineteen,
+        src: twenty,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
     {
-        src: nineteen,
+        src: Fourteen,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
     {
-        src: nineteen,
+        src: twentyOne,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
     {
-        src: nineteen,
+        src: twentyTwo,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
 ]
 let NEWC: newFormatInterface[] = [
     {
         src: twentyFour,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
     },
     {
-        src: twentyFour,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        src: twentyFive,
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
     },
     {
-        src: twentyFour,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        src: twentySix,
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
     },
     {
-        src: twentyFour,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        src: thirtyFour,
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
     },
     {
-        src: twentyFour,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        src: thirtyNine,
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
     },
 ];
 let NSC: newFormatInterface[] = [
@@ -136,11 +161,11 @@ let NSC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
     {
-        src: One,
+        src: Two,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
     {
-        src: One,
+        src: Three,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
     {
@@ -154,33 +179,35 @@ let EWC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F],
     },
     {
-        src: Four,
+        src: Five,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F],
     },
     {
-        src: Four,
+        src: Eight,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F],
     },
 ];
-let NESWC: newFormatInterface[] = [
+export let NESWC: newFormatInterface[] = [
     {
         src: Eleven,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
+        // Aici ar trebui sa fie un ID si cine a pus cartea (ID-ul userului)
+        //
     },
     {
-        src: Eleven,
+        src: twentyThree,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
     },
     {
-        src: Eleven,
+        src: thirtyFive,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
     },
     {
-        src: Eleven,
+        src: Twelve,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
     },
     {
-        src: Eleven,
+        src: Thirtheen,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
     },
 ];
@@ -190,15 +217,15 @@ let ESC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
     },
     {
-        src: Nine,
+        src: Ten,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
     },
     {
-        src: Nine,
+        src: SevenTeen,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
     },
     {
-        src: Nine,
+        src: SevenTeen,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
     }
 ];
@@ -217,7 +244,8 @@ export let normalPath: newFormatInterface[] = [
 export let SpecialPath: ISpecialPath[] = [
     {
         src: start,
-        code: [dex.Base, dex.Path, dex.Start]
+        code: [dex.Base, dex.Path, dex.Start],
+        // id: 1,
     },
     {
         src: rock,
