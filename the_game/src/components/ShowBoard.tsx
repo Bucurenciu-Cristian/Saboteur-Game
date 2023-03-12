@@ -7,7 +7,7 @@ const ShowBoard = ({gameMatrix}: { gameMatrix: IMatrix[][] }) => {
     const renderSquareUpdated = (i: number, j: number) => {
         let onClick = () => {
 
-            console.log(`Locatia este: [${i},${j}]`);
+            console.log(`End cards found: !!!Locatia este: [${i},${j}]`);
         };
         return (
             <Square

@@ -1,5 +1,6 @@
 import {FOT} from "../BusinessLogic/Cards/Actions";
 import {newFormatInterface} from "../BusinessLogic/Logic";
+import {BusySquare} from "../BusinessLogic/GameEngine/Matrix";
 
 export interface dexType {
     Action: 'A';
@@ -40,4 +41,8 @@ export interface FOTType {
 export interface IMatrix {
     Card: newFormatInterface;
     Occupied: boolean;
+    Checked?: string;
+    Available?: BusySquare;
+    //Here it is necessary to add the player who played the card because I need to know this stuff
+    // User?: string;
 }

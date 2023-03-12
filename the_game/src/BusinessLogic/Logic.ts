@@ -105,6 +105,9 @@ export function checkMyCards() {
 
     checkTheCurrentCardInTable(centerRows, centerColumn, InitialMatrix);
 
+    // let message = findAllEndCards(InitialMatrix, StartRow, StartColumn);
+    // console.log(message);
+
 }
 
 export function changeOrientation(code: string): CharTuple | string {
@@ -130,3 +133,4 @@ export function changeOrientation(code: string): CharTuple | string {
     }
     return codeArr as CharTuple;
 }
+
