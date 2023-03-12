@@ -3,6 +3,7 @@ import {Actions} from "./Cards/Actions";
 import {Dwarfs} from "./Cards/Dwarfs";
 import {AllGold} from "./Cards/Rewards";
 import {allPath} from "./Cards/Paths";
+import {centerColumn, centerRows, checkTheCurrentCardInTable, InitialMatrix} from "./GameEngine/Matrix";
 
 
 type CharTuple = [
@@ -15,6 +16,7 @@ type CharTuple = [
 export interface newFormatInterface {
     code: CharTuple | string;
     src: StaticImageData;
+
 }
 
 export interface ISpecialPath extends newFormatInterface {
@@ -95,10 +97,14 @@ export function checkMyCards() {
         TypeGuardOnCards(obj);
     });
     /*
-  console.info(1, normalPath[0].code);
-  const code = normalPath[0].code?.join("");
-  normalPath[0].code = changeOrientation(code);
-  console.info(2, normalPath[0].code);*/
+      console.info(1, normalPath[0].code);
+      const code = normalPath[0].code?.join("");
+      normalPath[0].code = changeOrientation(code);
+      console.info(2, normalPath[0].code);
+    */
+
+    checkTheCurrentCardInTable(centerRows, centerColumn, InitialMatrix);
+
 }
 
 export function changeOrientation(code: string): CharTuple | string {

@@ -7,6 +7,7 @@ export let imageSize = {
     height: height,
 }
 
+export const padding = true;
 export const Matrix = {
     rowsFromMatrix: 7,
     columnsFromMatrix: 11,
