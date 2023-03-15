@@ -9,11 +9,11 @@ import BadGuy1 from "../../../public/images/SaboteurImagesSingle/Players/BadGuys
 import BadGuy2 from "../../../public/images/SaboteurImagesSingle/Players/BadGuys/2.png";
 import BadGuy3 from "../../../public/images/SaboteurImagesSingle/Players/BadGuys/3.png";
 import BadGuy4 from "../../../public/images/SaboteurImagesSingle/Players/BadGuys/4.png";
-import {newFormatInterface} from "../Logic";
 import {dex} from "./Actions";
+import {ICardBasic} from "../../Types/DexType";
 
 
-const Saboteurs: newFormatInterface[] = [
+const Saboteurs: ICardBasic[] = [
     {
         src: BadGuy1,
         code: [dex.Base, dex.Player, dex.Saboteur]
@@ -31,7 +31,7 @@ const Saboteurs: newFormatInterface[] = [
         code: [dex.Base, dex.Player, dex.Saboteur]
     }
 ]
-const Miners: newFormatInterface[] = [
+const Miners: ICardBasic[] = [
     {
         src: Miner1,
         code: [dex.Base, dex.Player, dex.Miner]
@@ -62,7 +62,7 @@ const Miners: newFormatInterface[] = [
     }
 ]
 
-export const Dwarfs: newFormatInterface[] = [
+export const Dwarfs: ICardBasic[] = [
     ...Miners,
     ...Saboteurs
 ]

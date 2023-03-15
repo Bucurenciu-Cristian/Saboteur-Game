@@ -1,11 +1,11 @@
-import {newFormatInterface} from "../Logic";
 import gold_reward_1 from "../../../public/images/SaboteurImagesSingle/Gold-reward/gold_reward_1.png";
 import gold_reward_2 from "../../../public/images/SaboteurImagesSingle/Gold-reward/gold_reward_2.png";
 import gold_reward_3 from "../../../public/images/SaboteurImagesSingle/Gold-reward/gold_reward_3.png";
 import {dex, FOT} from "./Actions";
+import {ICardBasic} from "../../Types/DexType";
 
 
-const Gold1: newFormatInterface[] = [
+const Gold1: ICardBasic[] = [
     {
         src: gold_reward_1,
         code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
@@ -56,7 +56,7 @@ const Gold1: newFormatInterface[] = [
         code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
     },
 ]
-const Gold2: newFormatInterface[] = [
+const Gold2: ICardBasic[] = [
     {
         src: gold_reward_2,
         code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
@@ -83,7 +83,7 @@ const Gold2: newFormatInterface[] = [
         code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
     }
 ]
-const Gold3: newFormatInterface[] = [
+const Gold3: ICardBasic[] = [
     {
         src: gold_reward_3,
         code: [dex.Base, dex.Reward, FOT.T, FOT.F, FOT.F]
@@ -105,7 +105,7 @@ const Gold3: newFormatInterface[] = [
 
 ]
 
-export const AllGold: newFormatInterface[] = [
+export const AllGold: ICardBasic[] = [
     ...Gold1,
     ...Gold2,
     ...Gold3

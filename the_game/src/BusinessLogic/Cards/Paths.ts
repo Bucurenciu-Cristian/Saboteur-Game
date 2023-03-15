@@ -1,5 +1,4 @@
-import {dex} from "./Actions";
-import {ISpecialPath, newFormatInterface} from "../Logic";
+import {Actions, dex} from "./Actions";
 import gold from "../../../public/images/SaboteurImagesSingle/Path/gold.png";
 import start from "../../../public/images/SaboteurImagesSingle/Path/start.png";
 import rock from "../../../public/images/SaboteurImagesSingle/Path/rock.png";
@@ -45,9 +44,9 @@ import Twelve from "../../../public/images/SaboteurImagesSingle/Path/12.png";
 import Thirtheen from "../../../public/images/SaboteurImagesSingle/Path/13.png";
 import Ten from "../../../public/images/SaboteurImagesSingle/Path/10.png";
 import SevenTeen from "../../../public/images/SaboteurImagesSingle/Path/17.png";
+import {ICardBasic, ISpecialPath} from "../../Types/DexType";
 
-
-let Blocks: newFormatInterface[] = [
+let Blocks: ICardBasic[] = [
     //Blocaje Don't change
     {
         src: Six,
@@ -86,7 +85,7 @@ let Blocks: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.F, dex.C.F, dex.R.F]
     },
 ];
-let SWC: newFormatInterface[] = [
+let SWC: ICardBasic[] = [
     {
         src: thirtySeven,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
@@ -108,7 +107,7 @@ let SWC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
     }
 ];
-let NESC: newFormatInterface[] = [
+let NESC: ICardBasic[] = [
     {
         src: nineteen,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
@@ -133,7 +132,7 @@ let NESC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
 ]
-let NEWC: newFormatInterface[] = [
+let NEWC: ICardBasic[] = [
     {
         src: twentyFour,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
@@ -155,7 +154,7 @@ let NEWC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
     },
 ];
-let NSC: newFormatInterface[] = [
+let NSC: ICardBasic[] = [
     {
         src: One,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
@@ -173,7 +172,7 @@ let NSC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
     },
 ];
-let EWC: newFormatInterface[] = [
+let EWC: ICardBasic[] = [
     {
         src: Four,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F],
@@ -187,7 +186,7 @@ let EWC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F],
     },
 ];
-export let NESWC: newFormatInterface[] = [
+export let NESWC: ICardBasic[] = [
     {
         src: Eleven,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
@@ -211,7 +210,7 @@ export let NESWC: newFormatInterface[] = [
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
     },
 ];
-let ESC: newFormatInterface[] = [
+let ESC: ICardBasic[] = [
     {
         src: Nine,
         code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
@@ -230,7 +229,7 @@ let ESC: newFormatInterface[] = [
     }
 ];
 
-export let normalPath: newFormatInterface[] = [
+export let normalPath: ICardBasic[] = [
     ...Blocks, //Done
     ...SWC, //Done
     ...NESC, //Done
@@ -244,27 +243,34 @@ export let normalPath: newFormatInterface[] = [
 export let SpecialPath: ISpecialPath[] = [
     {
         src: start,
-        code: [dex.Base, dex.Path, dex.Start],
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Start],
         // id: 1,
     },
     {
         src: rock,
-        code: [dex.Base, dex.Path, dex.Rock],
+        // code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.F, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
         back: winning
     },
     {
         src: gold,
-        code: [dex.Base, dex.Path, dex.Gold],
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Gold],
         back: winning
     },
     {
         src: rock2,
-        code: [dex.Base, dex.Path, dex.Rock],
+        // code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.F, dex.C.T, dex.R.F, dex.Rock],
+        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
         back: winning
     },
 ];
 
-export let allPath: newFormatInterface[] = [
-    // ...SpecialPath,
+export let allPaths: ICardBasic[] = [
+    ...SpecialPath,
     ...normalPath
 ];
+
+export let allPaths2: ICardBasic[] = [
+    ...normalPath,
+    ...Actions
+]

@@ -1,6 +1,7 @@
 import {FOT} from "../BusinessLogic/Cards/Actions";
-import {newFormatInterface} from "../BusinessLogic/Logic";
+import {CharTuple} from "../BusinessLogic/Logic";
 import {BusySquare} from "../BusinessLogic/GameEngine/Matrix";
+import {StaticImageData} from "next/image";
 
 export interface dexType {
     Action: 'A';
@@ -39,10 +40,27 @@ export interface FOTType {
 }
 
 export interface IMatrix {
-    Card: newFormatInterface;
+    Card: ICardBasic;
     Occupied: boolean;
     Checked?: string;
     Available?: BusySquare;
+
+    DFS?: boolean;
     //Here it is necessary to add the player who played the card because I need to know this stuff
     // User?: string;
+}
+
+export interface IUser {
+    Selected?: number;
+    UserName: string;
+    Hand: ICardBasic[];
+}
+
+export interface ICardBasic {
+    code: CharTuple | string;
+    src: StaticImageData;
+}
+
+export interface ISpecialPath extends ICardBasic {
+    back?: StaticImageData;
 }

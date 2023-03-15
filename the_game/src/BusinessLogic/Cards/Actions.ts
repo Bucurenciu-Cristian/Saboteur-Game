@@ -11,8 +11,7 @@ import CartOff from '../../../public/images/SaboteurImagesSingle/Actions/Cart/2.
 import CartAxe from '../../../public/images/SaboteurImagesSingle/Actions/2Powers/1.png'
 import LanternAxe from '../../../public/images/SaboteurImagesSingle/Actions/2Powers/2.png'
 
-import {newFormatInterface} from "../Logic";
-import {dexType, FOTType} from "../../Types/DexType";
+import {dexType, FOTType, ICardBasic} from "../../Types/DexType";
 
 export let FOT: FOTType = {F: 'F', T: 'T'};
 export const dex: dexType = {
@@ -44,7 +43,7 @@ export const dex: dexType = {
     CartLantern: 'E',
     Start: 'S',
 }
-const Maps: newFormatInterface[] = [
+const Maps: ICardBasic[] = [
     {
         src: Map,
         code: [dex.Base, dex.Action, dex.Map]
@@ -70,7 +69,7 @@ const Maps: newFormatInterface[] = [
         code: [dex.Base, dex.Action, dex.Map]
     },
 ]
-let TwoActions: newFormatInterface[] = [
+let TwoActions: ICardBasic[] = [
     {
         src: LanternCart,
         code: [dex.Base, dex.Action, dex.CartLantern]
@@ -84,7 +83,7 @@ let TwoActions: newFormatInterface[] = [
         code: [dex.Base, dex.Action, dex.AxeCart]
     },
 ];
-let DestroyPath: newFormatInterface[] = [
+let DestroyPath: ICardBasic[] = [
     {
         src: Destroy,
         code: [dex.Base, dex.Action, dex.Destroy]
@@ -98,7 +97,7 @@ let DestroyPath: newFormatInterface[] = [
         code: [dex.Base, dex.Action, dex.Destroy]
     }
 ];
-let Cart: newFormatInterface[] = [
+let Cart: ICardBasic[] = [
     {
         src: CartOn,
         code: [dex.Base, dex.Action, dex.CartS, dex.Cart.T]
@@ -120,7 +119,7 @@ let Cart: newFormatInterface[] = [
         code: [dex.Base, dex.Action, dex.CartS, dex.Cart.F]
     },
 ]
-let Axe: newFormatInterface[] = [
+let Axe: ICardBasic[] = [
     {
         src: AxeOn,
         code: [dex.Base, dex.Action, dex.AxeS, dex.Axe.T]
@@ -145,7 +144,7 @@ let Axe: newFormatInterface[] = [
 
     }
 ]
-let Lantern: newFormatInterface[] = [
+let Lantern: ICardBasic[] = [
     {
         src: LanternOn,
         code: [dex.Base, dex.Action, dex.LanternS, dex.Lantern.T]
@@ -170,7 +169,7 @@ let Lantern: newFormatInterface[] = [
 
     },
 ];
-export const Actions: newFormatInterface[] = [
+export const Actions: ICardBasic[] = [
     ...Maps,
     ...TwoActions,
     ...DestroyPath,
