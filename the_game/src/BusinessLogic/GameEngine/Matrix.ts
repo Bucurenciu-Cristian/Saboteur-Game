@@ -1,6 +1,9 @@
 import {Matrix, padding} from "../../variables";
 import {IMatrix} from "../../Types/DexType";
-import {normalPath, SpecialPath} from "../Cards/Paths";
+import {NESWC, normalPath, SpecialPath} from "../Cards/Paths";
+import {CharTuple} from "../Logic";
+import {stringify} from "../../../utils/Helpers";
+import {conDirections, NeighboursActions} from "../../constants";
 
 const {rowsFromMatrix: row, columnsFromMatrix: column} = Matrix;
 export let InitialMatrix: IMatrix[][] = Array(row).fill(null).map(() => Array(column).fill({
@@ -14,16 +17,10 @@ export let InitialMatrix: IMatrix[][] = Array(row).fill(null).map(() => Array(co
         return {Card: allTheCards[s], Occupied: true}
     })
 })*/
-// const randomNumber1 = Math.floor(Math.random() * 6);
-const randomNumber1 = 3; // Max 6
-// const randomNumber2 = Math.floor(Math.random() * 10);
-const randomNumber2 = 3; // Max 10
 
-export const centerRows = randomNumber1;
-export const centerColumn = randomNumber2;
 export let StartRow = (padding ? row - Math.floor((row / 2)) - 1 : row - Math.floor((row / 2)) - 2);
 export let StartColumn = column - (padding ? column - 1 : column - 2);
-let lastColumn = column - (padding ? 2 : 1);
+export let lastColumn = column - (padding ? 2 : 1);
 
 InitialMatrix[StartRow][StartColumn] = {Card: SpecialPath[0], Occupied: true};
 
@@ -33,46 +30,59 @@ InitialMatrix[StartRow][lastColumn] = {Card: SpecialPath[2], Occupied: true};
 
 InitialMatrix[StartRow + 2][lastColumn] = {Card: SpecialPath[3], Occupied: true};
 
+InitialMatrix[StartRow][lastColumn - 1] = {Card: NESWC[1], Occupied: true};
 
+InitialMatrix[StartRow][lastColumn - 2] = {Card: NESWC[2], Occupied: true};
+InitialMatrix[StartRow][lastColumn - 3] = {Card: NESWC[3], Occupied: true};
+InitialMatrix[StartRow][lastColumn - 4] = {Card: NESWC[4], Occupied: true};
+InitialMatrix[StartRow][lastColumn - 5] = {Card: NESWC[1], Occupied: true};
+InitialMatrix[StartRow][lastColumn - 6] = {Card: NESWC[0], Occupied: true};
+InitialMatrix[StartRow][lastColumn - 7] = {Card: NESWC[2], Occupied: true};
+
+function GiveMeRandomsCardsAroundACard(centerRows: number, centerColumn: number) {
 //Testing the Cards connection
-const randomNumbers = Array.from({length: 5}, () => Math.floor(Math.random() * 40));
+    const randomNumbers = Array.from({length: 5}, () => Math.floor(Math.random() * 40));
 
-InitialMatrix[centerRows][centerColumn] = {Card: normalPath[randomNumbers[0]], Occupied: true};
+    InitialMatrix[centerRows][centerColumn] = {Card: normalPath[randomNumbers[0]], Occupied: true};
 
 // Check if West direction is within bounds
-let West = centerColumn - 1;
-if (West >= 0) {
-    InitialMatrix[centerRows][West] = {Card: normalPath[randomNumbers[1]], Occupied: true};
-}
+    let West = centerColumn - 1;
+    if (West >= 0) {
+        InitialMatrix[centerRows][West] = {Card: normalPath[randomNumbers[1]], Occupied: true};
+    }
 
 // Check if East direction is within bounds
-let East = centerColumn + 1;
-if (East < InitialMatrix[0].length) {
-    InitialMatrix[centerRows][East] = {Card: normalPath[randomNumbers[2]], Occupied: true};
-}
+    let East = centerColumn + 1;
+    if (East < InitialMatrix[0].length) {
+        InitialMatrix[centerRows][East] = {Card: normalPath[randomNumbers[2]], Occupied: true};
+    }
 
 // Check if North direction is within bounds
-let North = centerRows - 1;
-if (North >= 0) {
-    InitialMatrix[North][centerColumn] = {Card: normalPath[randomNumbers[3]], Occupied: true};
-}
+    let North = centerRows - 1;
+    if (North >= 0) {
+        InitialMatrix[North][centerColumn] = {Card: normalPath[randomNumbers[3]], Occupied: true};
+    }
 
 // Check if South direction is within bounds
-let South = centerRows + 1;
-if (South < InitialMatrix.length) {
-    InitialMatrix[South][centerColumn] = {Card: normalPath[randomNumbers[4]], Occupied: true};
+    let South = centerRows + 1;
+    if (South < InitialMatrix.length) {
+        InitialMatrix[South][centerColumn] = {Card: normalPath[randomNumbers[4]], Occupied: true};
+    }
 }
 
+export const centerRows = 0; // Max 6;
+export const centerColumn = 1; // Max 10;
+// GiveMeRandomsCardsAroundACard(centerRows, centerColumn);
+// GiveMeRandomsCardsAroundACard(centerRows + 5, centerColumn + 5);
+// GiveMeRandomsCardsAroundACard(centerRows + 1, centerColumn + 2);
+// GiveMeRandomsCardsAroundACard(centerRows + 1, centerColumn + 4);
+// GiveMeRandomsCardsAroundACard(centerRows + 1, centerColumn + 6);
 
-export function checkTheCurrentCardInTable(row: number, column: number, matrix: IMatrix[][]) {
-    /*B P N E S W C R
-    //0 1 2 3 4 5 6 7
-    */
-    const {Card: CardCenter, Occupied: OccupiedCenter} = matrix[row][column];
+// GiveMeRandomsCardsAroundACard(centerRows + 1, centerColumn + 8);
 
-    if (!OccupiedCenter) {
-        return false; // skip this position if it's not occupied
-    }
+
+function giveMeTheNeighbours(matrix: IMatrix[][], row: number, column: number) {
+    const {Card} = matrix[row][column];
 
     let NorthCenter;
     let EastCenter;
@@ -82,35 +92,38 @@ export function checkTheCurrentCardInTable(row: number, column: number, matrix: 
     let WestOfEastCard;
     let NorthOfSouthCard;
     let EastOfWestCard;
-
+    const north = row - 1;
+    const south = row + 1;
+    const west = column - 1;
+    const east = column + 1;
     if (row > 0) {
-        const {Card: CardNorth, Occupied: OccupiedNorth} = matrix[row - 1][column];
+        const {Card: CardNorth, Occupied: OccupiedNorth} = matrix[north][column];
         if (OccupiedNorth) {
-            NorthCenter = CardCenter.code[2];
+            NorthCenter = Card.code[2];
             SouthOfNorthCard = CardNorth.code[4];
         }
     }
 
     if (column < matrix[row].length - 1) {
-        const {Card: CardEast, Occupied: OccupiedEast} = matrix[row][column + 1];
+        const {Card: CardEast, Occupied: OccupiedEast} = matrix[row][east];
         if (OccupiedEast) {
-            EastCenter = CardCenter.code[3];
+            EastCenter = Card.code[3];
             WestOfEastCard = CardEast.code[5];
         }
     }
 
     if (row < matrix.length - 1) {
-        const {Card: CardSouth, Occupied: OccupiedSouth} = matrix[row + 1][column];
+        const {Card: CardSouth, Occupied: OccupiedSouth} = matrix[south][column];
         if (OccupiedSouth) {
-            SouthCenter = CardCenter.code[4];
+            SouthCenter = Card.code[4];
             NorthOfSouthCard = CardSouth.code[2];
         }
     }
 
     if (column > 0) {
-        const {Card: CardWest, Occupied: OccupiedWest} = matrix[row][column - 1];
+        const {Card: CardWest, Occupied: OccupiedWest} = matrix[row][west];
         if (OccupiedWest) {
-            WestCenter = CardCenter.code[5];
+            WestCenter = Card.code[5];
             EastOfWestCard = CardWest.code[3];
         }
     }
@@ -118,37 +131,58 @@ export function checkTheCurrentCardInTable(row: number, column: number, matrix: 
     const directions = [];
 
     if (NorthCenter !== undefined && SouthOfNorthCard !== undefined) {
-        directions.push({center: NorthCenter, adjacent: SouthOfNorthCard, name: "North"});
+        directions.push({
+            center: NorthCenter,
+            adjacent: SouthOfNorthCard,
+            name: conDirections.NORTH,
+            coordinate: {row: north, column}
+        });
     }
 
     if (EastCenter !== undefined && WestOfEastCard !== undefined) {
-        directions.push({center: EastCenter, adjacent: WestOfEastCard, name: "East"});
+        directions.push({
+            center: EastCenter,
+            adjacent: WestOfEastCard,
+            name: conDirections.EAST,
+            coordinate: {row, column: east}
+        });
     }
 
     if (SouthCenter !== undefined && NorthOfSouthCard !== undefined) {
-        directions.push({center: SouthCenter, adjacent: NorthOfSouthCard, name: "South"});
+        directions.push({
+            center: SouthCenter,
+            adjacent: NorthOfSouthCard,
+            name: conDirections.SOUTH,
+            coordinate: {row: south, column}
+        });
     }
 
     if (WestCenter !== undefined && EastOfWestCard !== undefined) {
-        directions.push({center: WestCenter, adjacent: EastOfWestCard, name: "West"});
+        directions.push({
+            center: WestCenter,
+            adjacent: EastOfWestCard,
+            name: conDirections.WEST,
+            coordinate: {row, column: west}
+        });
+    }
+    return directions;
+}
+
+export function checkTheCurrentCardInTable(row: number, column: number, matrix: IMatrix[][], action: string = NeighboursActions.ALL) {
+    /*B P N E S W C R
+    //0 1 2 3 4 5 6 7
+    */
+    const {Occupied} = matrix[row][column];
+    if (!Occupied) {
+        return false; // skip this position if it's not occupied
     }
 
-    directions.forEach(({center, adjacent, name}) => {
-        if (center === adjacent && center === "T") {
-            // console.info(`${name} is correct`);
-        }
-    });
-    const isAllDirectionsCorrect = directions.every(({center, adjacent}) => {
-        return center === adjacent && center === "T";
-    });
-
-    if (isAllDirectionsCorrect) {
-        console.info("All directions are correct");
-        return true;
-    } else {
-        // console.info("All directions are not correct");
-        return false;
-    }
+    const directions = giveMeTheNeighbours(matrix, row, column);
+    const predicate = ({
+                           center, adjacent
+                       }: { center: string, adjacent: string }) => center === adjacent && center === "T";
+    if (action === NeighboursActions.ALL) return directions.every(predicate);
+    else if (action === NeighboursActions.ONE) return directions.some(predicate);
 
 }
 
@@ -198,7 +232,7 @@ export type BusySquare = [
         "T" | "F"
 ]
 
-export function findAllEndCardsAlternative(matrix: IMatrix[][], StartRow: number, StartCol: number, lista = [[]]) {
+export function findAllEndCardsAlternative(matrix: IMatrix[][], StartRow: number, StartCol: number, lista = []) {
     //Aici trebuie sa implementezi o functie care sa returneze toate drumurile posibile de la StartRow si StartCol
     //Exact ce mi-a sugerat Markus.
     //O lista ce conține cărțile ce au inca drumuri deschise
@@ -208,5 +242,97 @@ export function findAllEndCardsAlternative(matrix: IMatrix[][], StartRow: number
     //La a 3 a carte pusa, consider ca se va pune in S => N, W sunt inca true, deci T F F T - Start, T T T F - East Card, F T T T - South Card
     //La a 4 a carte pusa, consider ca se va pune in W => N sunt inca true, deci T F F F - Start, T T T F - East Card, F T T T - South Card, T F T T - West Card
     //La a 5 a carte pusa, consider ca se va pune in N => 0 sunt inca true, deci F F F F - Start (scoti la acest moment din aceea lista), T T T F - East Card, F T T T - South Card, T F T T - West Card, T T F T - North Card
+    const startCard = matrix[StartRow][StartCol];
+    lista.push();
+    const neighbours = giveMeTheNeighbours(matrix, StartRow, StartCol + 1);
+    const directions = neighbours.map(({name}) => {
+        return name;
+    });
+    directions.map((direction) => {
+        switch (direction) {
+            case conDirections.NORTH:
+                //Aici trebuie sa verific daca exista o carte in North, daca da, atunci trebuie sa verific daca are cel putin o directie activata
+                //Daca da, atunci trebuie sa adaug in lista, acea carte, cu directiile respective
+                //Daca nu, atunci trebuie sa verific daca exista o carte in North, daca da, atunci trebuie sa verific daca are cel putin o directie activata
+                console.log(conDirections.NORTH);
+                break;
+            case conDirections.EAST:
+                console.log(conDirections.EAST);
+                break;
+            case conDirections.SOUTH:
+                console.log(conDirections.SOUTH);
+                break;
+            case conDirections.WEST:
+                console.log(conDirections.WEST);
+                break;
+        }
+    });
+    stringify(directions);
 }
 
+export function thereIsAContinuedPath() { // Aceasta functie trebuie apelata doar cand una din cele 3 carti (gold sau rock) a fost atinsa in sensul ca una din cele 4 directii din ele a fost activata.
+    //Gen cartea din Mijloc a fost atinsa din West, acum e momentul sa apelam asta.
+    //Aici trebuie sa pot verifica, daca din acel punct, pot merge pe un drum continuu pana la start. Un backTracking gen
+}
+
+function isThisCardTouched(matrix: IMatrix[][], row: number, col: number) {
+    //Aici trebuie sa pot verifica daca o carte a fost atinsa, adica daca are cel putin o directie activata
+    //Daca da, atunci trebuie sa apelam functia de mai sus, care sa verifice daca exista un drum continuu pana la start
+    for (const [dRow, dCol] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const neighborRow = row + dRow;
+        const neighborCol = col + dCol;
+        if (neighborRow >= 0 && neighborRow < matrix.length && neighborCol >= 0 && neighborCol < matrix[0].length) {
+
+        }
+    }
+}
+
+export interface Coordinate {
+    row: number;
+    col: number;
+}
+
+export function dfs(matrix: IMatrix[][], visited: boolean[][], coord: Coordinate, targetCode: CharTuple | string): boolean {
+    if (coord.row < 0 || coord.row >= matrix.length || coord.col < 0 || coord.col >= matrix[0].length) {
+        // we've gone out of bounds
+        return false;
+    }
+
+    if (matrix[coord.row][coord.col].Checked) {
+        // we've already visited this cell
+        return false;
+    }
+
+    const cell = matrix[coord.row][coord.col];
+    console.log('cell', cell, coord.row, coord.col);
+    // Array.isArray(arr)
+    if (Array.isArray(cell.Card.code) && Array.isArray(targetCode)) {
+        if (!cell.Occupied && cell.Card.code.join() === targetCode.join()) {
+            // we've found the target card!
+            return true;
+        }
+    }
+
+    visited[coord.row][coord.col] = true;
+
+    // explore neighbors
+    const north = coord.row - 1;
+    const south = coord.row + 1;
+    const west = coord.col - 1;
+    const east = coord.col + 1;
+    const neighbors: Coordinate[] = [
+        {row: north, col: coord.col},
+        {row: south, col: coord.col},
+        {row: coord.row, col: west},
+        {row: coord.row, col: east},
+    ];
+
+    for (const neighbor of neighbors) {
+        if (dfs(matrix, visited, neighbor, targetCode)) {
+            // we've found the target card in one of the neighbors
+            return true;
+        }
+    }
+
+    return false;
+}
