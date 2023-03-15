@@ -1,7 +1,8 @@
 import React, {Fragment, useEffect, useState} from "react";
-import {allTheCards, checkMyCards} from "../../src/BusinessLogic/Logic";
+import {allTheCards} from "../../src/BusinessLogic/Logic";
 import Image from "next/image";
 import {imageSize} from "../../src/variables";
+import {checkMyCards} from "../../src/BusinessLogic/CheckMyCards";
 
 const Test = () => {
     const [cards, setCards] = useState(allTheCards);
