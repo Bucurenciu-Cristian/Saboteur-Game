@@ -31,7 +31,6 @@ export interface dexType {
     AxeS: 'A',
     CartS: 'C',
     LanternS: 'L',
-
 }
 
 export interface FOTType {

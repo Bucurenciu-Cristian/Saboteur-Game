@@ -1,6 +1,6 @@
 import {Matrix, padding} from "../../variables";
-import {IMatrix} from "../../Types/DexType";
-import {NESWC, normalPath, SpecialPath} from "../Cards/Paths";
+import {IMatrix, ISpecialPath} from "../../Types/DexType";
+import {Blocks, NESWC, normalPath, SpecialPath} from "../Cards/Paths";
 import {CharTuple} from "../Logic";
 import {stringify} from "../../../utils/Helpers";
 import {conDirections, NeighboursActions} from "../../constants";
@@ -22,19 +22,34 @@ export let StartRow = (padding ? row - Math.floor((row / 2)) - 1 : row - Math.fl
 export let StartColumn = column - (padding ? column - 1 : column - 2);
 export let lastColumn = column - (padding ? 2 : 1);
 
+function getRandomizedArray<T>(array: T[], excludeFirstElement: boolean = false): T[] {
+  // Create a copy of the original array and remove the first element if excludeFirstElement is true
+  const newArray = excludeFirstElement ? array.slice(1) : array.slice();
+
+  // Shuffle the array using the Fisher-Yates algorithm
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+
+  // Return the shuffled array
+  return newArray;
+}
+
+const randomizedFinalCards  = getRandomizedArray(SpecialPath, true);
 InitialMatrix[StartRow][StartColumn] = {Card: SpecialPath[0], Occupied: true};
 
-InitialMatrix[StartRow - 2][lastColumn] = {Card: SpecialPath[1], Occupied: true};
+InitialMatrix[StartRow - 2][lastColumn] = {Card: randomizedFinalCards[1], Occupied: true};
 
-InitialMatrix[StartRow][lastColumn] = {Card: SpecialPath[2], Occupied: true};
+InitialMatrix[StartRow][lastColumn] = {Card: randomizedFinalCards[2], Occupied: true};
 
-InitialMatrix[StartRow + 2][lastColumn] = {Card: SpecialPath[3], Occupied: true};
+InitialMatrix[StartRow + 2][lastColumn] = {Card: randomizedFinalCards[0], Occupied: true};
 
 InitialMatrix[StartRow][lastColumn - 1] = {Card: NESWC[1], Occupied: true};
 
 InitialMatrix[StartRow][lastColumn - 2] = {Card: NESWC[2], Occupied: true};
 InitialMatrix[StartRow][lastColumn - 3] = {Card: NESWC[3], Occupied: true};
-InitialMatrix[StartRow][lastColumn - 4] = {Card: NESWC[4], Occupied: true};
+InitialMatrix[StartRow][lastColumn - 4] = {Card: NESWC[2], Occupied: true};
 InitialMatrix[StartRow][lastColumn - 5] = {Card: NESWC[1], Occupied: true};
 InitialMatrix[StartRow][lastColumn - 6] = {Card: NESWC[0], Occupied: true};
 InitialMatrix[StartRow][lastColumn - 7] = {Card: NESWC[2], Occupied: true};
@@ -183,7 +198,7 @@ export function checkTheCurrentCardInTable(row: number, column: number, matrix: 
                        }: { center: string, adjacent: string }) => center === adjacent && center === "T";
     if (action === NeighboursActions.ALL) return directions.every(predicate);
     else if (action === NeighboursActions.ONE) return directions.some(predicate);
-
+    else if (action === NeighboursActions.DIRECTIONS) return directions;
 }
 
 
@@ -232,7 +247,7 @@ export type BusySquare = [
         "T" | "F"
 ]
 
-export function findAllEndCardsAlternative(matrix: IMatrix[][], StartRow: number, StartCol: number, lista = []) {
+/*export function findAllEndCardsAlternative(matrix: IMatrix[][], StartRow: number, StartCol: number, lista = []) {
     //Aici trebuie sa implementezi o functie care sa returneze toate drumurile posibile de la StartRow si StartCol
     //Exact ce mi-a sugerat Markus.
     //O lista ce conține cărțile ce au inca drumuri deschise
@@ -242,9 +257,11 @@ export function findAllEndCardsAlternative(matrix: IMatrix[][], StartRow: number
     //La a 3 a carte pusa, consider ca se va pune in S => N, W sunt inca true, deci T F F T - Start, T T T F - East Card, F T T T - South Card
     //La a 4 a carte pusa, consider ca se va pune in W => N sunt inca true, deci T F F F - Start, T T T F - East Card, F T T T - South Card, T F T T - West Card
     //La a 5 a carte pusa, consider ca se va pune in N => 0 sunt inca true, deci F F F F - Start (scoti la acest moment din aceea lista), T T T F - East Card, F T T T - South Card, T F T T - West Card, T T F T - North Card
-    const startCard = matrix[StartRow][StartCol];
-    lista.push();
-    const neighbours = giveMeTheNeighbours(matrix, StartRow, StartCol + 1);
+    if (lista.length === 0) {
+      lista.push(StartRow,StartCol);
+    }
+
+    const neighbours = giveMeTheNeighbours(matrix, StartRow, StartCol);
     const directions = neighbours.map(({name}) => {
         return name;
     });
@@ -254,7 +271,7 @@ export function findAllEndCardsAlternative(matrix: IMatrix[][], StartRow: number
                 //Aici trebuie sa verific daca exista o carte in North, daca da, atunci trebuie sa verific daca are cel putin o directie activata
                 //Daca da, atunci trebuie sa adaug in lista, acea carte, cu directiile respective
                 //Daca nu, atunci trebuie sa verific daca exista o carte in North, daca da, atunci trebuie sa verific daca are cel putin o directie activata
-                console.log(conDirections.NORTH);
+                // console.log(conDirections.NORTH);
                 break;
             case conDirections.EAST:
                 console.log(conDirections.EAST);
@@ -268,8 +285,42 @@ export function findAllEndCardsAlternative(matrix: IMatrix[][], StartRow: number
         }
     });
     stringify(directions);
-}
+}*/
+export function findAllEndCardsAlternative(matrix: IMatrix[][], startRow: number, startCol: number, lista: number[][] = []) {
+  // Add the starting position to the list
+  //Itereaza prin toata matricea si vezi cand dai de Occupied, du-te in vecini care nu sunt ocupati si verifica care cale este libera, daca gasesti, adauga coordonatele in lista.
+  const x = checkTheCurrentCardInTable(startRow, startCol+1,matrix,NeighboursActions.DIRECTIONS);
+  if(x !== undefined) {
+    for (const x1 of x) {
+      console.log({x1});
+    }
+  }
 
+
+  for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < matrix[row].length; col++) {
+      const x = checkTheCurrentCardInTable(row, col,matrix,NeighboursActions.DIRECTIONS);
+      if (x !== false) {
+        console.log(x);
+      }
+      // if(x !== undefined) {
+      //   for (const x1 of x) {
+      //     if (!x1.Occupied) {
+      //       console.log(x1);
+      //     }
+      //   }
+      // }
+    }
+  }
+
+
+  // if (lista.length === 0) {
+  //   if (x !== undefined) {
+  //     lista.push(x);
+  //   }
+  // }
+  // console.log({lista});
+}
 export function thereIsAContinuedPath() { // Aceasta functie trebuie apelata doar cand una din cele 3 carti (gold sau rock) a fost atinsa in sensul ca una din cele 4 directii din ele a fost activata.
     //Gen cartea din Mijloc a fost atinsa din West, acum e momentul sa apelam asta.
     //Aici trebuie sa pot verifica, daca din acel punct, pot merge pe un drum continuu pana la start. Un backTracking gen

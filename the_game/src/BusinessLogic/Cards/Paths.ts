@@ -46,7 +46,7 @@ import Ten from "../../../public/images/SaboteurImagesSingle/Path/10.png";
 import SevenTeen from "../../../public/images/SaboteurImagesSingle/Path/17.png";
 import {ICardBasic, ISpecialPath} from "../../Types/DexType";
 
-let Blocks: ICardBasic[] = [
+export let Blocks: ICardBasic[] = [
     //Blocaje Don't change
     {
         src: Six,
@@ -250,18 +250,18 @@ export let SpecialPath: ISpecialPath[] = [
         src: rock,
         // code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.F, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
-        back: winning
+        // back: winning
     },
     {
         src: gold,
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Gold],
-        back: winning
+        // back: winning
     },
     {
         src: rock2,
         // code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.F, dex.C.T, dex.R.F, dex.Rock],
         code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
-        back: winning
+        // back: winning
     },
 ];
 
