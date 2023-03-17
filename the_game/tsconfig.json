@@ -17,8 +17,17 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "allowJs": true
+    "allowJs": true,
     //    "downlevelIteration": true,
+    "baseUrl": "src",
+    "paths": {
+      "@app/*": [
+        "app/*"
+      ],
+      "@shared/*": [
+        "app/shared/*"
+      ]
+    }
   },
   "include": [
     "next-env.d.ts",
