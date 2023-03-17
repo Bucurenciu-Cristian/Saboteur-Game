@@ -38,8 +38,9 @@ export function checkMyCards() {
     console.timeEnd('StartAndFinish'); // end the timer
 
     const [found, coordinates] = findOccupiedEdge(InitialMatrix);
-    if (found && !Array.isArray(coordinates)) {
+    if (found && coordinates !== false && coordinates !== undefined && coordinates !== null && coordinates !== true) {
         console.log('Found the occupied edge at', coordinates);
+
     }
 
 }

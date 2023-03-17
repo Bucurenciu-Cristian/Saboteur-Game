@@ -45,12 +45,14 @@ export interface IMatrix {
 }
 
 export interface IUser {
-    Selected?: number;
-    UserName: string;
+    id?: string | number;
+    userName: string;
     Hand: ICardBasic[];
-    Actions: ActionCard[];
+    actions: ActionCard[];
+    selectedCardIndex?: number;
+    score?: number;
+    isTurn?: boolean;
 }
-
 
 export interface ICardBasic {
     code: CharTuple | string;

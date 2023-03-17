@@ -18,6 +18,8 @@ const ShowUsers = ({items, moveItemToMatrix, onCardClick}
                             <Square
                                 Card={item}
                                 key={i}
+                                row={i}
+                                column={0}
                                 Occupied={true}
                                 onClick={
                                     () => {

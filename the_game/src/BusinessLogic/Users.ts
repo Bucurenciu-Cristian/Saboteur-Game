@@ -3,18 +3,18 @@ import {allPaths2} from "./Cards/Paths";
 
 export const usersList: IUser[] = [
     {
-        UserName: 'Player1',
+        userName: 'Player1',
         Hand: allPaths2.slice(0, 6).map(() => allPaths2[Math.floor(Math.random() * allPaths2.length)]),
-        Actions: []
+        actions: []
     },
     {
-        UserName: 'Player2',
+        userName: 'Player2',
         Hand: allPaths2.slice(0, 6).map(() => allPaths2[Math.floor(Math.random() * allPaths2.length)]),
-        Actions: []
+        actions: []
     },
     {
-        UserName: 'Player3',
+        userName: 'Player3',
         Hand: allPaths2.slice(0, 6).map(() => allPaths2[Math.floor(Math.random() * allPaths2.length)]),
-        Actions: []
+        actions: []
     },
 ]

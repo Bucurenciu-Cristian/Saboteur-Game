@@ -1,7 +1,7 @@
 import {Matrix, padding} from "../../variables";
 import {ICardBasic, IMatrix} from "../../Types/DexType";
 import {NESWC, normalPath, SpecialPath} from "../Cards/Paths";
-import {conDirections, NeighboursActions} from "../../constants";
+import {conDirections} from "../../constants";
 import rewardBack from "../../../public/images/SaboteurImagesSingle/Back_of_cards/reward.png";
 import {getRandomizedArray} from "./GetRandomizedArray";
 import {checkTheCurrentCardInTable} from "./CheckTheCurrentCardInTable";
@@ -11,9 +11,18 @@ export let InitialMatrix: IMatrix[][] = Array(row).fill(null).map(() => Array(co
     Card: "#",
     Occupied: false
 }))
+
+
 export let StartRow = (padding ? row - Math.floor((row / 2)) - 1 : row - Math.floor((row / 2)) - 2);
 export let StartColumn = column - (padding ? column - 1 : column - 2);
 export let lastColumn = column - (padding ? 2 : 1);
+// InitialMatrix = BasicFullPath(InitialMatrix);
+// GiveAndCheckCardTable(InitialMatrix, StartRow - 2, lastColumn - 5);
+// GiveAndCheckCardTable(InitialMatrix, StartRow - 2, lastColumn - 2);
+// GiveAndCheckCardTable(InitialMatrix, StartRow + 2, lastColumn - 5);
+// GiveAndCheckCardTable(InitialMatrix, StartRow + 2, lastColumn - 2);
+// GiveAndCheckCardTable(InitialMatrix, StartRow + 2, 1);
+// GiveAndCheckCardTable(InitialMatrix, StartRow - 2, 1);
 
 const randomizedFinalCards = getRandomizedArray(SpecialPath, true);
 
@@ -32,23 +41,23 @@ function introduceSquare(card: ICardBasic) {
 
 InitialMatrix = InitializeTheMatrixBasics(InitialMatrix);
 
-InitialMatrix[StartRow][lastColumn - 1] = introduceSquare(NESWC[2]);
-InitialMatrix[StartRow][lastColumn - 2] = introduceSquare(NESWC[2]);
-InitialMatrix[StartRow][lastColumn - 3] = introduceSquare(NESWC[2]);
-InitialMatrix[StartRow][lastColumn - 4] = introduceSquare(NESWC[2]);
-InitialMatrix[StartRow][lastColumn - 5] = introduceSquare(NESWC[2]);
-InitialMatrix[StartRow][lastColumn - 6] = introduceSquare(NESWC[3]);
-InitialMatrix[StartRow][lastColumn - 7] = introduceSquare(NESWC[3]);
-InitialMatrix[StartRow][lastColumn - 9] = introduceSquare(NESWC[3]);
-
-
-function GiveAndCheckCardTable(InitialMatrix: IMatrix[][], row: number, column: number) {
-    GiveMeRandomsCardsAroundACard(row, column);
-    const beta = checkTheCurrentCardInTable(InitialMatrix, row, column, NeighboursActions.DIRECTIONS);
-    console.log(beta);
+function BasicFullPath(matrix: IMatrix[][]) {
+    matrix[StartRow][lastColumn - 1] = introduceSquare(NESWC[2]);
+    matrix[StartRow][lastColumn - 2] = introduceSquare(NESWC[2]);
+    matrix[StartRow][lastColumn - 3] = introduceSquare(NESWC[2]);
+    matrix[StartRow][lastColumn - 4] = introduceSquare(NESWC[2]);
+    matrix[StartRow][lastColumn - 5] = introduceSquare(NESWC[2]);
+    matrix[StartRow][lastColumn - 6] = introduceSquare(NESWC[3]);
+    matrix[StartRow][lastColumn - 7] = introduceSquare(NESWC[3]);
+    matrix[StartRow][lastColumn - 9] = introduceSquare(NESWC[3]);
+    return matrix;
 }
 
-GiveAndCheckCardTable(InitialMatrix, StartRow - 2, lastColumn - 5);
+
+function GiveAndCheckCardTable(matrix: IMatrix[][], row: number, column: number) {
+    GiveMeRandomsCardsAroundACard(row, column);
+    const beta = checkTheCurrentCardInTable(matrix, row, column);
+}
 
 
 function GiveMeRandomsCardsAroundACard(centerRows: number, centerColumn: number) {
