@@ -11,54 +11,55 @@ import BadGuy3 from "../../../public/images/SaboteurImagesSingle/Players/BadGuys
 import BadGuy4 from "../../../public/images/SaboteurImagesSingle/Players/BadGuys/4.png";
 import {dex} from "./Actions";
 import {ICardBasic} from "../../Types/DexType";
+import {Modes} from "../../constants";
 
 
 const Saboteurs: ICardBasic[] = [
     {
         src: BadGuy1,
-        code: [dex.Base, dex.Player, dex.Saboteur]
+        code: [Modes.Base, Modes.Player, dex.Saboteur]
     },
     {
         src: BadGuy2,
-        code: [dex.Base, dex.Player, dex.Saboteur]
+        code: [Modes.Base, Modes.Player, dex.Saboteur]
     },
     {
         src: BadGuy3,
-        code: [dex.Base, dex.Player, dex.Saboteur]
+        code: [Modes.Base, Modes.Player, dex.Saboteur]
     },
     {
         src: BadGuy4,
-        code: [dex.Base, dex.Player, dex.Saboteur]
+        code: [Modes.Base, Modes.Player, dex.Saboteur]
     }
 ]
 const Miners: ICardBasic[] = [
     {
         src: Miner1,
-        code: [dex.Base, dex.Player, dex.Miner]
+        code: [Modes.Base, Modes.Player, dex.Miner]
     },
     {
         src: Miner2,
-        code: [dex.Base, dex.Player, dex.Miner]
+        code: [Modes.Base, Modes.Player, dex.Miner]
     },
     {
         src: Miner3,
-        code: [dex.Base, dex.Player, dex.Miner]
+        code: [Modes.Base, Modes.Player, dex.Miner]
     },
     {
         src: Miner4,
-        code: [dex.Base, dex.Player, dex.Miner]
+        code: [Modes.Base, Modes.Player, dex.Miner]
     },
     {
         src: Miner5,
-        code: [dex.Base, dex.Player, dex.Miner]
+        code: [Modes.Base, Modes.Player, dex.Miner]
     },
     {
         src: Miner6,
-        code: [dex.Base, dex.Player, dex.Miner]
+        code: [Modes.Base, Modes.Player, dex.Miner]
     },
     {
         src: Miner7,
-        code: [dex.Base, dex.Player, dex.Miner]
+        code: [Modes.Base, Modes.Player, dex.Miner]
     }
 ]
 
@@ -66,3 +67,4 @@ export const Dwarfs: ICardBasic[] = [
     ...Miners,
     ...Saboteurs
 ]
+

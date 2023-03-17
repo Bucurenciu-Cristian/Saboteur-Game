@@ -1,23 +1,23 @@
-export enum findCardActions
-{
+export enum findCardActions {
     Start = 'Start',
     Final = 'Final',
 }
+
 export enum NeighboursActions {
-  ONE = 'ONE',
-  ALL = 'ALL',
-  DIRECTIONS = 'DIRECTIONS',
-}
-export enum conDirections {
-  NORTH = 'NORTH',
-  EAST = 'EAST',
-  SOUTH = 'SOUTH',
-  WEST = 'WEST',
-  CENTER = 'CENTER',
-  FALSE = 'FALSE',
+    ONE = 'ONE',
+    ALL = 'ALL',
+    DIRECTIONS = 'DIRECTIONS',
 }
 
-const direction: conDirections = conDirections.FALSE;
+export enum conDirections {
+    NORTH = 'NORTH',
+    EAST = 'EAST',
+    SOUTH = 'SOUTH',
+    WEST = 'WEST',
+    CENTER = 'CENTER',
+    FALSE = 'FALSE',
+}
+
 /*
 switch (direction) {
   case conDirections.NORTH:
@@ -40,3 +40,15 @@ switch (direction) {
     break;
 }*/
 
+export enum Modes {
+    Path = 'P',
+    Player = 'L',
+    Reward = 'R',
+    Action = 'A',
+    Base = 'B',
+    Expansion = 'E',
+    True = 'T',
+    False = 'F',
+    Gold = 'G',
+    Rock = 'R',
+}

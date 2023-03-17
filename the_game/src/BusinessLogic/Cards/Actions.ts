@@ -11,7 +11,8 @@ import CartOff from '../../../public/images/SaboteurImagesSingle/Actions/Cart/2.
 import CartAxe from '../../../public/images/SaboteurImagesSingle/Actions/2Powers/1.png'
 import LanternAxe from '../../../public/images/SaboteurImagesSingle/Actions/2Powers/2.png'
 
-import {dexType, FOTType, ICardBasic} from "../../Types/DexType";
+import {ActionCard, dexType, FOTType, ICardBasic} from "../../Types/DexType";
+import {Modes} from "../../constants";
 
 export let FOT: FOTType = {F: 'F', T: 'T'};
 export const dex: dexType = {
@@ -46,126 +47,126 @@ export const dex: dexType = {
 const Maps: ICardBasic[] = [
     {
         src: Map,
-        code: [dex.Base, dex.Action, dex.Map]
+        code: [Modes.Base, Modes.Action, dex.Map]
     },
     {
         src: Map,
-        code: [dex.Base, dex.Action, dex.Map]
+        code: [Modes.Base, Modes.Action, dex.Map]
     },
     {
         src: Map,
-        code: [dex.Base, dex.Action, dex.Map]
+        code: [Modes.Base, Modes.Action, dex.Map]
     },
     {
         src: Map,
-        code: [dex.Base, dex.Action, dex.Map]
+        code: [Modes.Base, Modes.Action, dex.Map]
     },
     {
         src: Map,
-        code: [dex.Base, dex.Action, dex.Map]
+        code: [Modes.Base, Modes.Action, dex.Map]
     },
     {
         src: Map,
-        code: [dex.Base, dex.Action, dex.Map]
+        code: [Modes.Base, Modes.Action, dex.Map]
     },
 ]
 let TwoActions: ICardBasic[] = [
     {
         src: LanternCart,
-        code: [dex.Base, dex.Action, dex.CartLantern]
+        code: [Modes.Base, Modes.Action, dex.CartLantern]
     },
     {
         src: LanternAxe,
-        code: [dex.Base, dex.Action, dex.Base]
+        code: [Modes.Base, Modes.Action, Modes.Base]
     },
     {
         src: CartAxe,
-        code: [dex.Base, dex.Action, dex.AxeCart]
+        code: [Modes.Base, Modes.Action, dex.AxeCart]
     },
 ];
 let DestroyPath: ICardBasic[] = [
     {
         src: Destroy,
-        code: [dex.Base, dex.Action, dex.Destroy]
+        code: [Modes.Base, Modes.Action, dex.Destroy]
     },
     {
         src: Destroy,
-        code: [dex.Base, dex.Action, dex.Destroy]
+        code: [Modes.Base, Modes.Action, dex.Destroy]
     },
     {
         src: Destroy,
-        code: [dex.Base, dex.Action, dex.Destroy]
+        code: [Modes.Base, Modes.Action, dex.Destroy]
     }
 ];
 let Cart: ICardBasic[] = [
     {
         src: CartOn,
-        code: [dex.Base, dex.Action, dex.CartS, dex.Cart.T]
+        code: [Modes.Base, Modes.Action, dex.CartS, dex.Cart.T]
     },
     {
         src: CartOn,
-        code: [dex.Base, dex.Action, dex.CartS, dex.Cart.T]
+        code: [Modes.Base, Modes.Action, dex.CartS, dex.Cart.T]
     },
     {
         src: CartOff,
-        code: [dex.Base, dex.Action, dex.CartS, dex.Cart.F]
+        code: [Modes.Base, Modes.Action, dex.CartS, dex.Cart.F]
     },
     {
         src: CartOff,
-        code: [dex.Base, dex.Action, dex.CartS, dex.Cart.F]
+        code: [Modes.Base, Modes.Action, dex.CartS, dex.Cart.F]
     },
     {
         src: CartOff,
-        code: [dex.Base, dex.Action, dex.CartS, dex.Cart.F]
+        code: [Modes.Base, Modes.Action, dex.CartS, dex.Cart.F]
     },
 ]
-let Axe: ICardBasic[] = [
+let Axe: ActionCard[] = [
     {
         src: AxeOn,
-        code: [dex.Base, dex.Action, dex.AxeS, dex.Axe.T]
+        code: [Modes.Base, Modes.Action, dex.AxeS, dex.Axe.T]
     },
     {
         src: AxeOn,
-        code: [dex.Base, dex.Action, dex.AxeS, dex.Axe.T]
+        code: [Modes.Base, Modes.Action, dex.AxeS, dex.Axe.T]
     },
     {
         src: AxeOff,
-        code: [dex.Base, dex.Action, dex.AxeS, dex.Axe.F]
+        code: [Modes.Base, Modes.Action, dex.AxeS, dex.Axe.F]
 
     },
     {
         src: AxeOff,
-        code: [dex.Base, dex.Action, dex.AxeS, dex.Axe.F]
+        code: [Modes.Base, Modes.Action, dex.AxeS, dex.Axe.F]
 
     },
     {
         src: AxeOff,
-        code: [dex.Base, dex.Action, dex.AxeS, dex.Axe.F]
+        code: [Modes.Base, Modes.Action, dex.AxeS, dex.Axe.F]
 
     }
 ]
 let Lantern: ICardBasic[] = [
     {
         src: LanternOn,
-        code: [dex.Base, dex.Action, dex.LanternS, dex.Lantern.T]
+        code: [Modes.Base, Modes.Action, dex.LanternS, dex.Lantern.T]
     },
     {
         src: LanternOn,
-        code: [dex.Base, dex.Action, dex.LanternS, dex.Lantern.T]
+        code: [Modes.Base, Modes.Action, dex.LanternS, dex.Lantern.T]
 
     },
     {
         src: LanternOff,
-        code: [dex.Base, dex.Action, dex.LanternS, dex.Lantern.F]
+        code: [Modes.Base, Modes.Action, dex.LanternS, dex.Lantern.F]
 
     },
     {
         src: LanternOff,
-        code: [dex.Base, dex.Action, dex.LanternS, dex.Lantern.F]
+        code: [Modes.Base, Modes.Action, dex.LanternS, dex.Lantern.F]
     },
     {
         src: LanternOff,
-        code: [dex.Base, dex.Action, dex.LanternS, dex.Lantern.F]
+        code: [Modes.Base, Modes.Action, dex.LanternS, dex.Lantern.F]
 
     },
 ];

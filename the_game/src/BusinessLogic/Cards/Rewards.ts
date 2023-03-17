@@ -1,106 +1,107 @@
 import gold_reward_1 from "../../../public/images/SaboteurImagesSingle/Gold-reward/gold_reward_1.png";
 import gold_reward_2 from "../../../public/images/SaboteurImagesSingle/Gold-reward/gold_reward_2.png";
 import gold_reward_3 from "../../../public/images/SaboteurImagesSingle/Gold-reward/gold_reward_3.png";
-import {dex, FOT} from "./Actions";
+import {FOT} from "./Actions";
 import {ICardBasic} from "../../Types/DexType";
+import {Modes} from "../../constants";
 
 
 const Gold1: ICardBasic[] = [
     {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     }, {
         src: gold_reward_1,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.F, FOT.T]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.F, FOT.T]
     },
 ]
 const Gold2: ICardBasic[] = [
     {
         src: gold_reward_2,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.T, FOT.F]
     }, {
         src: gold_reward_2,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.T, FOT.F]
     }, {
         src: gold_reward_2,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.T, FOT.F]
     }, {
         src: gold_reward_2,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.T, FOT.F]
     }, {
         src: gold_reward_2,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.T, FOT.F]
     }, {
         src: gold_reward_2,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.T, FOT.F]
     }, {
         src: gold_reward_2,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.T, FOT.F]
     }, {
         src: gold_reward_2,
-        code: [dex.Base, dex.Reward, FOT.F, FOT.T, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.F, FOT.T, FOT.F]
     }
 ]
 const Gold3: ICardBasic[] = [
     {
         src: gold_reward_3,
-        code: [dex.Base, dex.Reward, FOT.T, FOT.F, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.T, FOT.F, FOT.F]
     },
     {
         src: gold_reward_3,
-        code: [dex.Base, dex.Reward, FOT.T, FOT.F, FOT.F]
-    },
-
-    {
-        src: gold_reward_3,
-        code: [dex.Base, dex.Reward, FOT.T, FOT.F, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.T, FOT.F, FOT.F]
     },
 
     {
         src: gold_reward_3,
-        code: [dex.Base, dex.Reward, FOT.T, FOT.F, FOT.F]
+        code: [Modes.Base, Modes.Reward, FOT.T, FOT.F, FOT.F]
+    },
+
+    {
+        src: gold_reward_3,
+        code: [Modes.Base, Modes.Reward, FOT.T, FOT.F, FOT.F]
     },
 
 ]

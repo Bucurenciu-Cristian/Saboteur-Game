@@ -20,8 +20,6 @@ import thirtyTwo from '../../../public/images/SaboteurImagesSingle/Path/32.png'
 import thirtyThree from '../../../public/images/SaboteurImagesSingle/Path/33.png'
 import thirtySix from '../../../public/images/SaboteurImagesSingle/Path/36.png'
 import thirtySeven from '../../../public/images/SaboteurImagesSingle/Path/37.png'
-
-import winning from '../../../public/images/SaboteurImagesSingle/Back_of_cards/winning.png'
 import thirtyEight from "../../../public/images/SaboteurImagesSingle/Path/38.png";
 import twentyNine from "../../../public/images/SaboteurImagesSingle/Path/29.png";
 import thirty from "../../../public/images/SaboteurImagesSingle/Path/30.png";
@@ -44,188 +42,192 @@ import Twelve from "../../../public/images/SaboteurImagesSingle/Path/12.png";
 import Thirtheen from "../../../public/images/SaboteurImagesSingle/Path/13.png";
 import Ten from "../../../public/images/SaboteurImagesSingle/Path/10.png";
 import SevenTeen from "../../../public/images/SaboteurImagesSingle/Path/17.png";
-import {ICardBasic, ISpecialPath} from "../../Types/DexType";
+import winning from "../../../public/images/SaboteurImagesSingle/Back_of_cards/winning.png";
 
-export let Blocks: ICardBasic[] = [
+
+import {ICardBasic, ISpecialPath, PathCard} from "../../Types/DexType";
+import {Modes} from "../../constants";
+
+export let Blocks: PathCard[] = [
     //Blocaje Don't change
     {
         src: Six,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.T, dex.C.F, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False, Modes.False]
     },
     {
         src: Seven,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.F, dex.W.T, dex.C.F, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.True, Modes.False, Modes.False]
     },
     {
         src: Fifteen,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.F, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.True, Modes.False, Modes.False, Modes.False]
     },
     {
         src: Sixteen,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.F, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.True, Modes.False, Modes.False]
     },
     {
         src: twentySeven,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.False, Modes.True, Modes.False]
     },
     {
         src: twentyEight,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.F, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.False, Modes.True, Modes.False]
     },
     {
         src: thirtyTwo,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.F, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.False]
     },
     {
         src: thirtyThree,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.F, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.False, Modes.False]
     },
     {
         src: thirtySix,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.F, dex.C.F, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.False, Modes.False, Modes.False]
     },
 ];
 let SWC: ICardBasic[] = [
     {
         src: thirtySeven,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False]
     },
     {
         src: thirtyEight,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False]
     },
     {
         src: twentyNine,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False]
     },
     {
         src: thirty,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False]
     },
     {
         src: thirtyOne,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.F, dex.S.T, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False]
     }
 ];
 let NESC: ICardBasic[] = [
     {
         src: nineteen,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False]
         // Trebuie sa tin minte pe partea server-ului cartile care sunt in mana la jucatori
         // Serverul are adevarul absolut in toata combinatia asta.
 
     },
     {
         src: twenty,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False]
     },
     {
         src: Fourteen,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False]
     },
     {
         src: twentyOne,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False]
     },
     {
         src: twentyTwo,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False]
     },
 ]
 let NEWC: ICardBasic[] = [
     {
         src: twentyFour,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False]
     },
     {
         src: twentyFive,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False]
     },
     {
         src: twentySix,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False]
     },
     {
         src: thirtyFour,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False]
     },
     {
         src: thirtyNine,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False]
     },
 ];
 let NSC: ICardBasic[] = [
     {
         src: One,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.True, Modes.False, Modes.True, Modes.False]
     },
     {
         src: Two,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.True, Modes.False, Modes.True, Modes.False]
     },
     {
         src: Three,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.True, Modes.False, Modes.True, Modes.False]
     },
     {
         src: One,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.T, dex.W.F, dex.C.T, dex.R.F]
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.True, Modes.False, Modes.True, Modes.False]
     },
 ];
 let EWC: ICardBasic[] = [
     {
         src: Four,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False],
     },
     {
         src: Five,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False],
     },
     {
         src: Eight,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.F, dex.W.T, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False],
     },
 ];
 export let NESWC: ICardBasic[] = [
     {
         src: Eleven,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False],
         // Aici ar trebui sa fie un ID si cine a pus cartea (ID-ul userului)
         //
     },
     {
         src: twentyThree,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False],
     },
     {
         src: thirtyFive,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False],
     },
     {
         src: Twelve,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False],
     },
     {
         src: Thirtheen,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False],
     },
 ];
 let ESC: ICardBasic[] = [
     {
         src: Nine,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False],
     },
     {
         src: Ten,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False],
     },
     {
         src: SevenTeen,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False],
     },
     {
         src: SevenTeen,
-        code: [dex.Base, dex.Path, dex.N.F, dex.E.T, dex.S.T, dex.W.F, dex.C.T, dex.R.F],
+        code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False],
     }
 ];
 
@@ -243,25 +245,25 @@ export let normalPath: ICardBasic[] = [
 export let SpecialPath: ISpecialPath[] = [
     {
         src: start,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Start],
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, dex.Start],
         // id: 1,
     },
     {
         src: rock,
-        // code: [dex.Base, dex.Path, dex.N.T, dex.E.F, dex.S.F, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
-        // back: winning
+        // code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.True, Modes.True, Modes.False, dex.Rock],
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, dex.Rock],
+        back: winning
     },
     {
         src: gold,
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Gold],
-        // back: winning
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, dex.Gold],
+        back: winning
     },
     {
         src: rock2,
-        // code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.F, dex.W.F, dex.C.T, dex.R.F, dex.Rock],
-        code: [dex.Base, dex.Path, dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F, dex.Rock],
-        // back: winning
+        // code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.False, Modes.True, Modes.False, dex.Rock],
+        code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, dex.Rock],
+        back: winning
     },
 ];
 
