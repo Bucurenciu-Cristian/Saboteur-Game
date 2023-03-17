@@ -1,4 +1,4 @@
-import {CharTuple} from "./Logic";
+import {CharTuple} from "../Types/DexType";
 
 export function changeOrientation(code: string): CharTuple | string {
     //This is working from my testing
