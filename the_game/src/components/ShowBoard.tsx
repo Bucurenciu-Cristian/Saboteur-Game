@@ -17,6 +17,8 @@ const ShowBoard = ({
                     Card={gameMatrix[i][j].Card}
                     Occupied={gameMatrix[i][j]?.Occupied}
                     onClick={onClick}
+                    row={i}
+                    column={j}
                 />
             );
         };
