@@ -1,6 +1,7 @@
 import {IMatrix} from "../../Types/DexType";
-import {isCodeAtIndex, neighboursCards} from "./Matrix";
 import {FOT} from "../Cards/Actions";
+import {isCodeAtIndex} from "./IsCodeAtIndex";
+import {neighboursCards} from "./NeighboursCards";
 
 export function isPathToFinish(matrix: IMatrix[][], startRow: number, startColumn: number): boolean {
     const numRows = matrix.length;

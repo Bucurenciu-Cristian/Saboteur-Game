@@ -9,8 +9,8 @@ export let imageSize = {
 
 export const padding = true;
 export const Matrix = {
-    rowsFromMatrix: 7,
-    columnsFromMatrix: 11,
+    rows: 7,
+    columns: 11,
 }
 
 export const typeOfCard = {path: 'path', action: 'action'};

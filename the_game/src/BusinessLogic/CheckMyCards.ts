@@ -1,8 +1,11 @@
-import {checkTheCurrentCardInTable, findAvailablePath, findOccupiedEdge, InitialMatrix} from "./GameEngine/Matrix";
+import {InitialMatrix} from "./GameEngine/Matrix";
 import {allTheCards, findTheCard} from "./Logic";
 import {TypeGuardOnCards} from "./TypeGuardOnCards";
 import {findCardActions, NeighboursActions} from "../constants";
 import {isPathToFinish} from "./GameEngine/DepthFirstSearch";
+import {findAvailablePath} from "./GameEngine/FindAvailablePath";
+import {findOccupiedEdge} from "./GameEngine/FindOccupiedEdge";
+import {checkTheCurrentCardInTable} from "./GameEngine/CheckTheCurrentCardInTable";
 
 export function checkMyCards() {
     console.time('CheckingTheCards'); // start the timer
@@ -18,7 +21,9 @@ export function checkMyCards() {
             if (checkTheCurrentCardInTable(InitialMatrix, row, column, NeighboursActions.ONE)) {
                 console.log("Start DFS");
                 const x = isPathToFinish(InitialMatrix, row, column);
-                console.log(x);
+                //TODO Handle the result of the DFS
+                if (x) console.log("Path to finish found");
+                else console.log("Path to finish not found");
                 console.log("END DFS");
             }
         });
