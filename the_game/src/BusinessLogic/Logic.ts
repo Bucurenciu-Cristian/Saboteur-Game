@@ -6,13 +6,6 @@ import {ICardBasic, IMatrix} from "../Types/DexType";
 import {findCardActions} from "../constants";
 
 
-export type CharTuple = [
-    first: 'B' | 'E',
-    second: 'P' | 'L' | 'A' | 'R',
-    // third?: 'T' | 'F' | 'M' | 'S' | 'E' | 'G' | dex.Base | 'D'| 'C',
-    ...rest: string[]
-];
-
 export const allTheCards: ICardBasic[] = [
     /* dex.N.T, dex.E.T, dex.S.T, dex.W.T, dex.C.T, dex.R.F */
     ...allPaths,
@@ -26,7 +19,6 @@ export function isTheSquareOccupied(matrix: IMatrix[][], row: number, col: numbe
 }
 
 export function findTheCard(matrix: IMatrix[][], action: string): number[][] {
-
     const cardsFound: number[][] = [];
     for (const [i, row] of matrix.entries()) {
         if (action === findCardActions.Start) {
