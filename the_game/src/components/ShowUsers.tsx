@@ -3,7 +3,7 @@ import Square from "./Square";
 import {Col} from "react-bootstrap";
 import React from "react";
 
-const ShowUsers = ({items, moveItemToMatrix, onCardClick}
+const ShowUsers = ({items, moveItemToMatrix}
                        : {
     items: IUser,
     moveItemToMatrix: any,
@@ -31,6 +31,9 @@ const ShowUsers = ({items, moveItemToMatrix, onCardClick}
                         );
                     })}
                 </div>
+                <div>
+
+                </div>
 
                 {/*{users.map((user, i) => {
                             return (<div key={i} className="board-row">
@@ -57,6 +60,6 @@ const ShowUsers = ({items, moveItemToMatrix, onCardClick}
                             </div>)
                         })}*/}
             </Col>
-        </>)
+        </>);
 }
 export default ShowUsers;
