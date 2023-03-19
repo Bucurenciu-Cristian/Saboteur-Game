@@ -44,16 +44,6 @@ export interface IMatrix {
     Occupied: boolean;
 }
 
-export interface IUser {
-    id?: string | number;
-    userName: string;
-    Hand: ICardBasic[];
-    actions: ActionCard[];
-    selectedCardIndex?: number;
-    score?: number;
-    isTurn?: boolean;
-}
-
 export interface ICardBasic {
     code: CharTuple | string;
     src: StaticImageData;

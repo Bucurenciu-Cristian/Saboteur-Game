@@ -1,5 +1,5 @@
-import {IUser} from "../Types/DexType";
 import {allPaths2} from "./Cards/Paths";
+import {IUser} from "../Types/Players";
 
 export const usersList: IUser[] = [
     {

@@ -1,7 +1,7 @@
-import {IUser} from "../Types/DexType";
 import Square from "./Square";
 import {Col} from "react-bootstrap";
 import React from "react";
+import {IUser} from "../Types/Players";
 
 const ShowUsers = ({items, moveItemToMatrix}
                        : {
