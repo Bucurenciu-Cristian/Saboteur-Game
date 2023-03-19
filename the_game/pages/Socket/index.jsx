@@ -12,6 +12,7 @@ const Home = () => {
     useEffect(() => {
         socketInitializer();
     }, []);
+    //Here you are in a component. Not Back-end.
     
     const socketInitializer = async () => {
         await fetch('/api/socket');
@@ -26,21 +27,13 @@ const Home = () => {
         });
         
         socket.on('update-json-data', (data) => {
-            setJsonData(JSON.parse(data));
+            setJsonData(data);
         });
     };
     
     const onChangeHandler = (e) => {
         setInput(e.target.value);
         socket.emit('input-change', e.target.value);
-        
-        // Update jsonData and emit the modified version to the clients
-        const updatedJsonData = {
-            ...jsonData,
-            text: e.target.value,
-        };
-        setJsonData(updatedJsonData);
-        socket.emit('json-data-change', JSON.stringify(updatedJsonData));
     };
     
     return (

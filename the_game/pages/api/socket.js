@@ -2,33 +2,56 @@ import {Server} from 'socket.io'
 import fs from 'fs';
 import path from 'path';
 
+
+const eventJsonData = 'update-json-data';
+const eventNameClient = 'update-input';
+
+const inputChange = 'input-change';
+const jsonDataChange = 'json-data-change';
+
+function watchAJsonFile(jsonFilePath, io, eventNameClient) {
+    fs.watch(jsonFilePath, (eventType, filename) => {
+        if (eventType === 'change') {
+            let updatedJsonData = fs.readFileSync(jsonFilePath, 'utf8');
+            try {
+                updatedJsonData = JSON.parse(updatedJsonData);
+                io.emit(eventNameClient, updatedJsonData); // Emit the event if the JSON data is valid
+            } catch (error) {
+                console.error('Invalid JSON data:', error.message);
+            }
+        }
+    });
+}
+
+//Here you are on the back-end side:
+//You have to restart the server for the changes to take effect
 const SocketHandler = (req, res) => {
-    if (res.socket.server.io) {
-        console.log('Socket is already running')
-    } else {
+    function eventServerToClient(socket, eventNameServer, eventNameClient) {
+        socket.on(eventNameServer, msg => {
+            socket.broadcast.emit(eventNameClient, msg)
+        })
+    }
+    
+    const dataFolder = 'data';
+    if (!res.socket.server.io) {
         console.log('Socket is initializing')
         const io = new Server(res.socket.server)
         res.socket.server.io = io
-        const jsonFilePath = path.join(process.cwd(), 'data', 'example.json');
+        
+        const jsonFilePath = path.join(process.cwd(), dataFolder, 'example.json');
         
         io.on('connection', socket => {
-            socket.on('input-change', msg => {
-                socket.broadcast.emit('update-input', msg)
-            })
             // Send initial JSON data to the client
-            const initialJsonData = fs.readFileSync(jsonFilePath, 'utf8');
-            socket.emit('update-json-data', initialJsonData);
-            socket.on('json-data-change', msg => {
-                socket.broadcast.emit('update-json-data', msg)
-            })
+            let initialJsonData = fs.readFileSync(jsonFilePath, 'utf8');
+            initialJsonData = JSON.parse(initialJsonData);
+            socket.emit(eventJsonData, initialJsonData);
+            
+            eventServerToClient(socket, inputChange, eventNameClient);
+            
+            eventServerToClient(socket, jsonDataChange, eventJsonData);
         })
         // Watch for changes in the JSON file and emit the updated content to clients
-        fs.watch(jsonFilePath, (eventType, filename) => {
-            if (eventType === 'change') {
-                const updatedJsonData = fs.readFileSync(jsonFilePath, 'utf8');
-                io.emit('update-json-data', updatedJsonData);
-            }
-        });
+        watchAJsonFile(jsonFilePath, io, eventJsonData);
     }
     res.end()
 }
