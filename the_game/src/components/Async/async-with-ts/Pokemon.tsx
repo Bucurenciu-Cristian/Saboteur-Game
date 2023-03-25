@@ -1,3 +1,3 @@
 //Check under Pages/async.tsx
 
-export {}
+export {};

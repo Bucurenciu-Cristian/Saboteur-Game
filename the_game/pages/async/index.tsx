@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import PromisePool from "@supercharge/promise-pool";
-import {getPokemonList, getPokemon, Pokemon} from "../../src/components/Async/async-with-ts/getPokemon";
+import React, { useEffect, useState } from 'react';
+import PromisePool from '@supercharge/promise-pool';
+import { getPokemonList, getPokemon, Pokemon } from '../../src/components/Async/async-with-ts/getPokemon';
 
 function App() {
   const [pokemon, setPokemon] = useState<Pokemon[]>([]);
@@ -8,7 +8,7 @@ function App() {
     async function getData() {
       const list = await getPokemonList();
 
-      const {results} = await PromisePool.withConcurrency(10)
+      const { results } = await PromisePool.withConcurrency(10)
         .for(list.results)
         .process(async (data) => {
           return await getPokemon(data.url);

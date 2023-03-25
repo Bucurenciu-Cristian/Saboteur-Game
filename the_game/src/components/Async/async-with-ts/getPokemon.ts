@@ -22,7 +22,7 @@ export interface Pokemon {
 }
 
 export const getPokemonList = async (): Promise<PokemonList> => {
-  const listResp = await fetch("https://pokeapi.co/api/v2/pokemon");
+  const listResp = await fetch('https://pokeapi.co/api/v2/pokemon');
   return await listResp.json();
 };
 
@@ -34,7 +34,7 @@ export const getPokemon = async (url: string): Promise<Pokemon> => {
 export const getFirstPokemon = async (): Promise<Pokemon> =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log("Getting the list");
+      console.log('Getting the list');
       const list = await getPokemonList();
       resolve(await getPokemon(list.results[0].url));
     } catch (error) {

@@ -1,4 +1,5 @@
 Entity Card
+
 - enum
   - path 44
     - finish 3
@@ -6,7 +7,7 @@ Entity Card
       - 1 gold
     - rest 41
       - 1 start
-- 
+-
 - action 27
   - 1 type action
     - 2 lights open
@@ -28,14 +29,16 @@ Entity Card
 - dwarf 11
   - 7 gold diggers
   - 4 saboteurs
+
 ### Tables of players
-| No. of Players 	 | No. of Saboteurs 	 | No. of Gold-diggers 	 |
-|:----------------:|:------------------:|:---------------------:|
-| 3              	 | 1                	 | 3                   	 |
-| 4              	 | 1                	 | 4                   	 |
-| 5              	 | 2                	 | 4                   	 |
-| 6              	 | 2                	 | 5                   	 |
-| 7              	 | 3                	 | 5                   	 |
-| 8              	 | 3                	 | 6                   	 |
-| 9              	 | 3                	 | 7                   	 |
-| 10             	 | 4                	 | 7                   	 |
+
+| No. of Players | No. of Saboteurs | No. of Gold-diggers |
+| :------------: | :--------------: | :-----------------: |
+|       3        |        1         |          3          |
+|       4        |        1         |          4          |
+|       5        |        2         |          4          |
+|       6        |        2         |          5          |
+|       7        |        3         |          5          |
+|       8        |        3         |          6          |
+|       9        |        3         |          7          |
+|       10       |        4         |          7          |
