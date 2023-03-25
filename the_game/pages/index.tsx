@@ -1,33 +1,11 @@
-import type {NextPage} from 'next'
-import styles from '../styles/Home.module.css'
-import React, {useEffect, useState} from "react";
-import {NewLink} from "../src/components/RoutesList";
+import type { NextPage } from 'next';
+import React from 'react';
+import styles from '../styles/Home.module.css';
 
-const Home: NextPage = () => {
-    const [hello, setHello] = useState(null);
+const Home: NextPage = () => (
+  <div className={styles.container}>
+    <h1>Home Page</h1>
+  </div>
+);
 
-    useEffect(() => {
-        fetch('/api/hello')
-            .then(res => res.json())
-            .then(setHello)
-    }, []);
-
-    return (
-        <div className={styles.container}>
-            <main className={styles.main}>
-                <h1>Available Routes</h1>
-
-                <NewLink href={"/Table"}/>
-                <NewLink href={"/cardsList"}/>
-                <NewLink href={"/Socket"}/>
-                <br/>
-                <hr/>
-                <NewLink href={"/async"}/>
-                <NewLink href={"/State"}/>
-                {/*<RoutesList/>*/}
-            </main>
-        </div>
-    )
-}
-
-export default Home
+export default Home;
