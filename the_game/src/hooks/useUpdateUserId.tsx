@@ -4,7 +4,7 @@ import { login } from '../../redux/Slices/authSlice';
 
 const useUpdateUserId = () => {
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.user.userId);
+  const userId = useSelector((state) => state.auth.userId);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && userId === null) {
