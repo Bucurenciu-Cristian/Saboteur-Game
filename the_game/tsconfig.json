@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES5",
     "lib": [
       "dom",
       "dom.iterable",
@@ -18,14 +18,18 @@
     "jsx": "preserve",
     "incremental": true,
     "allowJs": true,
-    //    "downlevelIteration": true,
+    "downlevelIteration": true,
     "baseUrl": "src",
+    "declaration": true,
     "paths": {
       "@app/*": [
         "app/*"
       ],
       "@shared/*": [
         "app/shared/*"
+      ],
+      "@components/*": [
+        "app/components/*"
       ]
     }
   },
