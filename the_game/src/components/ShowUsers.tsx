@@ -1,41 +1,26 @@
-import Square from "./Square";
-import {Col} from "react-bootstrap";
-import React from "react";
-import {IUser} from "../Types/Players";
+import React from 'react';
+import Square from './Square';
+import { IUser } from '../Types/Players';
 
-const ShowUsers = ({items, moveItemToMatrix}
-                       : {
-    items: IUser,
-    moveItemToMatrix: any,
-    onCardClick: any
-}) => {
-    return (
-        <>
-            <Col md={2}>
-                <div className="board-row">
-                    {items.Hand.map((item, i) => {
-                        return (
-                            <Square
-                                Card={item}
-                                key={i}
-                                row={i}
-                                column={0}
-                                Occupied={true}
-                                onClick={
-                                    () => {
-                                        moveItemToMatrix(i, 0, 0);
-                                        console.log(`Locatia cartii din mana este: [${i}]`);
-                                    }
-                                }
-                            />
-                        );
-                    })}
-                </div>
-                <div>
-
-                </div>
-
-                {/*{users.map((user, i) => {
+function ShowUsers({ items, moveItemToMatrix }: { items: IUser; moveItemToMatrix: any; onCardClick: any }) {
+  return (
+    <>
+      <div className="board-row">
+        {items.hand.map((item, i) => (
+          <Square
+            Card={item}
+            key={i}
+            row={i}
+            column={0}
+            Occupied
+            onClick={() => {
+              moveItemToMatrix(i, 0, 0);
+              console.log(`Locatia cartii din mana este: [${i}]`);
+            }}
+          />
+        ))}
+      </div>
+      {/* {users.map((user, i) => {
                             return (<div key={i} className="board-row">
                                 <br/>
                                 <h3>{user.UserName}</h3>
@@ -58,8 +43,9 @@ const ShowUsers = ({items, moveItemToMatrix}
                                     })
                                 }
                             </div>)
-                        })}*/}
-            </Col>
-        </>);
+                        })} */}
+    </>
+  );
 }
+
 export default ShowUsers;
