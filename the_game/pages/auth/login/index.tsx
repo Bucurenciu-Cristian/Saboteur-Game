@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../redux/Slices/authSlice';
@@ -17,12 +17,13 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const dispatch = useDispatch();
-  /* useEffect(() => {
-     const token = localStorage.getItem('authToken');
-     if (token) {
-       router.push(Lobby);
-     }
-   }, []); */
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('userId');
+    /* if (token && userId) {
+      router.push(Lobby);
+    } */
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

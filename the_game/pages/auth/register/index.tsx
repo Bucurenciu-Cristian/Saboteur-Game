@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
 
-interface RegisterProps {
-  onRegisterSuccess: () => void;
-}
-
-const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
+const Register: React.FC = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
+  const dispatch = useDispatch();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -26,7 +25,13 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
       });
 
       if (response.ok) {
-        onRegisterSuccess();
+        const data = await response.json();
+        const { success, message, data: newUser } = data;
+        if (success) {
+          router.push('/auth/login');
+        } else {
+          setError(message);
+        }
       } else {
         const errorData = await response.json();
         setError(errorData.message);
