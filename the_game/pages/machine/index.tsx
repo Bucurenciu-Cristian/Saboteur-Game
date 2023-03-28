@@ -21,9 +21,9 @@ function SaboteurGame() {
   // }, [state.context]);
   return (
     <div>
-      {/* <div>
+      <div>
         <h1>Child Comp</h1>
-         <p>Current context: {JSON.stringify(state.context)}</p>
+        <p>Current context: {JSON.stringify(state.context)}</p>
         <p>Current state: {state.value}</p>
         {state.matches('preparationComplete') ? (
           <p>Preparation is complete!</p>
@@ -31,7 +31,7 @@ function SaboteurGame() {
           <button onClick={handleStartPreparation}>Start Preparation</button>
         )}
         {state.done && <p>Done processing!</p>}
-      </div> */}
+      </div>
       <div>
         <h1>Parent Comp</h1>
         <p>Current state: {state2.value}</p>

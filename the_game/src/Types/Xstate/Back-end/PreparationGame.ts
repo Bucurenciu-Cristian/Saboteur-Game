@@ -70,6 +70,10 @@ const shuffleAndDealPathAndActionCards = assign((context: Context, event) => {
 
 // const hasEnoughPlayers: (context, event) => boolean = (context, event) => context.players.length >= 3;
 
+const setPlayers = assign({
+  players: (context, event) => event.players,
+});
+
 const preparationMachine = createMachine<Context>(
   {
     predictableActionArguments: true,
@@ -80,8 +84,16 @@ const preparationMachine = createMachine<Context>(
       roleCards: [],
       matrix: InitialMatrix,
     },
-    initial: 'determineDwarfRoles',
+    initial: 'fetchingPlayers',
     states: {
+      fetchingPlayers: {
+        on: {
+          SET_PLAYERS: {
+            target: 'determineDwarfRoles',
+            actions: setPlayers,
+          },
+        },
+      },
       determineDwarfRoles: {
         after: {
           100: {
@@ -130,6 +142,7 @@ const preparationMachine = createMachine<Context>(
       shuffleAndDealDwarfCards,
       placeStartAndFinishCards,
       shuffleAndDealPathAndActionCards,
+      setPlayers,
     },
     guards: {
       // hasEnoughPlayers,

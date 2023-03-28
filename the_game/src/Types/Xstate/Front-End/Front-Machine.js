@@ -25,6 +25,7 @@ const updateCanPlay = assign({
 });
 const clientMachine = createMachine(
   {
+    predictableActionArguments: true,
     id: 'clientSaboteur',
     initial: 'waitingForGame',
     context: {
