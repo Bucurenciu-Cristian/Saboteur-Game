@@ -11,7 +11,7 @@ const useUpdateUserId = () => {
       const storedUserId = localStorage.getItem('userId');
 
       if (storedUserId) {
-        dispatch(login(JSON.parse(storedUserId)));
+        dispatch(login({ userId: JSON.parse(storedUserId) })); // Pass an object with a userId property
       }
     }
   }, [dispatch, userId]);
