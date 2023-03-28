@@ -5,9 +5,9 @@ const prisma = new PrismaClient();
 const JoinLobby = async (socket) => {
   console.log('joinLobby');
   const waitingRooms = await prisma.room.findMany({
-    where: {
+    /* where: {
       gameState: 'WAITING',
-    },
+    }, */
     include: {
       players: true,
     },

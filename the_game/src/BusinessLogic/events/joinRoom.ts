@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { getRoom } from './disconnectRoom';
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ const joinRoom = async (socket, io, { roomId, userId }) => {
   });
 
   if (room) {
-    socket.join(`room-${roomId}`);
+    socket.join(getRoom(roomId));
 
     // Check if the user is already in the room
     const existingUserInRoom = room.players.find((player) => player.id === userId);
@@ -29,7 +30,7 @@ const joinRoom = async (socket, io, { roomId, userId }) => {
       include: { players: true },
     });
 
-    io.to(`room-${roomId}`).emit('updateRoom', updatedRoom);
+    io.to(getRoom(roomId)).emit('updateRoom', updatedRoom);
   }
 };
 export default joinRoom;

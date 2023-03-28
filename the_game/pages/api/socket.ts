@@ -3,6 +3,10 @@ import fs from 'fs';
 import joinLobby from '../../src/BusinessLogic/events/joinLobby';
 import joinRoom from '../../src/BusinessLogic/events/joinRoom';
 import leaveRoom from '../../src/BusinessLogic/events/leaveRoom';
+import disconnectRoom, { getRoom } from '../../src/BusinessLogic/events/disconnectRoom';
+import createRoom from '../../src/BusinessLogic/events/createRoom';
+import getActiveGames from '../../src/BusinessLogic/events/getActiveGames';
+import startGame from '../../src/BusinessLogic/events/StartGame';
 
 // Here you are on the back-end side:
 // You have to restart the server for the changes to take effect
@@ -12,21 +16,22 @@ const SocketHandler = (req, res) => {
     const io = new Server(res.socket.server);
     res.socket.server.io = io;
     io.on('connection', (socket) => {
-      /*
-      // Send initial JSON data to the client
-      // let initialJsonData = fs.readFileSync(jsonFilePath, 'utf8');
-      // initialJsonData = JSON.parse(initialJsonData);
-      // socket.emit(eventJsonData, initialJsonData);
-      // eventServerToClient(socket, inputChange, eventNameClient);
-      // eventServerToClient(socket, jsonDataChange, eventJsonData);
-      */
-      console.log('User connected');
+      console.log('User connected through socket ->', socket.rooms);
       socket.on('joinLobby', () => joinLobby(socket));
       socket.on('joinRoom', (data) => joinRoom(socket, io, data));
       socket.on('leaveRoom', (data) => leaveRoom(socket, io, data));
+      socket.on('disconnectRoom', (data) => disconnectRoom(socket, io, data));
+      socket.on('createRoom', (data) => createRoom(socket, io, data));
+      socket.on('getActiveGames', () => getActiveGames(socket));
 
-      socket.on('disconnect', () => {
-        console.log('User disconnected');
+      socket.on('startGame', async ({ roomId }) => {
+        await startGame(roomId);
+        // You can emit an event to inform clients about the updated room, if necessary
+        // For example, you can update the room state for all players in the room
+        io.to(getRoom(roomId)).emit('gameStarted', { roomId });
+      });
+      socket.on('disconnect', (reason) => {
+        console.log(`socket ${socket.id} disconnected due to ${reason}`);
       });
     });
     // const dataFolder = 'data';

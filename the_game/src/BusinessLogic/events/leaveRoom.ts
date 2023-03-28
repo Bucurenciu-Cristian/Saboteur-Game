@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { getRoom } from './disconnectRoom';
 
 const prisma = new PrismaClient();
 
@@ -22,15 +23,15 @@ const leaveRoom = async (socket, io, { roomId, userId }) => {
         data: { players: { disconnect: { id: userId } } },
       });
     }
-
-    socket.leave(`room-${roomId}`);
+    console.log('User disconnected from room ->', socket.rooms);
+    socket.leave(getRoom(roomId));
 
     const updatedRoom = await prisma.room.findUnique({
       where: { id: roomId },
       include: { players: true },
     });
 
-    io.to(`room-${roomId}`).emit('updateRoom', updatedRoom);
+    io.to(getRoom(roomId)).emit('updateRoom', updatedRoom);
   }
 };
 
