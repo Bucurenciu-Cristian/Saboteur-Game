@@ -5,20 +5,8 @@ import { Provider } from 'react-redux';
 import { createWrapper } from 'next-redux-wrapper';
 import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import { NewLink } from '../src/components/RoutesList';
 import store from '../redux/store';
-
-function ShowLinks() {
-  return (
-    <>
-      <NewLink href="/auth/login" />
-      <NewLink href="/auth/register" />
-      <NewLink href="/Table" />
-      <NewLink href="/cardsList" />
-      <NewLink href="/Socket" />
-    </>
-  );
-}
+import { ShowLinks } from './showLinks';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
