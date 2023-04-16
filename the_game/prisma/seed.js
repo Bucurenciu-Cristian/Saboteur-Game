@@ -24,6 +24,22 @@ async function main() {
       birthDate: new Date(1992, 0, 1),
     },
   });
+  const user3 = await prisma.user.create({
+    data: {
+      username: 'Kicky',
+      email: 'bucurenciu.cristian@gmail.com',
+      passwordHash,
+      birthDate: new Date(1992, 0, 2),
+    },
+  });
+  const user4 = await prisma.user.create({
+    data: {
+      username: 'Ioana',
+      email: 'ioana.catana@ulbsibiu.ro',
+      passwordHash,
+      birthDate: new Date(1992, 0, 3),
+    },
+  });
 
   // Create rooms
   const room1 = await prisma.room.create({
