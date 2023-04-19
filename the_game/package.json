@@ -8,10 +8,8 @@
     "start": "next start -p 3050",
     "lint": "next lint",
     "prisma studio": "prisma studio",
-    "seed": "node prisma/seed.js",
     "prisma generate": "prisma generate",
     "prisma db push": "prisma db push",
-    "prisma migrate dev": "prisma migrate dev",
     "reset-db": "npx prisma migrate reset --force && npx prisma migrate dev && node prisma/seed.js"
   },
   "dependencies": {
