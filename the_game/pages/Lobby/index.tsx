@@ -58,8 +58,8 @@ function Lobby() {
       <h2>UserID: {userId}</h2>
       <ol>
         {rooms.map((room) => (
-          <li key={room.id} onClick={() => joinRoom(room.id)}>
-            <Button>
+          <li key={room.id}>
+            <Button onClick={() => joinRoom(room.id)}>
               {room.name} ({room.players.length} players) - {room.gameState}
             </Button>
             {room.players.map((player) => (
