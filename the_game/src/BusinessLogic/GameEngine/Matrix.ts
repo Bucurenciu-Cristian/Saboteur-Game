@@ -19,6 +19,12 @@ export let InitialMatrix: IMatrix[][] = Array(row)
 export const StartRow = padding ? row - Math.floor(row / 2) - 1 : row - Math.floor(row / 2) - 2;
 export const StartColumn = column - (padding ? column - 1 : column - 2);
 export const lastColumn = column - (padding ? 2 : 1);
+
+function GiveAndCheckCardTable(matrix: IMatrix[][], row: number, column: number) {
+  GiveMeRandomsCardsAroundACard(row, column);
+  const beta = checkTheCurrentCardInTable(matrix, row, column);
+}
+
 // InitialMatrix = BasicFullPath(InitialMatrix);
 // GiveAndCheckCardTable(InitialMatrix, StartRow - 2, lastColumn - 5);
 // GiveAndCheckCardTable(InitialMatrix, StartRow - 2, lastColumn - 2);
@@ -53,11 +59,6 @@ function BasicFullPath(matrix: IMatrix[][]) {
   matrix[StartRow][lastColumn - 7] = introduceSquare(NESWC[3]);
   matrix[StartRow][lastColumn - 9] = introduceSquare(NESWC[3]);
   return matrix;
-}
-
-function GiveAndCheckCardTable(matrix: IMatrix[][], row: number, column: number) {
-  GiveMeRandomsCardsAroundACard(row, column);
-  const beta = checkTheCurrentCardInTable(matrix, row, column);
 }
 
 function GiveMeRandomsCardsAroundACard(centerRows: number, centerColumn: number) {
