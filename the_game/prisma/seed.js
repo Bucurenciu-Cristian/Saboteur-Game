@@ -40,26 +40,76 @@ async function main() {
       birthDate: new Date(1992, 0, 3),
     },
   });
+  const user5 = await prisma.user.create({
+    data: {
+      username: 'user5',
+      email: 'user5@example.com',
+      passwordHash,
+      birthDate: new Date(1998, 0, 1),
+    },
+  });
 
+  const user6 = await prisma.user.create({
+    data: {
+      username: 'user6',
+      email: 'user6@example.com',
+      passwordHash,
+      birthDate: new Date(2000, 0, 1),
+    },
+  });
+
+  const user7 = await prisma.user.create({
+    data: {
+      username: 'user7',
+      email: 'user7@example.com',
+      passwordHash,
+      birthDate: new Date(2002, 0, 1),
+    },
+  });
+
+  const user8 = await prisma.user.create({
+    data: {
+      username: 'user8',
+      email: 'user8@example.com',
+      passwordHash,
+      birthDate: new Date(2004, 0, 1),
+    },
+  });
+
+  const user9 = await prisma.user.create({
+    data: {
+      username: 'user9',
+      email: 'user9@example.com',
+      passwordHash,
+      birthDate: new Date(2006, 0, 1),
+    },
+  });
+
+  const user10 = await prisma.user.create({
+    data: {
+      username: 'user10',
+      email: 'user10@example.com',
+      passwordHash,
+      birthDate: new Date(2008, 0, 1),
+    },
+  });
   // Create rooms
-  const room1 = await prisma.room.create({
+  await prisma.room.create({
     data: {
       name: 'Room1',
       players: {
-        connect: { id: user1.id },
+        connect: [{ id: user1.id }, { id: user2.id }, { id: user3.id }, { id: user4.id }],
       },
     },
   });
-
-  const room2 = await prisma.room.create({
+  await prisma.room.create({
     data: {
       name: 'Room2',
       players: {
-        connect: { id: user2.id },
+        connect: [{ id: user5.id }, { id: user6.id }, { id: user7.id }],
       },
     },
   });
-
   console.log('Seeding completed!');
 }
 
