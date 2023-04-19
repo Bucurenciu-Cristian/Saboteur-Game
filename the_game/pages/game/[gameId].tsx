@@ -1,51 +1,61 @@
 import { useRouter } from 'next/router';
-import { useMachine } from '@xstate/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useSocket from '../../src/hooks/useSocket';
-import parentMachine from '../../src/Types/Xstate/Back-end/main-back-machine';
-import preparationMachine from '../../src/Types/Xstate/Back-end/PreparationGame';
+import ShowBoard from '../../src/components/ShowBoard';
 
-export async function fetchPlayers(roomId: number) {
-  const response = await fetch(`/api/room/${roomId}/players`);
-  const players = await response.json();
-  return players;
+/* if (typeof window !== 'undefined') {
+  inspect({
+    url: 'https://statecharts.io/inspect', // The URL of the inspect server
+    iframe: false, // Set to false if you want to use a separate browser window for the inspector
+  });
+} */
+
+async function checkRoomExists(gameId: number) {
+  const response = await fetch(`/api/room/${gameId}/players`);
+  const data = await response.json();
+  return data;
 }
 
 function GameId() {
   const router = useRouter();
   let { gameId } = router.query;
   gameId = Number(gameId);
+  const [gameState, setGameState] = useState(null);
 
   const socket = useSocket();
-  const [parentState, send] = useMachine(parentMachine, { devTools: true });
-  const [ChildState, ChildSend] = useMachine(preparationMachine, { devTools: true });
+  // const [clientState, sendClient] = useMachine(clientMachine, { devTools: true });
+
+  // const { context } = clientState;
+  useEffect(() => {
+    if (!gameId) return;
+    (async () => {
+      const roomExists = await checkRoomExists(gameId);
+      if (roomExists[0].roomExists === false) {
+        await router.push('/'); // Redirect to the home page if the room doesn't exist
+      }
+    })();
+  }, [gameId, router]);
 
   useEffect(() => {
-    async function loadPlayers() {
-      console.log('loadPlayers');
-      const players = await fetchPlayers(gameId);
-      // Send the players to the parentState machine
-      console.log('players', players);
-      send({ type: 'SET_PLAYERS', players });
-    }
+    if (!socket || !gameId) return;
 
-    loadPlayers();
-  }, [gameId, send]);
-
+    // Join the room with the given gameId
+    socket.emit('join', gameId);
+    socket.on('GAME_STATE_UPDATE', (data) => {
+      console.log('GAME_STATE_UPDATE_CLIENT', data);
+      setGameState(data);
+    });
+    return () => {
+      socket.emit('leave', gameId);
+    };
+  }, [socket, gameId]);
+  // Listen for server updates and update the client state accordingly
+  useEffect(() => {}, [socket]);
+  // Render the component based on the client state
   return (
     <>
       <div>Game ID: {gameId}</div>
-      <div>
-        <h1>Child Comp</h1>
-        {/* <p>Current context: {JSON.stringify(ChildState.context)}</p> */}
-        <p>Current state: {ChildState.value}</p>
-        {ChildState.matches('preparationComplete') ? <p>Preparation is complete!</p> : <button>Start Preparation</button>}
-        {ChildState.done && <p>Done processing!</p>}
-      </div>
-      <div>
-        <p>Current state of BIG: {parentState.value}</p>
-        {parentState.done && <p>Done processing!</p> && JSON.stringify(parentState.context.players)}
-      </div>
+      {gameState && <ShowBoard gameMatrix={gameState.gameBoard} />}
     </>
   );
 }
