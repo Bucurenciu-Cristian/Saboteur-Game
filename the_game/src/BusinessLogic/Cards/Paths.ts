@@ -1,9 +1,8 @@
 import { Actions } from './Actions';
 import gold from '../../../public/images/SaboteurImagesSingle/Path/gold.png';
-import start from '../../../public/images/SaboteurImagesSingle/Path/start.png';
 import rock from '../../../public/images/SaboteurImagesSingle/Path/rock.png';
 import rock2 from '../../../public/images/SaboteurImagesSingle/Path/rock2.png';
-
+import { CardTypes } from '../../data/cards';
 import One from '../../../public/images/SaboteurImagesSingle/Path/1.png';
 import Four from '../../../public/images/SaboteurImagesSingle/Path/4.png';
 import Six from '../../../public/images/SaboteurImagesSingle/Path/6.png';
@@ -50,39 +49,39 @@ import { Modes } from '../../enums';
 export const Blocks: PathCard[] = [
   // Blocaje Don't change
   {
-    src: Six,
+    src: CardTypes.PATH[5],
     code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False, Modes.False],
   },
   {
-    src: Seven,
+    src: CardTypes.PATH[6],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.True, Modes.False, Modes.False],
   },
   {
-    src: Fifteen,
+    src: CardTypes.PATH[14],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.True, Modes.False, Modes.False, Modes.False],
   },
   {
-    src: Sixteen,
+    src: CardTypes.PATH[15],
     code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.True, Modes.False, Modes.False],
   },
   {
-    src: twentySeven,
+    src: CardTypes.PATH[26],
     code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.False, Modes.True, Modes.False],
   },
   {
-    src: twentyEight,
+    src: CardTypes.PATH[27],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.False, Modes.True, Modes.False],
   },
   {
-    src: thirtyTwo,
+    src: CardTypes.PATH[31],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.False],
   },
   {
-    src: thirtyThree,
+    src: CardTypes.PATH[32],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.False, Modes.False],
   },
   {
-    src: thirtySix,
+    src: CardTypes.PATH[35],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.False, Modes.False, Modes.False],
   },
 ];
@@ -241,27 +240,27 @@ export const normalPath: ICardBasic[] = [
 ];
 
 const StartCard: ICardBasic = {
-  src: start,
+  src: CardTypes.PATH_SPECIAL[0],
   code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Start],
   // id: 1,
 };
 export const finishCards: ISpecialPath[] = [
   {
-    src: rock,
+    src: CardTypes.PATH_SPECIAL[1],
     // code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.True, Modes.True, Modes.False, dex.Rock],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Rock],
-    back: winning,
+    back: CardTypes.BACK_OF_CARDS.WINNING,
   },
   {
-    src: gold,
+    src: CardTypes.PATH_SPECIAL[3],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Gold],
-    back: winning,
+    back: CardTypes.BACK_OF_CARDS.WINNING,
   },
   {
-    src: rock2,
+    src: CardTypes.PATH_SPECIAL[2],
     // code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.False, Modes.True, Modes.False, Modes.Rock],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Rock],
-    back: winning,
+    back: CardTypes.BACK_OF_CARDS.WINNING,
   },
 ];
 export const SpecialPath: ICardBasic[] = [StartCard, ...finishCards];
