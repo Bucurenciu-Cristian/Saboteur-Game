@@ -1,6 +1,6 @@
-import { IMatrix } from '../../Types/DexType';
+import { IMatrix } from '@src/Types/DexType';
+import { findCardActions } from '@src/enums';
 import { findTheCard } from '../Logic';
-import { findCardActions } from '../../enums';
 import { coordinateType } from './Matrix';
 import { neighboursCoordonate } from './NeighboursCoordonate';
 
@@ -10,8 +10,8 @@ import { neighboursCoordonate } from './NeighboursCoordonate';
  * @param matrix
  */
 export function findAvailablePath(matrix: IMatrix[][]) {
-  //Itereaza prin toata matricea si vezi cand dai de Occupied, du-te in vecini care nu sunt ocupati si verifica care cale este libera, daca gasesti, adauga coordonatele in lista.
-  let list: coordinateType[] = [];
+  // Itereaza prin toata matricea si vezi cand dai de Occupied, du-te in vecini care nu sunt ocupati si verifica care cale este libera, daca gasesti, adauga coordonatele in lista.
+  const list: coordinateType[] = [];
   const finalCardsCoord = findTheCard(matrix, findCardActions.Final);
   const finalCardsRows = finalCardsCoord.map((item) => item[0]);
   const finalCardsColumns = finalCardsCoord.map((item) => item[1]);
@@ -30,9 +30,9 @@ export function findAvailablePath(matrix: IMatrix[][]) {
       }
     }
   }
-  const uniqueData = list.filter((item, index, array) => {
-    return index === array.findIndex((obj) => obj.row === item.row && obj.column === item.column);
-  });
+  const uniqueData = list.filter(
+    (item, index, array) => index === array.findIndex((obj) => obj.row === item.row && obj.column === item.column)
+  );
   uniqueData.sort((a, b) => a.row - b.row);
   return uniqueData;
 }

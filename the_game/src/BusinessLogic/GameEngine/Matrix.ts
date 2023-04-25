@@ -1,11 +1,9 @@
-import { Matrix, padding } from '../../variables';
-import { ICardBasic, IMatrix } from '../../Types/DexType';
-import { NESWC, normalPath, SpecialPath, StartCard } from '../Cards/Paths';
-import { conDirections } from '../../enums';
-import rewardBack from '../../../public/images/SaboteurImagesSingle/Back_of_cards/reward.png';
+import { Matrix, padding } from '@src/variables';
+import { ICardBasic, IMatrix } from '@src/Types/DexType';
+import { NESWC, normalPath, SpecialPath, StartCard } from '@cards/Paths';
+import { fisherYatesShuffle } from '@src/Types/Xstate/Back-end/FisherYatesShuffle';
 import { getRandomizedArray } from './GetRandomizedArray';
 import { checkTheCurrentCardInTable } from './CheckTheCurrentCardInTable';
-import { fisherYatesShuffle } from '../../Types/Xstate/Back-end/FisherYatesShuffle';
 
 const { rows: row, columns: column } = Matrix;
 export let InitialMatrix: IMatrix[][] = Array(row)
@@ -98,6 +96,7 @@ function GiveMeRandomsCardsAroundACard(centerRows: number, centerColumn: number)
 }
 
 export type coordinateType = { row: number; column: number };
+/*
 
 export function extendMatrix(matrix: IMatrix[][], direction: conDirections): IMatrix[][] {
   const numRows = direction === conDirections.NORTH || direction === conDirections.SOUTH ? 1 : matrix.length;
@@ -145,3 +144,4 @@ export function extendMatrix(matrix: IMatrix[][], direction: conDirections): IMa
   }
   return extendedMatrix;
 }
+*/

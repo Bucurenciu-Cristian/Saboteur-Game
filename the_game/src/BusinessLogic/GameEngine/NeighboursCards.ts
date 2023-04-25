@@ -1,5 +1,5 @@
-import { IMatrix } from '../../Types/DexType';
-import { conDirections } from '../../enums';
+import { IMatrix } from '@src/Types/DexType';
+import { conDirections } from '@src/enums';
 
 export function neighboursCards(matrix: IMatrix[][], row: number, column: number) {
   const { Card } = matrix[row][column];
@@ -16,35 +16,41 @@ export function neighboursCards(matrix: IMatrix[][], row: number, column: number
   const south = row + 1;
   const west = column - 1;
   const east = column + 1;
+  const [, , third, fourth, fifth, sixth] = Card.code;
   if (row > 0) {
     const { Card: CardNorth, Occupied: OccupiedNorth } = matrix[north][column];
     if (OccupiedNorth) {
-      NorthCenter = Card.code[2];
-      SouthOfNorthCard = CardNorth.code[4];
+      NorthCenter = third;
+      const [, , , , fifth1] = CardNorth.code;
+      SouthOfNorthCard = fifth1;
     }
   }
 
   if (column < matrix[row].length - 1) {
     const { Card: CardEast, Occupied: OccupiedEast } = matrix[row][east];
     if (OccupiedEast) {
-      EastCenter = Card.code[3];
-      WestOfEastCard = CardEast.code[5];
+      EastCenter = fourth;
+      const { code } = CardEast;
+      const [, , , , , sixth1] = code;
+      WestOfEastCard = sixth1;
     }
   }
 
   if (row < matrix.length - 1) {
     const { Card: CardSouth, Occupied: OccupiedSouth } = matrix[south][column];
     if (OccupiedSouth) {
-      SouthCenter = Card.code[4];
-      NorthOfSouthCard = CardSouth.code[2];
+      SouthCenter = fifth;
+      const [, , third1] = CardSouth.code;
+      NorthOfSouthCard = third1;
     }
   }
 
   if (column > 0) {
     const { Card: CardWest, Occupied: OccupiedWest } = matrix[row][west];
     if (OccupiedWest) {
-      WestCenter = Card.code[5];
-      EastOfWestCard = CardWest.code[3];
+      WestCenter = sixth;
+      const [, , , fourth1] = CardWest.code;
+      EastOfWestCard = fourth1;
     }
   }
 

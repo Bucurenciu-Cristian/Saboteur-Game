@@ -1,62 +1,52 @@
-import Miner1 from '../../../public/images/SaboteurImagesSingle/Players/Miners/1.png';
-import Miner2 from '../../../public/images/SaboteurImagesSingle/Players/Miners/2.png';
-import Miner3 from '../../../public/images/SaboteurImagesSingle/Players/Miners/3.png';
-import Miner4 from '../../../public/images/SaboteurImagesSingle/Players/Miners/4.png';
-import Miner5 from '../../../public/images/SaboteurImagesSingle/Players/Miners/5.png';
-import Miner6 from '../../../public/images/SaboteurImagesSingle/Players/Miners/6.png';
-import Miner7 from '../../../public/images/SaboteurImagesSingle/Players/Miners/7.png';
-import BadGuy1 from '../../../public/images/SaboteurImagesSingle/Players/BadGuys/1.png';
-import BadGuy2 from '../../../public/images/SaboteurImagesSingle/Players/BadGuys/2.png';
-import BadGuy3 from '../../../public/images/SaboteurImagesSingle/Players/BadGuys/3.png';
-import BadGuy4 from '../../../public/images/SaboteurImagesSingle/Players/BadGuys/4.png';
-import { ICardBasic, PlayerCard } from '../../Types/DexType';
-import { Modes } from '../../enums';
+import { ICardBasic, PlayerCard } from '@src/Types/DexType';
+import { Modes } from '@src/enums';
+import { CardTypes } from '@src/data/cards';
 
 export const Saboteurs: PlayerCard[] = [
   {
-    src: BadGuy1,
+    src: CardTypes.PLAYERS.BAD_GUYS[0],
     code: [Modes.Base, Modes.Player, Modes.Saboteur],
   },
   {
-    src: BadGuy2,
+    src: CardTypes.PLAYERS.BAD_GUYS[1],
     code: [Modes.Base, Modes.Player, Modes.Saboteur],
   },
   {
-    src: BadGuy3,
+    src: CardTypes.PLAYERS.BAD_GUYS[2],
     code: [Modes.Base, Modes.Player, Modes.Saboteur],
   },
   {
-    src: BadGuy4,
+    src: CardTypes.PLAYERS.BAD_GUYS[3],
     code: [Modes.Base, Modes.Player, Modes.Saboteur],
   },
 ];
 export const Miners: PlayerCard[] = [
   {
-    src: Miner1,
+    src: CardTypes.PLAYERS.MINERS[0],
     code: [Modes.Base, Modes.Player, Modes.Miner],
   },
   {
-    src: Miner2,
+    src: CardTypes.PLAYERS.MINERS[1],
     code: [Modes.Base, Modes.Player, Modes.Miner],
   },
   {
-    src: Miner3,
+    src: CardTypes.PLAYERS.MINERS[2],
     code: [Modes.Base, Modes.Player, Modes.Miner],
   },
   {
-    src: Miner4,
+    src: CardTypes.PLAYERS.MINERS[3],
     code: [Modes.Base, Modes.Player, Modes.Miner],
   },
   {
-    src: Miner5,
+    src: CardTypes.PLAYERS.MINERS[4],
     code: [Modes.Base, Modes.Player, Modes.Miner],
   },
   {
-    src: Miner6,
+    src: CardTypes.PLAYERS.MINERS[5],
     code: [Modes.Base, Modes.Player, Modes.Miner],
   },
   {
-    src: Miner7,
+    src: CardTypes.PLAYERS.MINERS[6],
     code: [Modes.Base, Modes.Player, Modes.Miner],
   },
 ];

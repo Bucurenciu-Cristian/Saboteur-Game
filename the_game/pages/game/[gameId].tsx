@@ -87,8 +87,8 @@ function GameId() {
           <Col xs={3}>
             <div>Players</div>
             <ShowUsers items={gameState.players[0]} />
-            {/* <ShowUsers items={gameState.players[1]} /> */}
-            {/* <ShowUsers items={gameState.players[2]} /> */}
+            <ShowUsers items={gameState.players[1]} />
+            <ShowUsers items={gameState.players[2]} />
           </Col>
         </Row>
       )}

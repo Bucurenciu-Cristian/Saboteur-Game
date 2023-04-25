@@ -1,7 +1,7 @@
-import { Actions } from './Cards/Actions';
-import { Dwarfs } from './Cards/Dwarfs';
-import { AllGold } from './Cards/Rewards';
-import { allPaths } from './Cards/Paths';
+import { Actions } from '@cards/Actions';
+import { Dwarfs } from '@cards/Dwarfs';
+import { AllGold } from '@cards/Rewards';
+import { allPaths } from '@cards/Paths';
 import { ICardBasic, IMatrix } from '../Types/DexType';
 import { findCardActions } from '../enums';
 

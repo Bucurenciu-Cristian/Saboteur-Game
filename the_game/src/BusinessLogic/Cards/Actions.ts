@@ -1,37 +1,8 @@
-import { ActionCard, dexType, FOTType, ICardBasic } from '@src/Types/DexType';
+import { ActionCard, FOTType, ICardBasic } from '@src/Types/DexType';
 import { Modes } from '@src/enums';
 import { CardTypes } from '@src/data/cards';
 
 export const FOT: FOTType = { F: 'F', T: 'T' };
-export const dex: dexType = {
-  Action: 'A',
-  Base: 'B',
-  Destroy: 'D',
-  Map: 'M',
-  Miner: 'M',
-  Path: 'P',
-  Player: 'L',
-  Reward: 'R',
-  Saboteur: 'S',
-  N: { ...FOT },
-  S: { ...FOT },
-  E: { ...FOT },
-  W: { ...FOT },
-  C: { ...FOT },
-  R: { ...FOT },
-  Axe: { ...FOT },
-  Cart: { ...FOT },
-  Lantern: { ...FOT },
-  AxeS: 'A',
-  CartS: 'C',
-  LanternS: 'L',
-  Gold: 'G',
-  Rock: 'R',
-  AxeCart: 'G',
-  AxeLantern: 'B',
-  CartLantern: 'E',
-  Start: 'S',
-};
 const Maps: ActionCard[] = [
   {
     src: CardTypes.ACTIONS.MAP,

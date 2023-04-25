@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Fragment, useMemo, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import pathOrAction from '../../public/images/SaboteurImagesSingle/Back_of_cards/pathOrAction.png';
+import pathOrAction from '../../public/images/Back_of_cards/pathOrAction.png';
 import { randomfirstCardsInHand, randomRestCardsInHand } from '../../src/components/Cards';
 import { helpWithTheRender } from '../../src/functions';
 import { imageSize } from '../../src/variables';

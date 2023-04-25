@@ -1,12 +1,12 @@
-import { IMatrix } from '../../Types/DexType';
-import { conDirections } from '../../enums';
+import { IMatrix } from '@src/Types/DexType';
+import { conDirections } from '@src/enums';
 
 export const findOccupiedEdge = (matrix: IMatrix[][]) => {
   const numRows = matrix.length;
   const numCols = matrix[0].length;
   // let location: conDirections;
-  let location: conDirections | undefined = undefined;
-  let locations: { direction: conDirections }[] = [];
+  let location: conDirections | undefined;
+  const locations: { direction: conDirections }[] = [];
 
   for (let row = 0; row < numRows; row++) {
     for (let col = 0; col < numCols; col++) {
@@ -40,7 +40,6 @@ export const findOccupiedEdge = (matrix: IMatrix[][]) => {
   }, []);
   if (uniqueLocations.length > 0) {
     return [true, uniqueLocations]; // Edge is occupied, return true and the array of occupied edge cell indices
-  } else {
-    return [false, []]; // Edge is not occupied, return false and an empty array
   }
+  return [false, []]; // Edge is not occupied, return false and an empty array
 };

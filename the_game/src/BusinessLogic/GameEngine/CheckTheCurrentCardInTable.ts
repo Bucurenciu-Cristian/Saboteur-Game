@@ -1,5 +1,5 @@
-import { IMatrix } from '../../Types/DexType';
-import { NeighboursActions } from '../../enums';
+import { IMatrix } from '@src/Types/DexType';
+import { NeighboursActions } from '@src/enums';
 import { neighboursCards } from './NeighboursCards';
 
 /**
@@ -9,6 +9,8 @@ import { neighboursCards } from './NeighboursCards';
  * @param matrix
  * @param action
  */
+
+// eslint-disable-next-line consistent-return
 export function checkTheCurrentCardInTable(
   matrix: IMatrix[][],
   row: number,

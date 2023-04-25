@@ -1,7 +1,6 @@
 import { allTheCards } from './Logic';
 import { TypeGuardOnCards } from './TypeGuardOnCards';
 import { ICardBasic } from '../Types/DexType';
-import { GameSetup } from './GameEngine/Gameplay/GameSetup';
 
 export function checkMyCards() {
   console.time('CheckingTheCards'); // start the timer
@@ -42,7 +41,6 @@ export function checkMyCards() {
   */
   console.time('GameSetup');
   {
-    console.log(GameSetup.randomWinningCards);
   }
   console.timeEnd('GameSetup');
 }

@@ -306,9 +306,10 @@ function createRoomMachine(roomId) {
         }),
 
         addPlayer: assign({
-          players: (context, event) =>
+          players: (context, event) => {
             // Add a new player to the game
-            [...context.players, event.newPlayer],
+            // [...context.players, event.newPlayer],
+          },
         }),
         endTurn: assign({
           currentPlayerIndex: (context) => (context.currentPlayerIndex + 1) % context.players.length,

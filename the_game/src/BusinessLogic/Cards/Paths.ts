@@ -207,7 +207,7 @@ export const finishCards: ISpecialPath[] = [
   {
     // src: rock,
     src: CardTypes.PATH_SPECIAL[1],
-    // code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.True, Modes.True, Modes.False, dex.Rock],
+    // code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.True, Modes.True, Modes.False, Modes.Rock],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Rock],
     // back: Winning,
     back: CardTypes.BACK_OF_CARDS.WINNING,

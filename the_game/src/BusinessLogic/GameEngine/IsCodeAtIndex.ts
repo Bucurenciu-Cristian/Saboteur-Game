@@ -1,4 +1,4 @@
-import { IMatrix } from '../../Types/DexType';
+import { IMatrix } from '@src/Types/DexType';
 
 /**
  * Checks if the code at the specified index in the matrix cell has a specific value.
