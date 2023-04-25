@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { Button } from '@mui/material';
-import useSocket from '../../src/hooks/useSocket';
-import useUpdateUserId from '../../src/hooks/useUpdateUserId';
+import useSocket from '@hooks/useSocket';
+import useUpdateUserId from '@hooks/useUpdateUserId';
 
 function Room() {
   const [room, setRoom] = useState(null);

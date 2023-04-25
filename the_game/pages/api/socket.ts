@@ -1,5 +1,6 @@
 import { Server } from 'socket.io';
 import { instrument } from '@socket.io/admin-ui';
+import { NextApiRequest, NextApiResponse } from 'next';
 import joinLobby from '../../src/BusinessLogic/events/joinLobby';
 import joinRoom from '../../src/BusinessLogic/events/joinRoom';
 import leaveRoom from '../../src/BusinessLogic/events/leaveRoom';
@@ -14,30 +15,34 @@ import createRoomMachine from '../../src/Types/Xstate/Back-end/main-back-machine
 
 const roomMachines = new Map();
 
-function getOrCreateRoomMachine(roomId: number) {
+function setupRoomMachineOnTransition(roomMachine, roomId, io1) {
+  roomMachine.onTransition((state) => {
+    if (state.changed) {
+      console.log('State changed to:', state.value);
+      io1.to(roomId).emit('GAME_STATE_UPDATE', state.context);
+    }
+  });
+}
+
+function getOrCreateRoomMachine(roomId: number, io) {
   if (roomMachines.has(roomId)) {
-    console.log('Room machine already exists');
     return roomMachines.get(roomId);
   }
   const newRoomMachine = createRoomMachine(roomId);
   console.log('Room machine created');
   roomMachines.set(roomId, newRoomMachine);
+  setupRoomMachineOnTransition(newRoomMachine, roomId, io);
   return newRoomMachine;
 }
 
-let connectedSockets = 0;
-
 // Here you are on the back-end side:
 // You have to restart the server for the changes to take effect
-const SocketHandler = (req, res) => {
+const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
   if (!res.socket.server.io) {
     console.log('Socket is initializing');
     const optionsServer = {
       cors: {
-        // origin: ['http://localhost:3050', 'https://admin.socket.io/#/', 'https://admin.socket.io/'], // This allows any origin to connect. You can replace '*' with your specific origins.
         origin: ['https://admin.socket.io'],
-        // methods: ['GET', 'POST'], // Allowed methods
-        // allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
         credentials: true, // This allows cookies to be sent along with requests
       },
     };
@@ -47,13 +52,19 @@ const SocketHandler = (req, res) => {
       mode: 'development',
     };
     instrument(io, optionsInstrument);
-    const adminNamespace = io.of('/admin');
     res.socket.server.io = io;
     io.on('connection', (socket) => {
-      connectedSockets++;
-      console.log('User connected through socket ->', socket.rooms);
-      console.log('Number of connected sockets:', connectedSockets);
+      // console.log('User connected through socket ->', socket.rooms);
+      const assignSocketName = (roomId: number) => {
+        const room = io.sockets.adapter.rooms.get(roomId);
+        const roomSize = room.size;
+        const socketName = `S-${roomId}-${roomSize}`; // Modify this format as needed
+        socket.namePlayer = socketName;
+      };
 
+      /*
+       * This is related to joining the GAME.
+       */
       socket.on('joinLobby', () => joinLobby(socket));
       socket.on('joinRoom', (data) => joinRoom(socket, io, data));
       socket.on('leaveRoom', (data) => leaveRoom(socket, io, data));
@@ -70,28 +81,26 @@ const SocketHandler = (req, res) => {
 
       socket.on('join', (roomId) => {
         socket.join(roomId);
+        assignSocketName(roomId); // Assign a custom name to the socket when it joins a room
 
-        console.log(`socket ${socket.id} joined room ${roomId}`);
         if (io.sockets.adapter.rooms.has(roomId)) {
-          console.log(`Room ${roomId} has ${io.sockets.adapter.rooms.get(roomId).size} sockets`);
+          console.log(`${socket.namePlayer} connected`);
         }
 
-        const roomMachine = getOrCreateRoomMachine(roomId);
+        const roomMachine = getOrCreateRoomMachine(roomId, io);
         io.to(roomId).emit('GAME_STATE_UPDATE', roomMachine.state.context);
-
-        roomMachine.onTransition((state) => {
-          if (state.changed) {
-            console.log('State changed to:', state.value);
-            // console.log('New context:', state.context);
-            io.to(roomId).emit('GAME_STATE_UPDATE', state.context);
-          }
-        });
       });
 
+      socket.on('disconnecting', (reason) => {
+        for (const room of socket.rooms) {
+          if (room !== socket.id) {
+            socket.to(room).emit('leftRoom');
+            console.log(`user has left ${socket.namePlayer} because off this ->`, reason);
+          }
+        }
+      });
       socket.on('disconnect', (reason) => {
         console.log(`socket ${socket.id} disconnected due to ${reason}`);
-        connectedSockets--;
-        console.log('Number of connected sockets:', connectedSockets);
       });
     });
   }

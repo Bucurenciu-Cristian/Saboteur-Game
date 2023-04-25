@@ -11,6 +11,11 @@ interface ImageListProps {
   item: CardsType[];
 }
 
+/**
+ * This is not working at the moment, KINDA deprecated
+ * @param item
+ * @constructor
+ */
 function ImageList({ item }: ImageListProps) {
   const [rotations, setRotations] = useState(Array(item.length).fill(0));
 

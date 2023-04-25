@@ -110,6 +110,12 @@ async function main() {
       },
     },
   });
+
+  await prisma.room.create({
+    data: {
+      name: 'Room3-Empty',
+    },
+  });
   console.log('Seeding completed!');
 }
 

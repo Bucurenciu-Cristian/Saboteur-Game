@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 const prisma = new PrismaClient();
-export default async (req, res) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { roomId } = req.query;
 
   if (req.method === 'GET') {
@@ -16,10 +17,9 @@ export default async (req, res) => {
           username: true,
         },
       });
-      if (players.length === 0) {
-        players.push({ roomExists: false });
-      } else {
-        players.push({ roomExists: true });
+      if (!players) {
+        res.status(404).json({ error: 'Room not found' });
+        return;
       }
       res.status(200).json(players);
     } catch (error) {

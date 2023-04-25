@@ -1,10 +1,10 @@
-export let noOfPlayers = 3;
+export const noOfPlayers = 3;
 
-const width = 100;
+const width = 70;
 const height = width * 1.45;
-export let imageSize = {
-  width: width,
-  height: height,
+export const imageSize = {
+  width,
+  height,
 };
 
 export const padding = true;

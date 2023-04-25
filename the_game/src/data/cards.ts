@@ -1,6 +1,6 @@
 const BASE_PATH = '/images/SaboteurImagesSingle';
 const ACTIONS_PATH = `${BASE_PATH}/Actions`;
-const BACK_OF_CARDS_PATH = `${BASE_PATH}/Back_of_cards`;
+const BACK_OF_CARDS_PATH = `/images/SaboteurImagesSingle/Back_of_cards`;
 const GOLD_REWARD_PATH = `${BASE_PATH}/Gold-reward`;
 const PATH_PATH = `${BASE_PATH}/Path`;
 const PLAYERS_PATH = `${BASE_PATH}/Players`;
@@ -12,12 +12,17 @@ export const CardTypes = {
   ACTIONS: {
     TWO_POWERS: Array.from({ length: 3 }, (_, i) => `${ACTIONS_PATH}/2Powers/${i + 1}.png`),
     AXE: Array.from({ length: 2 }, (_, i) => `${ACTIONS_PATH}/Axe/${i + 1}.png`),
+    FELINAR: Array.from({ length: 2 }, (_, i) => `${ACTIONS_PATH}/Felinar/${i + 1}.png`),
+    CART: Array.from({ length: 2 }, (_, i) => `${ACTIONS_PATH}/Cart/${i + 1}.png`),
+    MAP: `${ACTIONS_PATH}/map.png`,
+    DESTROY: `${ACTIONS_PATH}/destroyPath.png`,
     // Add other action cards here...
   },
   BACK_OF_CARDS: {
     PATH_OR_ACTION: `${BACK_OF_CARDS_PATH}/pathOrAction.png`,
     PLAYERS: `${BACK_OF_CARDS_PATH}/players.png`,
-    WINNING: `${BACK_OF_CARDS_PATH}/winning.png`,
+    // WINNING: `${BACK_OF_CARDS_PATH}/winning.png`,
+    WINNING: '/images/SaboteurImagesSingle/Back_of_cards/winning.png',
     REWARD: `${BACK_OF_CARDS_PATH}/reward.png`,
     Start2: `${BACK_OF_CARDS_PATH}/start2.png`,
     // Add other back_of_cards here...

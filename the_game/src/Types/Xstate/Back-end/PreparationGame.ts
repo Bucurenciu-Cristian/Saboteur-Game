@@ -4,11 +4,12 @@ import { Miners, Saboteurs } from '../../../BusinessLogic/Cards/Dwarfs';
 import { PathsAndActions } from '../../../BusinessLogic/Cards/Paths';
 import { InitialMatrix } from '../../../BusinessLogic/GameEngine/Matrix';
 import { ICardBasic, IMatrix, PlayerCard } from '../../DexType';
+import { fisherYatesShuffle } from './FisherYatesShuffle';
 
 interface Player {
   name: string;
   role?: PlayerCard;
-  Hand?: ICardBasic[];
+  hand?: ICardBasic[];
 }
 
 interface Context {
@@ -16,6 +17,7 @@ interface Context {
   deck: ICardBasic[];
   roleCards: PlayerCard[];
   matrix: IMatrix[][];
+  currentPlayerIndex: number;
 }
 
 const determineDwarfRoles = assign((context: Context, event) => {
@@ -28,7 +30,7 @@ const determineDwarfRoles = assign((context: Context, event) => {
 });
 
 const shuffleAndDealDwarfCards = assign((context: Context, event) => {
-  const shuffledCards = context.roleCards.sort(() => Math.random() - 0.5);
+  const shuffledCards = fisherYatesShuffle(context.roleCards);
   const playersWithRole = context.players.map((player, index) => ({
     ...player,
     role: shuffledCards[index],
@@ -42,7 +44,7 @@ const shuffleAndDealDwarfCards = assign((context: Context, event) => {
 const shuffleDeck = assign((context: Context, event) => {
   const deck = [...PathsAndActions];
   const matrix = [...InitialMatrix];
-  const shuffledCards = deck.sort(() => Math.random() - 0.5);
+  const shuffledCards = fisherYatesShuffle(deck);
   return {
     ...context,
     deck: shuffledCards,
@@ -61,7 +63,7 @@ const shuffleAndDealPathAndActionCards = assign((context: Context, event) => {
   };
   const playersWithCards = context.players.map((player) => ({
     ...player,
-    Hand: giveMeCards(howManyCardsInHand, context.deck),
+    hand: giveMeCards(howManyCardsInHand, context.deck),
   }));
   console.log('Preparation complete');
   return {
@@ -81,6 +83,7 @@ const preparationMachine = createMachine<Context>(
       deck: [],
       roleCards: [],
       matrix: [],
+      currentPlayerIndex: 0,
     },
     initial: 'determineDwarfRoles',
     states: {
@@ -133,9 +136,7 @@ const preparationMachine = createMachine<Context>(
       shuffleDeck,
       shuffleAndDealPathAndActionCards,
     },
-    guards: {
-      // hasEnoughPlayers,
-    },
+    guards: {},
   }
 );
 

@@ -1,12 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES6",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    "noEmit": false,
     "esModuleInterop": true,
+    "noEmitOnError": false,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -15,14 +20,38 @@
     "incremental": true,
     "allowJs": true,
     "downlevelIteration": true,
-    "baseUrl": "src",
+    "baseUrl": "./",
     "declaration": true,
     "paths": {
-      "@app/*": ["app/*"],
-      "@shared/*": ["app/shared/*"],
-      "@components/*": ["app/components/*"]
+      "@src/*": [
+        "src/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@cards/*": [
+        "src/BusinessLogic/Cards/*"
+      ],
+      "@engine/*": [
+        "src/BusinessLogic/GameEngine/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@images/*": [
+        "public/images/SaboteurImagesSingle/"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

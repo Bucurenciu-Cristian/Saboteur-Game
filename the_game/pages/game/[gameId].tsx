@@ -1,14 +1,9 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import useSocket from '../../src/hooks/useSocket';
-import ShowBoard from '../../src/components/ShowBoard';
-
-/* if (typeof window !== 'undefined') {
-  inspect({
-    url: 'https://statecharts.io/inspect', // The URL of the inspect server
-    iframe: false, // Set to false if you want to use a separate browser window for the inspector
-  });
-} */
+import useSocket from '@hooks/useSocket';
+import { Button, Col, Row } from 'react-bootstrap';
+import ShowUsers from '@components/ShowUsers';
+import ShowBoard from '@components/ShowBoard';
 
 async function checkRoomExists(gameId: number) {
   const response = await fetch(`/api/room/${gameId}/players`);
@@ -21,17 +16,13 @@ function GameId() {
   let { gameId } = router.query;
   gameId = Number(gameId);
   const [gameState, setGameState] = useState(null);
-
   const socket = useSocket();
-  // const [clientState, sendClient] = useMachine(clientMachine, { devTools: true });
-
-  // const { context } = clientState;
   useEffect(() => {
     if (!gameId) return;
     (async () => {
       const roomExists = await checkRoomExists(gameId);
-      if (roomExists[0].roomExists === false) {
-        await router.push('/'); // Redirect to the home page if the room doesn't exist
+      if (roomExists.length === 0) {
+        router.push('/'); // Redirect to the home page if the room doesn't exist
       }
     })();
   }, [gameId, router]);
@@ -41,21 +32,66 @@ function GameId() {
 
     // Join the room with the given gameId
     socket.emit('join', gameId);
+
     socket.on('GAME_STATE_UPDATE', (data) => {
       console.log('GAME_STATE_UPDATE_CLIENT', data);
       setGameState(data);
     });
+
+    // Ce poate sa faca un client?
+    // Sa trimita la server urmatoarele event-uri: playPath, playAction,
+
+    // trebuie sa arat si a cui e randul in momentul actual. Ca ceilalti sa astepte.
+    // socket.emit('playPath');
+    socket.emit('playAction');
+
     return () => {
       socket.emit('leave', gameId);
     };
   }, [socket, gameId]);
+
   // Listen for server updates and update the client state accordingly
   useEffect(() => {}, [socket]);
   // Render the component based on the client state
   return (
     <>
-      <div>Game ID: {gameId}</div>
-      {gameState && <ShowBoard gameMatrix={gameState.gameBoard} />}
+      <Row>
+        <div>Game ID: {gameId}</div>
+      </Row>
+      {gameState && (
+        <Row>
+          <Col xs={9}>
+            <ShowBoard gameMatrix={gameState.gameBoard} />
+            <Row>
+              <Col>
+                <p> Player {gameState.currentPlayer} has control </p>
+                The deck has {gameState.deck.length} cards
+                <Button>Reset Game</Button>
+              </Col>
+              <Col>
+                <Button>Rotate Card</Button>
+              </Col>
+              <Col>
+                <Button>Pass</Button>
+              </Col>
+              <Col>
+                <Button>End Turn</Button>
+                {/* <Button>End Game</Button> */}
+                {/* <Button>Leave Game</Button> */}
+                {/* <Button>Quit</Button> */}
+                {/* <Button>Restart Game</Button> */}
+                {/* <Button>Save Game</Button> */}
+              </Col>
+            </Row>
+          </Col>
+          <Col xs={3}>
+            <div>Players</div>
+            <ShowUsers items={gameState.players[0]} />
+            {/* <ShowUsers items={gameState.players[1]} /> */}
+            {/* <ShowUsers items={gameState.players[2]} /> */}
+          </Col>
+        </Row>
+      )}
     </>
   );
 }

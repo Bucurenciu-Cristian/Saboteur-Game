@@ -39,23 +39,26 @@ export interface FOTType {
   F: 'F';
   T: 'T';
 }
+
 export type CharTuple = [
   first: Modes.Base | Modes.Expansion,
   second: Modes.Path | Modes.Player | Modes.Action | Modes.Reward,
   // third?: 'T' | 'F' | 'M' | 'S' | 'E' | 'G' | dex.Base | 'D'| 'C',
   ...rest: string[]
 ];
+
 export interface ICardBasic {
   code: CharTuple | string;
-  src: StaticImageData | string;
+  src: string;
 }
+
 export interface IMatrix {
   Card: ICardBasic;
   Occupied: boolean;
 }
 
 export interface ISpecialPath extends ICardBasic {
-  back?: string;
+  back?: StaticImageData | string;
 }
 
 type PathCardCode = CharTuple & { 1: Modes.Path };

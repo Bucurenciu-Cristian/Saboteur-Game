@@ -1,10 +1,11 @@
 import { Matrix, padding } from '../../variables';
 import { ICardBasic, IMatrix } from '../../Types/DexType';
-import { NESWC, normalPath, SpecialPath } from '../Cards/Paths';
+import { NESWC, normalPath, SpecialPath, StartCard } from '../Cards/Paths';
 import { conDirections } from '../../enums';
 import rewardBack from '../../../public/images/SaboteurImagesSingle/Back_of_cards/reward.png';
 import { getRandomizedArray } from './GetRandomizedArray';
 import { checkTheCurrentCardInTable } from './CheckTheCurrentCardInTable';
+import { fisherYatesShuffle } from '../../Types/Xstate/Back-end/FisherYatesShuffle';
 
 const { rows: row, columns: column } = Matrix;
 export let InitialMatrix: IMatrix[][] = Array(row)
@@ -25,6 +26,9 @@ function GiveAndCheckCardTable(matrix: IMatrix[][], row: number, column: number)
   const beta = checkTheCurrentCardInTable(matrix, row, column);
 }
 
+/**
+ * DEMO, not Working, the same in every machine.
+ */
 // InitialMatrix = BasicFullPath(InitialMatrix);
 // GiveAndCheckCardTable(InitialMatrix, StartRow - 2, lastColumn - 5);
 // GiveAndCheckCardTable(InitialMatrix, StartRow - 2, lastColumn - 2);
@@ -40,7 +44,7 @@ function introduceSquare(card: ICardBasic) {
 }
 
 function InitializeTheMatrixBasics(matrix: IMatrix[][]) {
-  matrix[StartRow][StartColumn] = introduceSquare(SpecialPath[0]);
+  matrix[StartRow][StartColumn] = introduceSquare(StartCard);
   matrix[StartRow - 2][lastColumn] = introduceSquare(randomizedFinalCards[1]);
   matrix[StartRow][lastColumn] = introduceSquare(randomizedFinalCards[2]);
   matrix[StartRow + 2][lastColumn] = introduceSquare(randomizedFinalCards[0]);
@@ -63,32 +67,33 @@ function BasicFullPath(matrix: IMatrix[][]) {
 
 function GiveMeRandomsCardsAroundACard(centerRows: number, centerColumn: number) {
   // Testing the Cards connection
-  const randomNumbers = Array.from({ length: 5 }, () => Math.floor(Math.random() * 40));
+  const shuffledNormalPath = fisherYatesShuffle(normalPath);
+  const randomCards = shuffledNormalPath.slice(0, 5);
 
-  InitialMatrix[centerRows][centerColumn] = { Card: normalPath[randomNumbers[0]], Occupied: true };
+  InitialMatrix[centerRows][centerColumn] = { Card: randomCards[0], Occupied: true };
 
   // Check if West direction is within bounds
   const West = centerColumn - 1;
   if (West >= 0) {
-    InitialMatrix[centerRows][West] = { Card: normalPath[randomNumbers[1]], Occupied: true };
+    InitialMatrix[centerRows][West] = { Card: randomCards[1], Occupied: true };
   }
 
   // Check if East direction is within bounds
   const East = centerColumn + 1;
   if (East < InitialMatrix[0].length) {
-    InitialMatrix[centerRows][East] = { Card: normalPath[randomNumbers[2]], Occupied: true };
+    InitialMatrix[centerRows][East] = { Card: randomCards[2], Occupied: true };
   }
 
   // Check if North direction is within bounds
   const North = centerRows - 1;
   if (North >= 0) {
-    InitialMatrix[North][centerColumn] = { Card: normalPath[randomNumbers[3]], Occupied: true };
+    InitialMatrix[North][centerColumn] = { Card: randomCards[3], Occupied: true };
   }
 
   // Check if South direction is within bounds
   const South = centerRows + 1;
   if (South < InitialMatrix.length) {
-    InitialMatrix[South][centerColumn] = { Card: normalPath[randomNumbers[4]], Occupied: true };
+    InitialMatrix[South][centerColumn] = { Card: randomCards[4], Occupied: true };
   }
 }
 

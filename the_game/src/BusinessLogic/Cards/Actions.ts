@@ -1,20 +1,8 @@
-import Map from '../../../public/images/SaboteurImagesSingle/Actions/map.png';
-import LanternCart from '../../../public/images/SaboteurImagesSingle/Actions/2Powers/3.png';
+import { ActionCard, dexType, FOTType, ICardBasic } from '@src/Types/DexType';
+import { Modes } from '@src/enums';
+import { CardTypes } from '@src/data/cards';
 
-import Destroy from '../../../public/images/SaboteurImagesSingle/Actions/destroyPath.png';
-import AxeOn from '../../../public/images/SaboteurImagesSingle/Actions/Axe/1.png';
-import AxeOff from '../../../public/images/SaboteurImagesSingle/Actions/Axe/2.png';
-import LanternOn from '../../../public/images/SaboteurImagesSingle/Actions/Felinar/1.png';
-import LanternOff from '../../../public/images/SaboteurImagesSingle/Actions/Felinar/2.png';
-import CartOn from '../../../public/images/SaboteurImagesSingle/Actions/Cart/1.png';
-import CartOff from '../../../public/images/SaboteurImagesSingle/Actions/Cart/2.png';
-import CartAxe from '../../../public/images/SaboteurImagesSingle/Actions/2Powers/1.png';
-import LanternAxe from '../../../public/images/SaboteurImagesSingle/Actions/2Powers/2.png';
-
-import { ActionCard, dexType, FOTType, ICardBasic } from '../../Types/DexType';
-import { Modes } from '../../enums';
-
-export let FOT: FOTType = { F: 'F', T: 'T' };
+export const FOT: FOTType = { F: 'F', T: 'T' };
 export const dex: dexType = {
   Action: 'A',
   Base: 'B',
@@ -46,121 +34,124 @@ export const dex: dexType = {
 };
 const Maps: ActionCard[] = [
   {
-    src: Map,
+    src: CardTypes.ACTIONS.MAP,
     code: [Modes.Base, Modes.Action, Modes.Map],
   },
   {
-    src: Map,
+    src: CardTypes.ACTIONS.MAP,
     code: [Modes.Base, Modes.Action, Modes.Map],
   },
   {
-    src: Map,
+    src: CardTypes.ACTIONS.MAP,
     code: [Modes.Base, Modes.Action, Modes.Map],
   },
   {
-    src: Map,
+    src: CardTypes.ACTIONS.MAP,
     code: [Modes.Base, Modes.Action, Modes.Map],
   },
   {
-    src: Map,
+    src: CardTypes.ACTIONS.MAP,
     code: [Modes.Base, Modes.Action, Modes.Map],
   },
   {
-    src: Map,
+    src: CardTypes.ACTIONS.MAP,
     code: [Modes.Base, Modes.Action, Modes.Map],
   },
 ];
-let TwoActions: ActionCard[] = [
+const TwoActions: ActionCard[] = [
   {
-    src: LanternCart,
+    src: CardTypes.ACTIONS.TWO_POWERS[0],
     code: [Modes.Base, Modes.Action, Modes.LanternAndCard],
   },
   {
-    src: LanternAxe,
+    src: CardTypes.ACTIONS.TWO_POWERS[1],
     code: [Modes.Base, Modes.Action, Modes.AxeAndLantern],
   },
   {
-    src: CartAxe,
+    src: CardTypes.ACTIONS.TWO_POWERS[2],
     code: [Modes.Base, Modes.Action, Modes.AxeAndCart],
   },
 ];
-let DestroyPath: ActionCard[] = [
+const DestroyPath: ActionCard[] = [
   {
-    src: Destroy,
+    src: CardTypes.ACTIONS.DESTROY,
     code: [Modes.Base, Modes.Action, Modes.Destroy],
   },
   {
-    src: Destroy,
+    src: CardTypes.ACTIONS.DESTROY,
     code: [Modes.Base, Modes.Action, Modes.Destroy],
   },
   {
-    src: Destroy,
+    src: CardTypes.ACTIONS.DESTROY,
     code: [Modes.Base, Modes.Action, Modes.Destroy],
   },
 ];
-let Cart: ActionCard[] = [
+const Cart: ActionCard[] = [
   {
-    src: CartOn,
+    src: CardTypes.ACTIONS.CART[0],
     code: [Modes.Base, Modes.Action, Modes.Cart, Modes.True],
   },
   {
-    src: CartOn,
+    src: CardTypes.ACTIONS.CART[0],
     code: [Modes.Base, Modes.Action, Modes.Cart, Modes.True],
   },
   {
-    src: CartOff,
+    src: CardTypes.ACTIONS.CART[1],
+
     code: [Modes.Base, Modes.Action, Modes.Cart, Modes.False],
   },
   {
-    src: CartOff,
+    src: CardTypes.ACTIONS.CART[1],
     code: [Modes.Base, Modes.Action, Modes.Cart, Modes.False],
   },
   {
-    src: CartOff,
+    src: CardTypes.ACTIONS.CART[1],
     code: [Modes.Base, Modes.Action, Modes.Cart, Modes.False],
   },
 ];
-let Axe: ActionCard[] = [
+const Axe: ActionCard[] = [
   {
-    src: AxeOn,
+    src: CardTypes.ACTIONS.AXE[0],
     code: [Modes.Base, Modes.Action, Modes.Axe, Modes.True],
   },
   {
-    src: AxeOn,
+    src: CardTypes.ACTIONS.AXE[0],
     code: [Modes.Base, Modes.Action, Modes.Axe, Modes.True],
   },
   {
-    src: AxeOff,
+    src: CardTypes.ACTIONS.AXE[1],
     code: [Modes.Base, Modes.Action, Modes.Axe, Modes.False],
   },
   {
-    src: AxeOff,
+    src: CardTypes.ACTIONS.AXE[1],
     code: [Modes.Base, Modes.Action, Modes.Axe, Modes.False],
   },
   {
-    src: AxeOff,
+    src: CardTypes.ACTIONS.AXE[1],
+
     code: [Modes.Base, Modes.Action, Modes.Axe, Modes.False],
   },
 ];
-let Lantern: ActionCard[] = [
+const Lantern: ActionCard[] = [
   {
-    src: LanternOn,
+    src: CardTypes.ACTIONS.FELINAR[0],
+
     code: [Modes.Base, Modes.Action, Modes.Lantern, Modes.True],
   },
   {
-    src: LanternOn,
+    src: CardTypes.ACTIONS.FELINAR[0],
     code: [Modes.Base, Modes.Action, Modes.Lantern, Modes.True],
   },
   {
-    src: LanternOff,
+    src: CardTypes.ACTIONS.FELINAR[1],
     code: [Modes.Base, Modes.Action, Modes.Lantern, Modes.False],
   },
   {
-    src: LanternOff,
+    src: CardTypes.ACTIONS.FELINAR[1],
     code: [Modes.Base, Modes.Action, Modes.Lantern, Modes.False],
   },
   {
-    src: LanternOff,
+    src: CardTypes.ACTIONS.FELINAR[1],
     code: [Modes.Base, Modes.Action, Modes.Lantern, Modes.False],
   },
 ];
