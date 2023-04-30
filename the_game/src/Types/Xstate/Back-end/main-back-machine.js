@@ -30,12 +30,11 @@ function createRoomMachine(roomId) {
       context: {
         players: [], // Array of player objects with their roles, cards, and other relevant data
         playerId: null, // Add playerId to store the ID of the player attempting the action
-        currentPlayerIndex: 0, // Index of the current player in the players array
         currentPlayer: 0,
         startCard: null, // Start card (ladder)
         finishCards: [], // Array of finish cards (one treasure card and two stone cards)
         goldNuggetStock: [], // Stock  of gold nugget cards
-        round: 3, // Current round of the game (1 to 3)
+        round: 1, // Current round of the game (1 to 3)
         gameBoard: [], // Array representing the game board with played path cards
         discardPile: [], // Array of discarded cards
         deck: [], // Array of cards in the deck
@@ -82,11 +81,12 @@ function createRoomMachine(roomId) {
           invoke: {
             data: {
               players: (context) => context.players,
+              currentPlayer: (context) => context.currentPlayer,
             },
             id: 'saboteurPreparation',
             src: preparationMachine,
             onDone: {
-              target: 'play',
+              target: 'chooseCard',
               actions: ['updateParentContext'],
             },
           },
@@ -96,78 +96,55 @@ function createRoomMachine(roomId) {
             clientIsHere: {},
           },
         },
-        play: {
-          initial: 'chooseCard',
-          states: {
-            chooseCard: {
-              on: {
-                PLAY_PATH_CARD: {
-                  actions: ['setPlayerId', 'playPathCard'],
-                  target: 'validateCard',
-                  cond: 'isValidPathCard',
-                  internal: false,
-                  in: {
-                    // MaybeWrong
-                    validateCard: {
-                      actions: assign({
-                        'validateCard.meta.lastCardType': 'path',
-                      }),
-                    },
-                  },
-                },
-                PLAY_ACTION_CARD: {
-                  actions: ['setPlayerId', 'playActionCard'],
-                  target: 'validateCard',
-                  cond: 'canPlayActionCard',
-                  internal: false,
-                  in: {
-                    validateCard: {
-                      actions: assign({
-                        'validateCard.meta.lastCardType': 'action',
-                      }),
-                    },
-                  },
-                },
-                PASS: {
-                  actions: ['setPlayerId', 'pass'],
-                  target: 'nextPlayer',
-                  cond: 'hasPlayableCards',
-                },
-              },
+        chooseCard: {
+          entry: 'setPlayerId',
+          on: {
+            PLAY_PATH_CARD: {
+              actions: ['setPlayerId', 'playPathCard', 'removePlayedCardFromHand'],
+              target: 'nextPlayer',
+              // cond: 'isValidPathCard',
             },
-            validateCard: {
-              meta: {
-                lastCardType: null,
-              },
-              on: {
-                CARD_VALID: 'placeCard',
-                CARD_INVALID: 'chooseCard',
-              },
+            PLAY_ACTION_CARD: {
+              actions: ['playActionCard', 'removePlayedCardFromHand'],
+              target: 'nextPlayer',
+              // cond: 'canPlayActionCard',
             },
-            nextPlayer: {
-              onEntry: ['updateCurrentPlayerIndex', 'GiveCurrentUserANewCardFromTheDeck'],
-              on: {
-                NEXT_PLAYER: 'chooseCard',
-                // ROUND_END: `#room-${roomId}`.score',
-              },
+            PASS: {
+              actions: ['discardCardFromPass'],
+              target: 'nextPlayer',
+              // cond: 'hasPlayableCards',
             },
-            placeCard: {
-              on: {
-                SET_COORDINATES: {
-                  actions: ['setCardCoordinates'],
-                  target: 'nextPlayer',
-                  cond: (context, event, meta) => {
-                    const { lastCardType } = meta.stateNode.parent.states.validateCard.meta;
-                    if (lastCardType === 'path') {
-                      // Handle path card placement
-                      return true; // or return areValidCoordinates(context, event);
-                    }
-                    return lastCardType === 'action';
-                  },
-                },
-                INVALID_COORDINATES: 'chooseCard',
-              },
+          },
+        },
+        validateCard: {
+          meta: {
+            lastCardType: null,
+          },
+          on: {
+            CARD_VALID: 'placeCard',
+            CARD_INVALID: 'chooseCard',
+          },
+        },
+        nextPlayer: {
+          onEntry: ['GiveCurrentUserANewCardFromTheDeck', 'passTurn'],
+          always: ['chooseCard'],
+          // ROUND_END: `#room-${roomId}`.score',
+        },
+        placeCard: {
+          on: {
+            SET_COORDINATES: {
+              actions: ['setCardCoordinates'],
+              target: 'nextPlayer',
+              // cond: (context, event, meta) => {
+              //   const { lastCardType } = meta.stateNode.parent.states.validateCard.meta;
+              //   if (lastCardType === 'path') {
+              //     Handle path card placement
+              // return true; // or return areValidCoordinates(context, event);
+              // }
+              // return lastCardType === 'action';
+              // },
             },
+            INVALID_COORDINATES: 'chooseCard',
           },
         },
         score: {
@@ -175,7 +152,7 @@ function createRoomMachine(roomId) {
           on: {
             NEXT_ROUND: {
               target: 'fetchingPlayers',
-              cond: 'isNotLastRound',
+              // cond: 'isNotLastRound',
             },
             GAME_END: 'end',
           },
@@ -200,16 +177,54 @@ function createRoomMachine(roomId) {
       },
       actions: {
         updateParentContext: (context, event) => {
+          console.log('updateParentContext');
           context.gameBoard = event.data.matrix;
           context.players = event.data.players;
           context.deck = event.data.deck;
           // Aici trebuie sa spui a cui e randul primului Jucator.
-          context.currentPlayerIndex = event.data.currentPlayerIndex;
+          context.currentPlayer = event.data.currentPlayer;
         },
         setPlayers,
         setRoomId,
 
         // NEW STUFF
+        passTurn: assign({
+          currentPlayer: (context) => (context.currentPlayer + 1) % context.players.length,
+        }),
+        discardCardFromPass: assign({
+          discardPile: (context, event) => {
+            // Get the selected card from the player's hand
+            const card = context.players[context.currentPlayer].hand[event.payload.handIndex];
+
+            // Remove the card from the player's hand
+            context.players[context.currentPlayer].hand.splice(event.payload.handIndex, 1);
+
+            // Add the card to the discard pile
+            return [...context.discardPile, card];
+          },
+        }),
+        GiveCurrentUserANewCardFromTheDeck: assign((context) => {
+          const { players, currentPlayer, deck } = context;
+          if (deck.length === 0) {
+            return {}; // No changes to the context if the deck is empty
+          }
+          // Remove the top card frompo the deck
+          const [newCard, ...restOfDeck] = deck;
+
+          // Add the new card to the current player's hand
+          const currentPl = players[currentPlayer];
+          const updatedHand = [...currentPl.hand, newCard];
+
+          // Update the current player's hand in the players array
+          const updatedPlayers = players.map((player, index) =>
+            index === currentPlayer ? { ...player, hand: updatedHand } : player
+          );
+
+          return {
+            deck: restOfDeck,
+            players: updatedPlayers,
+          };
+        }),
         setupGame: assign({
           /* initialize context variables */
         }),
@@ -217,16 +232,27 @@ function createRoomMachine(roomId) {
           /* shuffle and deal cards to players */
         }),
         playPathCard: assign({
-          gameBoardMatrix: (context, event) => {
-            // Update the game board matrix with the played path card.
-            // You can use the row and column indices from the event object to place the card in the matrix.
+          gameBoard: (context, event) => {
+            const { row, column, card } = event.payload;
+            const newGameBoard = JSON.parse(JSON.stringify(context.gameBoard)); // Create a deep copy of the game board
+            newGameBoard[row][column] = { Card: card, Occupied: true, playerId: context.playerId }; // Place the card in the matrix
+            console.log(event.payload);
+            console.log(newGameBoard[row][column]);
+            return newGameBoard;
           },
         }),
+        removePlayedCardFromHand: assign({
+          players: (context, event) => {
+            const { currentPlayer } = context;
+            const { handIndex } = event.payload;
+            const newPlayers = JSON.parse(JSON.stringify(context.players)); // Create a deep copy of the players array
+            newPlayers[currentPlayer].hand.splice(handIndex, 1); // Remove the card from the player's hand
+            return newPlayers;
+          },
+        }),
+
         playActionCard: assign({
           /* update gameState with the played action card */
-        }),
-        pass: assign({
-          /* update currentPlayerIndex and gameState */
         }),
         revealRoles: assign({
           /* reveal the roles of all players */
@@ -241,7 +267,11 @@ function createRoomMachine(roomId) {
           /* announce the winners based on gold nuggets count */
         },
         setPlayerId: assign({
-          playerId: (context, event) => event.playerId,
+          playerId: (context, event) => {
+            console.log(event.playerId);
+            console.log(event);
+            return event.playerId;
+          },
         }),
         // From today 25.05
         discardCard: assign({

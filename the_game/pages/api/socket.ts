@@ -20,6 +20,8 @@ function setupRoomMachineOnTransition(roomMachine, roomId, io1) {
     if (state.changed) {
       console.log('State changed to:', state.value);
       io1.to(roomId).emit('GAME_STATE_UPDATE', state.context);
+      console.log('State sent to clients');
+      // console.log('State event:', state.event);
     }
   });
 }
@@ -89,6 +91,17 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
 
         const roomMachine = getOrCreateRoomMachine(roomId, io);
         io.to(roomId).emit('GAME_STATE_UPDATE', roomMachine.state.context);
+      });
+
+      socket.on('passTurn', (roomIdObj) => {
+        const { gameId: roomId, handIndex } = roomIdObj;
+        const roomMachine = getOrCreateRoomMachine(roomId, io);
+        roomMachine.send({ type: 'PASS', payload: { handIndex } });
+      });
+      socket.on('placeCard', (roomIdObj) => {
+        const { gameId: roomId, handIndex, row, column, card } = roomIdObj;
+        const roomMachine = getOrCreateRoomMachine(roomId, io);
+        roomMachine.send({ type: 'PLAY_PATH_CARD', payload: { handIndex, row, column, card } });
       });
 
       socket.on('disconnecting', (reason) => {

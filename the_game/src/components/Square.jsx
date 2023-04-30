@@ -6,9 +6,9 @@ import { imageSize } from '../variables';
 function renderImage(Card, Occupied, row, column) {
   if (Occupied) {
     if (Card?.back) {
-      return <Image src={Card?.back} layout="fill" alt="One of 3 cards" />;
+      return <Image src={Card?.back} quality={10} layout="fill" alt="One of 3 cards" />;
     }
-    return <Image src={Card?.src} layout="fill" alt="The rest" />;
+    return <Image src={Card?.src} quality={10} layout="fill" alt="The rest" />;
   }
   return (
     <p>

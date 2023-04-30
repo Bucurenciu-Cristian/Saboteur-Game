@@ -2,12 +2,13 @@ import React, { useMemo } from 'react';
 import Square from './Square';
 import { IMatrix } from '../Types/DexType';
 
-function ShowBoard({ gameMatrix }: { gameMatrix: IMatrix[][] }) {
+function ShowBoard({ gameMatrix, onBoardSquareClick }: { gameMatrix: IMatrix[][]; onBoardSquareClick: any }) {
   const renderSquareUpdated = (i: number, j: number) => {
     const onClick = () => {
+      onBoardSquareClick(i, j);
       console.log(`Locatia este: [${i},${j}]`);
     };
-    return <Square Card={gameMatrix[i][j].Card} Occupied={gameMatrix[i][j]?.Occupied} onClick={onClick} row={i} column={j} />;
+    return <Square Card={gameMatrix[i][j]?.Card} Occupied={gameMatrix[i][j]?.Occupied} onClick={onClick} row={i} column={j} />;
   };
 
   const memoizedGameMatrix = useMemo(() => gameMatrix, [gameMatrix]);
@@ -26,4 +27,5 @@ function ShowBoard({ gameMatrix }: { gameMatrix: IMatrix[][] }) {
     </>
   );
 }
+
 export default ShowBoard;

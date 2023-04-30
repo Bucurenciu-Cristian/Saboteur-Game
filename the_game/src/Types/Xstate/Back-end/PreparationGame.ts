@@ -17,7 +17,7 @@ interface Context {
   deck: ICardBasic[];
   roleCards: PlayerCard[];
   matrix: IMatrix[][];
-  currentPlayerIndex: number;
+  currentPlayer: number;
 }
 
 const determineDwarfRoles = assign((context: Context, event) => {
@@ -65,10 +65,12 @@ const shuffleAndDealPathAndActionCards = assign((context: Context, event) => {
     ...player,
     hand: giveMeCards(howManyCardsInHand, context.deck),
   }));
+
   console.log('Preparation complete');
   return {
     ...context,
     players: playersWithCards,
+    currentPlayer: 0,
   };
 });
 
@@ -83,7 +85,7 @@ const preparationMachine = createMachine<Context>(
       deck: [],
       roleCards: [],
       matrix: [],
-      currentPlayerIndex: 0,
+      currentPlayer: -1,
     },
     initial: 'determineDwarfRoles',
     states: {
@@ -124,6 +126,7 @@ const preparationMachine = createMachine<Context>(
           matrix: (context: Context) => context.matrix,
           players: (context: Context) => context.players,
           deck: (context: Context) => context.deck,
+          currentPlayer: (context: Context) => context.currentPlayer,
         },
         type: 'final',
       },

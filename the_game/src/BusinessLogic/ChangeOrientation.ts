@@ -1,6 +1,7 @@
 import { CharTuple } from '@src/Types/DexType';
 
 export function changeOrientation(code: string): CharTuple | string {
+  code = code.join('');
   const secondLetter = code.charAt(1);
   const eightChar = code.charAt(7);
 
@@ -11,10 +12,8 @@ export function changeOrientation(code: string): CharTuple | string {
 
     R = R === 'T' ? 'F' : 'T';
 
-    if (R === 'T') {
-      // Changing N with S and E with W
-      [N, E, S, W] = [S, W, N, E];
-    }
+    // Changing N with S and E with W
+    [N, E, S, W] = [S, W, N, E];
 
     codeArr = [B, P, N, E, S, W, C, R];
     return codeArr as CharTuple;
@@ -25,8 +24,11 @@ export function changeOrientation(code: string): CharTuple | string {
 }
 
 /*
+
 export function changeOrientation(code: string): CharTuple | string {
   // This is working from my testing
+  code = code.join('');
+
   const secondLetter = code.charAt(1);
   const eightChar = code?.charAt(7);
   let codeArr = code.split('');
