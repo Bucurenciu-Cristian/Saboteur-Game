@@ -12,12 +12,18 @@ async function checkRoomExists(gameId: number) {
   return data;
 }
 
+function getCardCondition(theCard, number: number, char: string) {
+  return theCard.code[number] === char;
+}
+
 function GameId() {
   const socket = useSocket();
 
   const [gameState, setGameState] = useState(null);
   // const [selectedCard, setSelectedCard] = useState({ card: null, index: -1 });
   const [hasJoined, setHasJoined] = useState(false);
+  const [validCoordinates, setValidCoordinates] = useState([]);
+
   const selectedCard = useRef({ card: null, index: -1 });
 
   const router = useRouter();
@@ -26,7 +32,6 @@ function GameId() {
   const placeCardEvent = 'placeCard';
   const rotateCardEvent = 'rotateCard';
   const passTurnEvent = 'passTurn';
-
   useEffect(() => {
     if (!gameId || !socket) return;
 
@@ -55,6 +60,10 @@ function GameId() {
     socket.on('GAME_STATE_UPDATE', (data) => {
       console.log('client', data);
       setGameState(data);
+      setValidCoordinates([]);
+    });
+    socket.on('validCoordinates', (coordinates) => {
+      setValidCoordinates(coordinates);
     });
   }, [socket]);
 
@@ -70,27 +79,22 @@ function GameId() {
         break;
     }
   };
-  // Ce poate sa faca un client?
-  // Sa trimita la server urmatoarele event-uri: playPath, playAction,
-
-  // trebuie sa arat si a cui e randul in momentul actual. Ca ceilalti sa astepte.
-  // socket.emit('playPath');
-  // socket.emit('playAction');
   const handlePathTurn = (row, column) => {
     const theCard = selectedCard.current.card;
     if (theCard) {
-      if (theCard.code[1] === 'P') {
+      if (getCardCondition(theCard, 1, 'P')) {
         socket.emit(placeCardEvent, {
           gameId,
           card: theCard,
           row,
           column,
           handIndex: selectedCard.current.index,
+          playerId: gameState.currentPlayer,
         });
 
         // Reset the selected card
         selectedCard.current = { card: null, index: -1 };
-      } else if (theCard.code[1] === 'A') {
+      } else if (getCardCondition(theCard, 1, 'A')) {
         helperAlert(placeCardEvent);
       }
     } else {
@@ -137,6 +141,16 @@ function GameId() {
     }
   };
   const handleActionTurn = () => {};
+  // Function to trigger event to the server
+  const triggerEventToServer = (card, index) => {
+    console.log('Selected card changed:', { card, index });
+    // Trigger the event to the server here
+    socket.emit('selectCard', {
+      gameId,
+      handIndex: index,
+      card,
+    });
+  };
   // Render the component based on the client state
   return (
     <>
@@ -146,7 +160,11 @@ function GameId() {
       {gameState && (
         <Row>
           <Col xs={9}>
-            <ShowBoard gameMatrix={gameState.gameBoard} onBoardSquareClick={(row, column) => handlePathTurn(row, column)} />
+            <ShowBoard
+              validCoordinates={validCoordinates}
+              gameMatrix={gameState.gameBoard}
+              onBoardSquareClick={(row, column) => handlePathTurn(row, column)}
+            />
             <Row>
               <Col>
                 The deck has {gameState.deck.length} cards <br /> the discard pile has {gameState.discardPile.length} cards
@@ -161,6 +179,7 @@ function GameId() {
               items={gameState.players[gameState.currentPlayer]}
               onCardClick={(card, index) => {
                 selectedCard.current = { card, index };
+                triggerEventToServer(card, index);
               }}
             />
             {/* <ShowUsers items={gameState.players[0]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}

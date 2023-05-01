@@ -53,7 +53,7 @@ export interface ICardBasic {
 }
 
 export interface IMatrix {
-  Card: ICardBasic;
+  Card: ICardBasic | '#';
   Occupied: boolean;
 }
 

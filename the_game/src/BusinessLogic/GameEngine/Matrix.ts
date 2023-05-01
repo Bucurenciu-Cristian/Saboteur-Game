@@ -37,7 +37,7 @@ function GiveAndCheckCardTable(matrix: IMatrix[][], row: number, column: number)
 
 const randomizedFinalCards = getRandomizedArray(SpecialPath, true);
 
-function introduceSquare(card: ICardBasic) {
+export function introduceSquare(card: ICardBasic) {
   return { Card: card, Occupied: true };
 }
 

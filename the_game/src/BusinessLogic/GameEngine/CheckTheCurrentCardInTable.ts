@@ -1,5 +1,6 @@
 import { IMatrix } from '@src/Types/DexType';
 import { NeighboursActions } from '@src/enums';
+import { introduceSquare } from '@engine/Matrix';
 import { neighboursCards } from './NeighboursCards';
 
 /**
@@ -8,26 +9,51 @@ import { neighboursCards } from './NeighboursCards';
  * @param column
  * @param matrix
  * @param action
+ * @param checkOccupied
  */
 
 // eslint-disable-next-line consistent-return
-export function checkTheCurrentCardInTable(
-  matrix: IMatrix[][],
-  row: number,
-  column: number,
-  action: string = NeighboursActions.ALL
-) {
+export function checkTheCurrentCardInTable({
+  matrix,
+  row,
+  column,
+  action = NeighboursActions.ALL,
+  card = undefined,
+  simulation = false,
+}: {
+  matrix: IMatrix[][];
+  row: number;
+  column: number;
+  action?: string;
+  card: any;
+  simulation: boolean;
+}) {
   /* B P N E S W C R
-     //0 1 2 3 4 5 6 7
+   //0 1 2 3 4 5 6 7
     */
+  if (card) {
+    matrix[row][column] = introduceSquare(card);
+  }
   const { Occupied } = matrix[row][column];
   if (!Occupied) {
     return false; // skip this position if it's not occupied
   }
-
   const directions = neighboursCards(matrix, row, column);
   const predicate = ({ center, adjacent }: { center: string; adjacent: string }) => center === adjacent && center === 'T';
-  if (action === NeighboursActions.ALL) return directions.every(predicate);
+  if (action === NeighboursActions.ALL) {
+    const result = directions.every(predicate);
+
+    // Remove the card from the matrix if the result is false
+    console.log(simulation, result);
+    if (!result) {
+      matrix[row][column] = { Card: '#', Occupied: false };
+    }
+    if (simulation) {
+      matrix[row][column] = { Card: '#', Occupied: false };
+    }
+
+    return result;
+  }
   if (action === NeighboursActions.ONE) return directions.some(predicate);
   if (action === NeighboursActions.DIRECTIONS) return directions;
 }

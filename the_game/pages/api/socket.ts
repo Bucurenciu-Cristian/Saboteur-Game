@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import { instrument } from '@socket.io/admin-ui';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { checkTheCurrentCardInTable } from '@engine/CheckTheCurrentCardInTable';
 import joinLobby from '../../src/BusinessLogic/events/joinLobby';
 import joinRoom from '../../src/BusinessLogic/events/joinRoom';
 import leaveRoom from '../../src/BusinessLogic/events/leaveRoom';
@@ -37,6 +38,22 @@ function getOrCreateRoomMachine(roomId: number, io) {
   return newRoomMachine;
 }
 
+const getValidCoordinatesForCard = (card, availablePaths, gameBoard) => {
+  const validCoordinates = [];
+  // Logic to determine if the card can be placed at each coordinate in availablePaths
+  // If the card can be placed at a coordinate, push the coordinate to the validCoordinates array
+  for (const availablePath of availablePaths) {
+    console.log('Available path:', availablePath);
+    const { row, column } = availablePath;
+    console.log('Row and column:', row, column);
+    const cardCanBePlaced = checkTheCurrentCardInTable({ matrix: gameBoard, row, column, card, simulation: true });
+    if (cardCanBePlaced) {
+      validCoordinates.push(availablePath);
+    }
+  }
+
+  return validCoordinates;
+};
 // Here you are on the back-end side:
 // You have to restart the server for the changes to take effect
 const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
@@ -99,11 +116,20 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
         roomMachine.send({ type: 'PASS', payload: { handIndex } });
       });
       socket.on('placeCard', (roomIdObj) => {
-        const { gameId: roomId, handIndex, row, column, card } = roomIdObj;
+        const { gameId: roomId } = roomIdObj;
         const roomMachine = getOrCreateRoomMachine(roomId, io);
-        roomMachine.send({ type: 'PLAY_PATH_CARD', payload: { handIndex, row, column, card } });
+        roomMachine.send({ type: 'PLAY_PATH_CARD', payload: roomIdObj });
       });
+      socket.on('selectCard', (roomIdObj) => {
+        const { gameId, card } = roomIdObj;
+        const roomMachine = getOrCreateRoomMachine(gameId, io);
+        // roomMachine.send({ type: 'SELECT_PATH_CARD', payload: roomIdObj });
+        const { availablePaths, gameBoard } = roomMachine.state.context;
 
+        const validCoordinates = getValidCoordinatesForCard(card, availablePaths, gameBoard);
+
+        socket.emit('validCoordinates', validCoordinates);
+      });
       socket.on('disconnecting', (reason) => {
         for (const room of socket.rooms) {
           if (room !== socket.id) {

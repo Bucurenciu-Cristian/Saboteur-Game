@@ -2,13 +2,30 @@ import React, { useMemo } from 'react';
 import Square from './Square';
 import { IMatrix } from '../Types/DexType';
 
-function ShowBoard({ gameMatrix, onBoardSquareClick }: { gameMatrix: IMatrix[][]; onBoardSquareClick: any }) {
-  const renderSquareUpdated = (i: number, j: number) => {
+function ShowBoard({
+  gameMatrix,
+  onBoardSquareClick,
+  validCoordinates, // Add validCoordinates as a prop
+}: {
+  gameMatrix: IMatrix[][];
+  onBoardSquareClick: any;
+  validCoordinates: any;
+}) {
+  const renderSquareUpdated = (i: number, j: number, validCoordinates: any) => {
     const onClick = () => {
       onBoardSquareClick(i, j);
       console.log(`Locatia este: [${i},${j}]`);
     };
-    return <Square Card={gameMatrix[i][j]?.Card} Occupied={gameMatrix[i][j]?.Occupied} onClick={onClick} row={i} column={j} />;
+    return (
+      <Square
+        Card={gameMatrix[i][j]?.Card}
+        Occupied={gameMatrix[i][j]?.Occupied}
+        onClick={onClick}
+        row={i}
+        column={j}
+        validCoordinates={validCoordinates} // Pass validCoordinates to Square
+      />
+    );
   };
 
   const memoizedGameMatrix = useMemo(() => gameMatrix, [gameMatrix]);
@@ -20,7 +37,7 @@ function ShowBoard({ gameMatrix, onBoardSquareClick }: { gameMatrix: IMatrix[][]
       {memoizedGameMatrix.map((row: any[], i) => (
         <div key={i} className="board-row">
           {row.map((column, j) => (
-            <div key={`${i}${j}`}>{memoizedRenderSquareUpdated(i, j)}</div>
+            <div key={`${i}${j}`}>{memoizedRenderSquareUpdated(i, j, validCoordinates)}</div>
           ))}
         </div>
       ))}

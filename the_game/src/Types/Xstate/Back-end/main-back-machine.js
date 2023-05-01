@@ -1,6 +1,9 @@
 import { assign, createMachine, interpret } from 'xstate';
 import { inspect } from '@xstate/inspect';
+
 import preparationMachine from './PreparationGame';
+import { checkTheCurrentCardInTable } from '../../../BusinessLogic/GameEngine/CheckTheCurrentCardInTable';
+import { findAvailablePath } from '../../../BusinessLogic/GameEngine/FindAvailablePath';
 
 const setPlayers = assign((context, event) => ({ players: event.data }));
 assign((context, event) => ({ players: event.data }));
@@ -13,6 +16,10 @@ if (typeof window !== 'undefined') {
     url: 'https://statecharts.io/inspect', // The URL of the inspect server
     iframe: false, // Set to false if you want to use a separate browser window for the inspector
   });
+}
+
+function checkCoordinates(param, availablePaths) {
+  return availablePaths.some(({ column, row }) => row === param.row && column === param.column);
 }
 
 function createRoomMachine(roomId) {
@@ -39,7 +46,7 @@ function createRoomMachine(roomId) {
         discardPile: [], // Array of discarded cards
         deck: [], // Array of cards in the deck
         roomId: 0, // Add roomId to the context
-
+        availablePaths: [], // Array of available paths
         // pathCards: [], // Array of path cards
         // actionCards: [], // Array of action cards
         // goldNuggetCards: [], // Array of gold nugget cards
@@ -87,23 +94,19 @@ function createRoomMachine(roomId) {
             src: preparationMachine,
             onDone: {
               target: 'chooseCard',
-              actions: ['updateParentContext'],
+              actions: ['updateParentContext', 'findAvailablePaths'],
             },
-          },
-        },
-        waitingForClients: {
-          on: {
-            clientIsHere: {},
           },
         },
         chooseCard: {
-          entry: 'setPlayerId',
           on: {
-            PLAY_PATH_CARD: {
-              actions: ['setPlayerId', 'playPathCard', 'removePlayedCardFromHand'],
-              target: 'nextPlayer',
-              // cond: 'isValidPathCard',
-            },
+            PLAY_PATH_CARD: [
+              {
+                cond: 'isEverythingOkay',
+                actions: ['setPlayerId', 'playPathCard', 'removePlayedCardFromHand'],
+                target: 'nextPlayer',
+              },
+            ],
             PLAY_ACTION_CARD: {
               actions: ['playActionCard', 'removePlayedCardFromHand'],
               target: 'nextPlayer',
@@ -116,6 +119,9 @@ function createRoomMachine(roomId) {
             },
           },
         },
+        wrongPlayer: {
+          always: 'chooseCard',
+        },
         validateCard: {
           meta: {
             lastCardType: null,
@@ -126,7 +132,7 @@ function createRoomMachine(roomId) {
           },
         },
         nextPlayer: {
-          onEntry: ['GiveCurrentUserANewCardFromTheDeck', 'passTurn'],
+          onEntry: ['GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths'],
           always: ['chooseCard'],
           // ROUND_END: `#room-${roomId}`.score',
         },
@@ -203,6 +209,9 @@ function createRoomMachine(roomId) {
             return [...context.discardPile, card];
           },
         }),
+        findAvailablePaths: assign({
+          availablePaths: ({ gameBoard }) => findAvailablePath(gameBoard),
+        }),
         GiveCurrentUserANewCardFromTheDeck: assign((context) => {
           const { players, currentPlayer, deck } = context;
           if (deck.length === 0) {
@@ -236,9 +245,13 @@ function createRoomMachine(roomId) {
             const { row, column, card } = event.payload;
             const newGameBoard = JSON.parse(JSON.stringify(context.gameBoard)); // Create a deep copy of the game board
             newGameBoard[row][column] = { Card: card, Occupied: true, playerId: context.playerId }; // Place the card in the matrix
-            console.log(event.payload);
-            console.log(newGameBoard[row][column]);
             return newGameBoard;
+          },
+        }),
+        setPlayerId: assign({
+          playerId: (_, event) => {
+            console.log('setPlayerId');
+            return event.payload.playerId;
           },
         }),
         removePlayedCardFromHand: assign({
@@ -252,6 +265,7 @@ function createRoomMachine(roomId) {
         }),
 
         playActionCard: assign({
+          playerId: (_, event) => event.payload.playerId,
           /* update gameState with the played action card */
         }),
         revealRoles: assign({
@@ -266,13 +280,6 @@ function createRoomMachine(roomId) {
         announceWinners: (context) => {
           /* announce the winners based on gold nuggets count */
         },
-        setPlayerId: assign({
-          playerId: (context, event) => {
-            console.log(event.playerId);
-            console.log(event);
-            return event.playerId;
-          },
-        }),
         // From today 25.05
         discardCard: assign({
           discardPile: (context, event) =>
@@ -364,11 +371,25 @@ function createRoomMachine(roomId) {
         // Add guards here
         /* guard implementations */
         isNotLastRound: (context) => context.round < 3,
-        isValidPathCard: (context, event) => {
-          // Check if the path card can be added to the game board
-        },
-        canPlayActionCard: (context, event) => {
-          // Check if the action card can be played
+        isEverythingOkay: (context, event) => {
+          console.log('Guard isEverythingOkay');
+          const checkCoord = checkCoordinates(
+            {
+              row: event.payload.row,
+              column: event.payload.column,
+            },
+            context.availablePaths
+          );
+          if (!checkCoord) {
+            return false;
+          }
+          const check = checkTheCurrentCardInTable({
+            matrix: context.gameBoard,
+            row: event.payload.row,
+            column: event.payload.column,
+            card: event.payload.card,
+          });
+          return check;
         },
         canPlayPathCard: (context, event) => {},
         hasPlayableCards: (context, event) => {
