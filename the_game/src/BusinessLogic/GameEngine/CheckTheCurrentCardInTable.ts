@@ -39,12 +39,16 @@ export function checkTheCurrentCardInTable({
     return false; // skip this position if it's not occupied
   }
   const directions = neighboursCards(matrix, row, column);
-  const predicate = ({ center, adjacent }: { center: string; adjacent: string }) => center === adjacent && center === 'T';
+  const predicate = ({ center, adjacent }) => (center === 'T' && adjacent === 'T') || (center === 'F' && adjacent === 'F');
+  const predicateV2 = ({ center, adjacent }) => center === 'T' && adjacent === 'T';
   if (action === NeighboursActions.ALL) {
-    const result = directions.every(predicate);
+    const validCombinations = directions.filter(predicate);
+
+    const hasAtLeastOneTrue = validCombinations.some(predicateV2);
+    // and no pairs were removed during filtering
+    const result = hasAtLeastOneTrue && validCombinations.length === directions.length;
 
     // Remove the card from the matrix if the result is false
-    console.log(simulation, result);
     if (!result) {
       matrix[row][column] = { Card: '#', Occupied: false };
     }
@@ -54,6 +58,6 @@ export function checkTheCurrentCardInTable({
 
     return result;
   }
-  if (action === NeighboursActions.ONE) return directions.some(predicate);
+  if (action === NeighboursActions.ONE) return directions.some(predicateV2);
   if (action === NeighboursActions.DIRECTIONS) return directions;
 }

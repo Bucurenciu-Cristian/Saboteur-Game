@@ -4,6 +4,9 @@ import { inspect } from '@xstate/inspect';
 import preparationMachine from './PreparationGame';
 import { checkTheCurrentCardInTable } from '../../../BusinessLogic/GameEngine/CheckTheCurrentCardInTable';
 import { findAvailablePath } from '../../../BusinessLogic/GameEngine/FindAvailablePath';
+import { findTheCard } from '../../../BusinessLogic/Logic';
+import { findCardActions, NeighboursActions } from '../../../enums';
+import { isPathToFinish } from '../../../BusinessLogic/GameEngine/DepthFirstSearch';
 
 const setPlayers = assign((context, event) => ({ players: event.data }));
 assign((context, event) => ({ players: event.data }));
@@ -47,6 +50,7 @@ function createRoomMachine(roomId) {
         deck: [], // Array of cards in the deck
         roomId: 0, // Add roomId to the context
         availablePaths: [], // Array of available paths
+        pathContinued: false, // Boolean to check if the path is continued
         // pathCards: [], // Array of path cards
         // actionCards: [], // Array of action cards
         // goldNuggetCards: [], // Array of gold nugget cards
@@ -94,7 +98,7 @@ function createRoomMachine(roomId) {
             src: preparationMachine,
             onDone: {
               target: 'chooseCard',
-              actions: ['updateParentContext', 'findAvailablePaths'],
+              actions: ['updateParentContext', 'findFinalCards', 'findAvailablePaths'],
             },
           },
         },
@@ -132,7 +136,7 @@ function createRoomMachine(roomId) {
           },
         },
         nextPlayer: {
-          onEntry: ['GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths'],
+          onEntry: ['GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths', 'findPathContinued'],
           always: ['chooseCard'],
           // ROUND_END: `#room-${roomId}`.score',
         },
@@ -209,8 +213,28 @@ function createRoomMachine(roomId) {
             return [...context.discardPile, card];
           },
         }),
+        findFinalCards: assign({
+          finishCards: ({ gameBoard }) => findTheCard(gameBoard, findCardActions.Final),
+        }),
         findAvailablePaths: assign({
-          availablePaths: ({ gameBoard }) => findAvailablePath(gameBoard),
+          availablePaths: ({ gameBoard, finishCards }) => findAvailablePath(gameBoard, finishCards),
+        }),
+        findPathContinued: assign({
+          // ? TODO: Think very good about this
+          pathContinued: ({ gameBoard, finishCards }) => {
+            const isContinued = [];
+            const isNotContinued = [];
+            finishCards.forEach(([row, column]) => {
+              if (checkTheCurrentCardInTable({ matrix: gameBoard, row, column, action: NeighboursActions.ONE })) {
+                console.log('Start DFS');
+                const x = isPathToFinish(gameBoard, row, column);
+                if (x) isContinued.push([row, column]);
+                else isNotContinued.push([row, column]);
+                console.log('END DFS');
+              }
+            });
+            return isContinued.length > 0 ? isContinued : false;
+          },
         }),
         GiveCurrentUserANewCardFromTheDeck: assign((context) => {
           const { players, currentPlayer, deck } = context;

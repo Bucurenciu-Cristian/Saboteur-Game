@@ -87,4 +87,4 @@ export type RewardCard = ICardBasic & { code: RewardCardCode };
 
 export type PlayerCardCode = CharTuple & { 1: Modes.Player };
 export type PlayerCardCodeSecond = CharTuple & { 2: Modes.Miner | Modes.Saboteur };
-export type PlayerCard = ICardBasic & { code: PlayerCardCode & PlayerCardCodeSecond };
+export type PlayerCard = ISpecialPath & { code: PlayerCardCode & PlayerCardCodeSecond };

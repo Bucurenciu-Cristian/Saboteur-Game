@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import useSocket from '@hooks/useSocket';
 import { Button, Col, Row } from 'react-bootstrap';
-import ShowUsers from '@components/ShowUsers';
+import ShowPlayer from '@components/ShowPlayer';
 import ShowBoard from '@components/ShowBoard';
 import { changeOrientation } from '@src/BusinessLogic/ChangeOrientation';
 
@@ -159,7 +159,7 @@ function GameId() {
       </Row>
       {gameState && (
         <Row>
-          <Col xs={9}>
+          <Col xs={8}>
             <ShowBoard
               validCoordinates={validCoordinates}
               gameMatrix={gameState.gameBoard}
@@ -169,39 +169,59 @@ function GameId() {
               <Col>
                 The deck has {gameState.deck.length} cards <br /> the discard pile has {gameState.discardPile.length} cards
               </Col>
-              <Col />
+              <Col>Path Continued until finished? {JSON.stringify(gameState.pathContinued)}</Col>
               <Col />
             </Row>
+            <Row>
+              <Col>
+                Play Actions on: <br />
+                {gameState.players.map((player, index) => {
+                  if (index !== gameState.currentPlayer) {
+                    return (
+                      <Fragment key={index}>
+                        <Button>
+                          {player.username} <br />
+                        </Button>
+                      </Fragment>
+                    );
+                  }
+                  return (
+                    <Fragment key={index}>
+                      <Button>
+                        Yourself <br />
+                      </Button>
+                    </Fragment>
+                  );
+                })}
+              </Col>
+            </Row>
           </Col>
-          <Col xs={3}>
+          <Col xs>
             <div>Players Turn {gameState.currentPlayer + 1}</div>
-            <ShowUsers
-              items={gameState.players[gameState.currentPlayer]}
+            <ShowPlayer
+              player={gameState.players[gameState.currentPlayer]}
               onCardClick={(card, index) => {
                 selectedCard.current = { card, index };
                 triggerEventToServer(card, index);
               }}
             />
-            {/* <ShowUsers items={gameState.players[0]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
-            {/* <ShowUsers items={gameState.players[1]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
-            {/* <ShowUsers items={gameState.players[2]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
-
-            <Row>
-              <Button onClick={handleRotateCard}>Rotate Card</Button>
-            </Row>
-            <Row>
-              {' '}
-              <Button onClick={handlePassTurn}>Pass Turn</Button>{' '}
-            </Row>
+            {/* <ShowPlayer items={gameState.players[0]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
+            {/* <ShowPlayer items={gameState.players[1]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
+            {/* <ShowPlayer items={gameState.players[2]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
             <br />
-
-            <Row>Others players: Here are the other players</Row>
+            <Row>
+              <Col>
+                <Button onClick={handleRotateCard}>Rotate Card</Button>
+              </Col>
+              <Col>
+                <Button onClick={handlePassTurn}>Pass Turn</Button>
+              </Col>
+            </Row>
 
             <br />
-
+            <br />
             <Row>{/* <Button onClick={handlePathTurn}>Play Path-Nope</Button> */}</Row>
             <br />
-
             <Row>{/* <Button onClick={handleActionTurn}>Play Action-Nope</Button> */}</Row>
           </Col>
         </Row>

@@ -14,7 +14,6 @@ function ShowBoard({
   const renderSquareUpdated = (i: number, j: number, validCoordinates: any) => {
     const onClick = () => {
       onBoardSquareClick(i, j);
-      console.log(`Locatia este: [${i},${j}]`);
     };
     return (
       <Square

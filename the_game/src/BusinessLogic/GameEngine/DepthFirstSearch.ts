@@ -3,24 +3,6 @@ import { FOT } from '@cards/Actions';
 import { isCodeAtIndex } from './IsCodeAtIndex';
 import { neighboursCards } from './NeighboursCards';
 
-// Starting to prepare the round.
-
-// You need to assign a random role to each player. Modes.Miner or Modes.Saboteur.
-
-// You need to assign a random starting player. (Best is the youngest player, if you decide to save the birthday in the db at registration)
-
-// You need to assign the hands to each player. (6 | 5 | 4 cards) and then the rest of the cards to the deck.
-
-// You need to have the deck ready.
-
-// You need to have the discard pile ready.
-
-// You need to have the board ready. The initialMatrix with the four cards in place, start, [gold and 2 rocks] (shuffled).
-
-// Scenarios:
-// 1. The player is the miner. He can play a path card or an action card or to discard a card. One of these three options is mandatory.
-//
-
 export function dfs(matrix: IMatrix[][], row: number, column: number, visited: boolean[][]): boolean {
   if (row < 0 || row >= matrix.length || column < 0 || column >= matrix[0].length) {
     return false;

@@ -10,9 +10,9 @@ import { ShowLinks } from './showLinks';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Container>
+    <Container fluid>
       <Row>
-        <Col xs={1}>
+        <Col className="d-none d-xxl-block" xs={1}>
           <ShowLinks />
         </Col>
         <Col xs={11}>
