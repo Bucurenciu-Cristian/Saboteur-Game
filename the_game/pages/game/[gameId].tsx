@@ -20,7 +20,6 @@ function GameId() {
   const socket = useSocket();
 
   const [gameState, setGameState] = useState(null);
-  // const [selectedCard, setSelectedCard] = useState({ card: null, index: -1 });
   const [hasJoined, setHasJoined] = useState(false);
   const [validCoordinates, setValidCoordinates] = useState([]);
 
@@ -134,7 +133,7 @@ function GameId() {
 
       // Update the game state
       setGameState(newGameState);
-      // setSelectedCard({ card: null, index: -1 });
+
       selectedCard.current = { card: null, index: -1 };
     } else {
       alert('Please select a card first.');
@@ -143,7 +142,6 @@ function GameId() {
   const handleActionTurn = () => {};
   // Function to trigger event to the server
   const triggerEventToServer = (card, index) => {
-    console.log('Selected card changed:', { card, index });
     // Trigger the event to the server here
     socket.emit('selectCard', {
       gameId,
@@ -169,7 +167,7 @@ function GameId() {
               <Col>
                 The deck has {gameState.deck.length} cards <br /> the discard pile has {gameState.discardPile.length} cards
               </Col>
-              <Col>Path Continued until finished? {JSON.stringify(gameState.pathContinued)}</Col>
+              <Col>Path Continued until finished? {JSON.stringify(gameState.endOfRound)}</Col>
               <Col />
             </Row>
             <Row>

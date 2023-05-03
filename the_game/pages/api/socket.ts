@@ -43,9 +43,7 @@ const getValidCoordinatesForCard = (card, availablePaths, gameBoard) => {
   // Logic to determine if the card can be placed at each coordinate in availablePaths
   // If the card can be placed at a coordinate, push the coordinate to the validCoordinates array
   for (const availablePath of availablePaths) {
-    console.log('Available path:', availablePath);
     const { row, column } = availablePath;
-    console.log('Row and column:', row, column);
     const cardCanBePlaced = checkTheCurrentCardInTable({ matrix: gameBoard, row, column, card, simulation: true });
     if (cardCanBePlaced) {
       validCoordinates.push(availablePath);

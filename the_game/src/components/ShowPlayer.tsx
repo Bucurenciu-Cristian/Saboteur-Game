@@ -9,10 +9,9 @@ function ShowPlayer({ player, onCardClick }) {
 
   return (
     <>
-      <p>
-        Your name is <Button>{player?.username}</Button>
-      </p>
-
+      <p>Your name is {player?.username}</p>
+      <p>Your Rewards</p>
+      <div className="board-row" />
       <p>Your Role</p>
       <div className="board-row">
         <Square
@@ -29,14 +28,18 @@ function ShowPlayer({ player, onCardClick }) {
         />
       </div>
       {showBack && <p>Click on the Card to reveal Your Role</p>}
+      <p>Your Blocks</p>
+      <div className="board-row">
+        {player?.blocks?.map((item, i) => (
+          <Square Card={item} key={i} row={i} column={0} Occupied onClick={() => onCardClick(item, i)} />
+        ))}
+      </div>
       <p>Your Hand</p>
       <div className="board-row">
         {player?.hand?.map((item, i) => (
           <Square Card={item} key={i} row={i} column={0} Occupied onClick={() => onCardClick(item, i)} />
         ))}
       </div>
-      {/* <p>Your Rewards</p> */}
-      <div className="board-row" />
     </>
   );
 }

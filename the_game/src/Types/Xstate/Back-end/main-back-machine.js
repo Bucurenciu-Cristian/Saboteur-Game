@@ -1,25 +1,20 @@
 import { assign, createMachine, interpret } from 'xstate';
-import { inspect } from '@xstate/inspect';
 
+import { checkTheCurrentCardInTable } from '@engine/CheckTheCurrentCardInTable';
+import { findAvailablePath } from '@engine/FindAvailablePath';
+import { findTheCard } from '@src/BusinessLogic/Logic';
+import { findCardActions, NeighboursActions } from '@src/enums';
+import { isPathToFinish } from '@engine/DepthFirstSearch';
 import preparationMachine from './PreparationGame';
-import { checkTheCurrentCardInTable } from '../../../BusinessLogic/GameEngine/CheckTheCurrentCardInTable';
-import { findAvailablePath } from '../../../BusinessLogic/GameEngine/FindAvailablePath';
-import { findTheCard } from '../../../BusinessLogic/Logic';
-import { findCardActions, NeighboursActions } from '../../../enums';
-import { isPathToFinish } from '../../../BusinessLogic/GameEngine/DepthFirstSearch';
 
-const setPlayers = assign((context, event) => ({ players: event.data }));
 assign((context, event) => ({ players: event.data }));
-const setRoomId = assign({
-  roomId: (_, event) => event.roomId,
-});
 // can't work
-if (typeof window !== 'undefined') {
-  inspect({
-    url: 'https://statecharts.io/inspect', // The URL of the inspect server
-    iframe: false, // Set to false if you want to use a separate browser window for the inspector
-  });
-}
+// if (typeof window !== 'undefined') {
+//   inspect({
+//     url: 'https://statecharts.io/inspect', // The URL of the inspect server
+//     iframe: false, // Set to false if you want to use a separate browser window for the inspector
+//   });
+// }
 
 function checkCoordinates(param, availablePaths) {
   return availablePaths.some(({ column, row }) => row === param.row && column === param.column);
@@ -41,7 +36,6 @@ function createRoomMachine(roomId) {
         players: [], // Array of player objects with their roles, cards, and other relevant data
         playerId: null, // Add playerId to store the ID of the player attempting the action
         currentPlayer: 0,
-        startCard: null, // Start card (ladder)
         finishCards: [], // Array of finish cards (one treasure card and two stone cards)
         goldNuggetStock: [], // Stock  of gold nugget cards
         round: 1, // Current round of the game (1 to 3)
@@ -50,11 +44,7 @@ function createRoomMachine(roomId) {
         deck: [], // Array of cards in the deck
         roomId: 0, // Add roomId to the context
         availablePaths: [], // Array of available paths
-        pathContinued: false, // Boolean to check if the path is continued
-        // pathCards: [], // Array of path cards
-        // actionCards: [], // Array of action cards
-        // goldNuggetCards: [], // Array of gold nugget cards
-        // dwarfCards: [], // Array of dwarf cards (gold-diggers and saboteurs)
+        endOfRound: { pathContinued: false, isContinued: [], isNotContinued: [] }, // Object to check if the round is over
       },
       states: {
         room_id: {
@@ -112,50 +102,27 @@ function createRoomMachine(roomId) {
               },
             ],
             PLAY_ACTION_CARD: {
-              actions: ['playActionCard', 'removePlayedCardFromHand'],
+              actions: ['setPlayerId', 'playActionCard', 'removePlayedCardFromHand'],
               target: 'nextPlayer',
               // cond: 'canPlayActionCard',
             },
             PASS: {
-              actions: ['discardCardFromPass'],
+              actions: ['setPlayerId', 'discardCardFromPass'],
               target: 'nextPlayer',
               // cond: 'hasPlayableCards',
             },
           },
         },
-        wrongPlayer: {
-          always: 'chooseCard',
-        },
-        validateCard: {
-          meta: {
-            lastCardType: null,
-          },
-          on: {
-            CARD_VALID: 'placeCard',
-            CARD_INVALID: 'chooseCard',
-          },
-        },
         nextPlayer: {
           onEntry: ['GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths', 'findPathContinued'],
-          always: ['chooseCard'],
+          always: [
+            { target: 'chooseCard', cond: 'isRoundPlayable' },
+            { target: 'chooseCard', actions: ['discoverFinalCards'], cond: 'isRockFound' },
+            { target: 'score', cond: 'isGoldFound' },
+            // { target: 'end', cond: 'isGameEndConditionMet' },
+          ],
+          // cond: 'isRoundEndConditionMet',
           // ROUND_END: `#room-${roomId}`.score',
-        },
-        placeCard: {
-          on: {
-            SET_COORDINATES: {
-              actions: ['setCardCoordinates'],
-              target: 'nextPlayer',
-              // cond: (context, event, meta) => {
-              //   const { lastCardType } = meta.stateNode.parent.states.validateCard.meta;
-              //   if (lastCardType === 'path') {
-              //     Handle path card placement
-              // return true; // or return areValidCoordinates(context, event);
-              // }
-              // return lastCardType === 'action';
-              // },
-            },
-            INVALID_COORDINATES: 'chooseCard',
-          },
         },
         score: {
           onEntry: ['revealRoles', 'distributeGold'],
@@ -179,10 +146,9 @@ function createRoomMachine(roomId) {
     {
       services: {
         fetchPlayersFromDatabase: async (context) => {
-          const { roomId: room_id } = context;
-          const response = await fetch(`${urlWebsite}/api/room/${room_id}/players`);
-          const players = await response.json();
-          return players;
+          const { roomId: gameId } = context;
+          const response = await fetch(`${urlWebsite}/api/room/${gameId}/players`);
+          return response.json();
         },
       },
       actions: {
@@ -194,8 +160,20 @@ function createRoomMachine(roomId) {
           // Aici trebuie sa spui a cui e randul primului Jucator.
           context.currentPlayer = event.data.currentPlayer;
         },
-        setPlayers,
-        setRoomId,
+        setPlayers: assign((context, event) => ({ players: event.data })),
+        setRoomId: assign({
+          roomId: (_, event) => event.roomId,
+        }),
+        discoverFinalCards: assign({
+          gameBoard: (context, event) => {
+            const { gameBoard, endOfRound } = context;
+            const { isContinued } = endOfRound;
+            isContinued.forEach(([row, column]) => {
+              gameBoard[row][column].Card.back = undefined;
+            });
+            return gameBoard;
+          },
+        }),
 
         // NEW STUFF
         passTurn: assign({
@@ -221,7 +199,7 @@ function createRoomMachine(roomId) {
         }),
         findPathContinued: assign({
           // ? TODO: Think very good about this
-          pathContinued: ({ gameBoard, finishCards }) => {
+          endOfRound: ({ gameBoard, finishCards }) => {
             const isContinued = [];
             const isNotContinued = [];
             finishCards.forEach(([row, column]) => {
@@ -233,7 +211,11 @@ function createRoomMachine(roomId) {
                 console.log('END DFS');
               }
             });
-            return isContinued.length > 0 ? isContinued : false;
+            return {
+              pathContinued: isContinued.length > 0,
+              isContinued,
+              isNotContinued,
+            };
           },
         }),
         GiveCurrentUserANewCardFromTheDeck: assign((context) => {
@@ -258,12 +240,6 @@ function createRoomMachine(roomId) {
             players: updatedPlayers,
           };
         }),
-        setupGame: assign({
-          /* initialize context variables */
-        }),
-        shuffleAndDealCards: assign({
-          /* shuffle and deal cards to players */
-        }),
         playPathCard: assign({
           gameBoard: (context, event) => {
             const { row, column, card } = event.payload;
@@ -273,10 +249,7 @@ function createRoomMachine(roomId) {
           },
         }),
         setPlayerId: assign({
-          playerId: (_, event) => {
-            console.log('setPlayerId');
-            return event.payload.playerId;
-          },
+          playerId: (_, event) => event.payload.playerId,
         }),
         removePlayedCardFromHand: assign({
           players: (context, event) => {
@@ -366,24 +339,8 @@ function createRoomMachine(roomId) {
             context.players.filter((_, index) => index !== event.playerId),
         }),
 
-        addPlayer: assign({
-          players: (context, event) => {
-            // Add a new player to the game
-            // [...context.players, event.newPlayer],
-          },
-        }),
         endTurn: assign({
           currentPlayerIndex: (context) => (context.currentPlayerIndex + 1) % context.players.length,
-        }),
-        updatePlayerStatus: assign({
-          players: (context, event) => {
-            // Update the status of the specified player
-          },
-        }),
-        checkPathCompletion: assign({
-          gameState: (context) => {
-            // Check if the path is completed and update the game state
-          },
         }),
         rotateCard: assign({
           players: (context, event) => {
@@ -415,21 +372,34 @@ function createRoomMachine(roomId) {
           });
           return check;
         },
-        canPlayPathCard: (context, event) => {},
-        hasPlayableCards: (context, event) => {
-          // Check if the player has any playable cards
+        isRoundPlayable: (context, event) => {
+          // Check if the round end condition is met
+          const { endOfRound } = context;
+          const { pathContinued } = endOfRound;
+          return !pathContinued;
         },
-        isRoundEndConditionMet: (context, event) => {
-          // Check if the end conditions for the current round are met
+        isRockFound: (ctx) => {
+          console.log('Guard isRockFound');
+          const { gameBoard, endOfRound } = ctx;
+          return endOfRound.isContinued.some(([row, column]) => {
+            const { code } = gameBoard[row][column].Card;
+            return code[8] === 'R';
+          });
         },
+        isGoldFound: (context) => {
+          console.log('Guard isGoldFound');
+          const { gameBoard, endOfRound } = context;
+          return endOfRound.isContinued.some(([row, column]) => {
+            const { code } = gameBoard[row][column].Card;
+            return code[8] === 'G';
+          });
+        },
+
         isMaxRoundsReached: (context, event) => {
           // Check if the maximum number of rounds has been played
         },
         isPlayerBlocked: (context, event) => {
           // Check if the player is blocked by a broken tool card
-        },
-        setCardCoordinates: (context, event) => {
-          // Check if the coordinates are valid
         },
         hasEnoughPlayers: (context, event) => {
           // TODO: Change this 3 to the input from the form.
@@ -462,10 +432,8 @@ function createRoomMachine(roomId) {
           // Implement the path card placement validation logic here
         },
 
-        isGameEndConditionMet: (context, event) => {
-          // Implement the game end condition validation logic here
-        },
-
+        // Implement the game end condition validation logic here
+        isGameEndConditionMet: (context, event) => true,
         isMaxPlayersReached: (context, event) => {
           const room = context.rooms[event.roomId];
           if (!room) return false;
