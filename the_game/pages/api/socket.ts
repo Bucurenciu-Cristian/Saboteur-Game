@@ -20,7 +20,7 @@ function setupRoomMachineOnTransition(roomMachine, roomId, io1) {
   roomMachine.onTransition((state) => {
     if (state.changed) {
       console.log('State changed to:', state.value);
-      io1.to(roomId).emit('GAME_STATE_UPDATE', state.context);
+      io1.to(roomId).emit('GAME_STATE_UPDATE', { context: state.context, value: state.value });
       console.log('State sent to clients');
       // console.log('State event:', state.event);
     }
@@ -105,7 +105,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const roomMachine = getOrCreateRoomMachine(roomId, io);
-        io.to(roomId).emit('GAME_STATE_UPDATE', roomMachine.state.context);
+        io.to(roomId).emit('GAME_STATE_UPDATE', { context: roomMachine.state.context, value: roomMachine.state.value });
       });
 
       socket.on('passTurn', (roomIdObj) => {
@@ -121,12 +121,18 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
       socket.on('selectCard', (roomIdObj) => {
         const { gameId, card } = roomIdObj;
         const roomMachine = getOrCreateRoomMachine(gameId, io);
-        // roomMachine.send({ type: 'SELECT_PATH_CARD', payload: roomIdObj });
+        if (roomMachine.state.value === 'score') return;
+
         const { availablePaths, gameBoard } = roomMachine.state.context;
 
         const validCoordinates = getValidCoordinatesForCard(card, availablePaths, gameBoard);
-
         socket.emit('validCoordinates', validCoordinates);
+      });
+
+      socket.on('startNewGame', (roomIdObj) => {
+        const { gameId: roomId } = roomIdObj;
+        const roomMachine = getOrCreateRoomMachine(roomId, io);
+        roomMachine.send({ type: 'NEXT_ROUND' });
       });
       socket.on('disconnecting', (reason) => {
         for (const room of socket.rooms) {

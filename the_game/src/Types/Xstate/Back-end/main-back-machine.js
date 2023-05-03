@@ -74,7 +74,7 @@ function createRoomMachine(roomId) {
               target: 'prepareGame',
             },
             {
-              target: 'final',
+              target: 'end',
             },
           ],
         },
@@ -117,9 +117,8 @@ function createRoomMachine(roomId) {
           onEntry: ['GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths', 'findPathContinued'],
           always: [
             { target: 'chooseCard', cond: 'isRoundPlayable' },
+            { target: 'score', actions: ['discoverFinalCards'], cond: 'isGoldFound' },
             { target: 'chooseCard', actions: ['discoverFinalCards'], cond: 'isRockFound' },
-            { target: 'score', cond: 'isGoldFound' },
-            // { target: 'end', cond: 'isGameEndConditionMet' },
           ],
           // cond: 'isRoundEndConditionMet',
           // ROUND_END: `#room-${roomId}`.score',
@@ -127,15 +126,17 @@ function createRoomMachine(roomId) {
         score: {
           onEntry: ['revealRoles', 'distributeGold'],
           on: {
-            NEXT_ROUND: {
-              target: 'fetchingPlayers',
-              // cond: 'isNotLastRound',
-            },
-            GAME_END: 'end',
+            NEXT_ROUND: [
+              {
+                target: 'fetchingPlayers',
+                actions: ['nextRound'],
+                cond: 'isNotLastRound',
+              },
+              {
+                target: 'end',
+              },
+            ],
           },
-        },
-        final: {
-          type: 'final',
         },
         end: {
           type: 'final',
@@ -242,14 +243,21 @@ function createRoomMachine(roomId) {
         }),
         playPathCard: assign({
           gameBoard: (context, event) => {
-            const { row, column, card } = event.payload;
-            const newGameBoard = JSON.parse(JSON.stringify(context.gameBoard)); // Create a deep copy of the game board
-            newGameBoard[row][column] = { Card: card, Occupied: true, playerId: context.playerId }; // Place the card in the matrix
-            return newGameBoard;
+            const { row, column, card, playerId } = event.payload;
+            console.log('playerId', playerId);
+            const { gameBoard } = context;
+            // const newGameBoard = JSON.parse(JSON.stringify(context.gameBoard)); // Create a deep copy of the game board
+            gameBoard[row][column] = { Card: card, Occupied: true, playerId }; // Place the card in the matrix
+            console.log(gameBoard[row][column]);
+            return gameBoard;
           },
         }),
         setPlayerId: assign({
-          playerId: (_, event) => event.payload.playerId,
+          playerId: (_, event) => {
+            console.log('setPlayerId');
+            console.log(event.payload.playerId);
+            return event.payload.playerId;
+          },
         }),
         removePlayedCardFromHand: assign({
           players: (context, event) => {
@@ -277,6 +285,9 @@ function createRoomMachine(roomId) {
         announceWinners: (context) => {
           /* announce the winners based on gold nuggets count */
         },
+        nextRound: assign({
+          round: (context) => context.round + 1,
+        }),
         // From today 25.05
         discardCard: assign({
           discardPile: (context, event) =>
@@ -341,11 +352,6 @@ function createRoomMachine(roomId) {
 
         endTurn: assign({
           currentPlayerIndex: (context) => (context.currentPlayerIndex + 1) % context.players.length,
-        }),
-        rotateCard: assign({
-          players: (context, event) => {
-            // Rotate the specified card in the player's hand or on the game board
-          },
         }),
       },
       guards: {
