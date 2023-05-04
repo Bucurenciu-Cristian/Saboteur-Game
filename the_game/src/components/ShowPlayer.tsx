@@ -44,12 +44,6 @@ function ShowPlayer({ player, onCardClick, currentCard }) {
       </Row>
 
       {showBack && <p>Click on the Card to reveal Your Role</p>}
-      <p>Your Blocks</p>
-      <div className="board-row">
-        {player?.blocks?.map((item, i) => (
-          <Square Card={item} key={i} row={i} column={0} Occupied />
-        ))}
-      </div>
       <p>Your Hand</p>
       <div className="board-row">
         {player?.hand?.map((item, i) => (

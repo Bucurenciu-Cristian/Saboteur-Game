@@ -10,6 +10,7 @@ interface Player {
   name: string;
   role?: PlayerCard;
   hand?: ICardBasic[];
+  blocks?: ICardBasic[];
 }
 
 interface Context {
@@ -64,6 +65,7 @@ const shuffleAndDealPathAndActionCards = assign((context: Context, event) => {
   const playersWithCards = context.players.map((player) => ({
     ...player,
     hand: giveMeCards(howManyCardsInHand, context.deck),
+    blocks: [],
   }));
 
   console.log('Preparation complete');

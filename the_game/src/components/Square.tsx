@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import Image from 'next/image';
 
 function renderImage(Card, Occupied, row, column, isValidCoordinate) {
-  const isRotated = Card?.code && Card.code[Card.code.length - 1] === 'T';
+  const isRotated = Card?.code && Card.code[1] === 'P' && Card.code[Card.code.length - 1] === 'T';
 
   if (Occupied) {
     if (Card?.back) {

@@ -32,7 +32,7 @@ const Maps: ActionCard[] = [
 const TwoActions: ActionCard[] = [
   {
     src: CardTypes.ACTIONS.TWO_POWERS[0],
-    code: [Modes.Base, Modes.Action, Modes.LanternAndCard],
+    code: [Modes.Base, Modes.Action, Modes.LanternAndCart],
   },
   {
     src: CardTypes.ACTIONS.TWO_POWERS[1],

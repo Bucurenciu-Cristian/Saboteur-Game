@@ -1,6 +1,7 @@
 import { Modes } from '@src/enums';
 import { ICardBasic, ISpecialPath, PathCard } from '@src/Types/DexType';
 import { CardTypes } from '@src/data/cards';
+import { Actions } from '@cards/Actions';
 
 export const Blocks: PathCard[] = [
   // Blocaje Don't change
@@ -198,9 +199,7 @@ export const normalPath: ICardBasic[] = [
 
 export const StartCard: ICardBasic = {
   src: CardTypes.PATH_SPECIAL[0],
-  // src: start,
   code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Start],
-  // id: 1,
 };
 export const finishCards: ISpecialPath[] = [
   {
@@ -225,4 +224,4 @@ export const SpecialPath: ICardBasic[] = [StartCard, ...finishCards];
 
 export const allPaths: ICardBasic[] = [...SpecialPath, ...normalPath];
 
-export const PathsAndActions: ICardBasic[] = [...normalPath];
+export const PathsAndActions: ICardBasic[] = [...normalPath, ...Actions];

@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import useSocket from '@hooks/useSocket';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import ShowPlayer from '@components/ShowPlayer';
-import ShowBoard from '@components/ShowBoard';
 import { changeOrientation } from '@src/BusinessLogic/ChangeOrientation';
 import Square from '@components/Square';
 import { CardTypes } from '@src/data/cards';
+import ShowBoard from '@components/ShowBoard';
 
 async function checkRoomExists(gameId: number) {
   const response = await fetch(`/api/room/${gameId}/players`);
@@ -14,8 +14,12 @@ async function checkRoomExists(gameId: number) {
   return data;
 }
 
-export function getCardCondition(theCard, number: number, char: string) {
-  return theCard.code[number] === char;
+export function getCardCondition(card, index: number, mode: string) {
+  return card.code[index] === mode;
+}
+
+function DisplayBlocks(props: { player: any; element: (item, i) => JSX.Element }) {
+  return <p>{props.player?.blocks?.map(props.element)}</p>;
 }
 
 function GameId() {
@@ -65,7 +69,11 @@ function GameId() {
       setValidCoordinates([]);
     });
     socket.on('validCoordinates', (coordinates) => {
-      setValidCoordinates(coordinates);
+      if (getCardCondition(coordinates.card, 1, 'P')) {
+        setValidCoordinates(coordinates.valid);
+      } else {
+        setValidCoordinates([]);
+      }
     });
   }, [socket]);
 
@@ -127,7 +135,15 @@ function GameId() {
     });
   };
   const handleRotateCard = () => {
-    if (selectedCard.current.card) {
+    const { card } = selectedCard.current;
+    if (card) {
+      if (getCardCondition(card, 1, 'A')) {
+        alert("You can't rotate an action card.");
+        selectedCard.current = { card: null, index: -1 };
+        return;
+      }
+
+      // Rotate the card
       const rotatedCode = changeOrientation(selectedCard.current.card.code);
       // Create a new object to avoid mutating the original card object
       const rotatedCard = {
@@ -150,8 +166,48 @@ function GameId() {
       alert('Please select a card first to rotate it.');
     }
   };
-  const handleActionTurnYourself = () => {};
-  const handleActionTurnOthers = () => {};
+  const handleActionTurnYourself = () => {
+    const theCard = selectedCard.current.card;
+    if (theCard) {
+      if (getCardCondition(theCard, 1, 'A')) {
+        if (getCardCondition(theCard, 2, 'M')) {
+          console.log('Map');
+        } else if (getCardCondition(theCard, 2, 'D')) {
+          console.log('Destroy');
+        } else {
+          console.log('You selected an action card but not Map or Destroy');
+          alert('You selected an action card but not Map or Destroy');
+        }
+      } else {
+        alert('You can place only actions on Players');
+      }
+    }
+  };
+  const handleActionTurnOthers = (selectedPlayer) => {
+    const theCard = selectedCard.current.card;
+    if (theCard) {
+      if (getCardCondition(theCard, 1, 'A')) {
+        if (!(getCardCondition(theCard, 2, 'M') || getCardCondition(theCard, 2, 'D'))) {
+          socket.emit('actionTurnOthers', {
+            gameId,
+            card: theCard,
+            handIndex: selectedCard.current.index,
+            playerId: context.currentPlayer,
+            selectedPlayer, // Add the selected player data here
+          });
+          // Reset the selected card
+          selectedCard.current = { card: null, index: -1 };
+          console.log(JSON.stringify(theCard));
+        } else {
+          alert("You can't play Map or Destroy on other players");
+        }
+      } else {
+        alert('You can place only actions on Players');
+      }
+    } else {
+      alert("You don't have an action card selected");
+    }
+  };
 
   const StartNewGame = () => {
     socket.emit('startNewGame', {
@@ -159,6 +215,19 @@ function GameId() {
     });
   };
   // Render the component based on the client state
+  const onCardClick = (card, index) => {
+    selectedCard.current = { card, index };
+    triggerEventToServer(card, index);
+  };
+  const renderTooltip = (text) =>
+    function (props) {
+      return (
+        <Tooltip id={`button-tooltip-${text}`} {...props}>
+          {text}
+        </Tooltip>
+      );
+    };
+
   return (
     <>
       <Row>
@@ -176,17 +245,33 @@ function GameId() {
                 if (index !== context.currentPlayer) {
                   return (
                     <Col key={index}>
-                      <Button className="w-75" onClick={handleActionTurnOthers}>
-                        {player.username} <br />
-                      </Button>
+                      <OverlayTrigger placement="top" delay={{ show: 100, hide: 200 }} overlay={renderTooltip('Other Actions')}>
+                        <>
+                          <Button className="w-75" onClick={() => handleActionTurnOthers(player)}>
+                            {player.username}
+                          </Button>
+                          <DisplayBlocks
+                            player={player}
+                            element={(item, i) => <Square Card={item} key={i} row={i} column={0} Occupied />}
+                          />
+                        </>
+                      </OverlayTrigger>
                     </Col>
                   );
                 }
                 return (
                   <Col key={index}>
-                    <Button className="w-75" onClick={handleActionTurnYourself}>
-                      Yourself <br />
-                    </Button>
+                    <OverlayTrigger placement="top" delay={{ show: 100, hide: 200 }} overlay={renderTooltip('Map or Action')}>
+                      <>
+                        <Button className="w-75" onClick={handleActionTurnYourself}>
+                          Yourself
+                        </Button>
+                        <DisplayBlocks
+                          player={player}
+                          element={(item, i) => <Square Card={item} key={i} row={i} column={0} Occupied />}
+                        />
+                      </>
+                    </OverlayTrigger>
                   </Col>
                 );
               })}
@@ -225,10 +310,7 @@ function GameId() {
             <div>Players Turn {context.currentPlayer + 1}</div>
             <ShowPlayer
               player={context.players[context.currentPlayer]}
-              onCardClick={(card, index) => {
-                selectedCard.current = { card, index };
-                triggerEventToServer(card, index);
-              }}
+              onCardClick={onCardClick}
               currentCard={selectedCard.current.card}
             />
             {/* <ShowPlayer items={context.players[0]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}

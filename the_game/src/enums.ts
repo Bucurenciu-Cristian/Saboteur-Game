@@ -36,7 +36,7 @@ export enum Modes {
   Axe = 'A',
   AxeAndCart = 'G',
   AxeAndLantern = 'B',
-  LanternAndCard = 'E',
+  LanternAndCart = 'E',
   Miner = 'M',
   Saboteur = 'S',
   playPath = 'PlayPath',

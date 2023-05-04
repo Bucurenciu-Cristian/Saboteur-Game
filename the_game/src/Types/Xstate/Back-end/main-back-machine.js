@@ -6,6 +6,8 @@ import { findTheCard } from '@src/BusinessLogic/Logic';
 import { findCardActions, NeighboursActions } from '@src/enums';
 import { isPathToFinish } from '@engine/DepthFirstSearch';
 import preparationMachine from './PreparationGame';
+import { getCardCondition } from '../../../../pages/game/[gameId]';
+import { Modes } from '../../../enums';
 
 assign((context, event) => ({ players: event.data }));
 // can't work
@@ -101,9 +103,16 @@ function createRoomMachine(roomId) {
                 target: 'nextPlayer',
               },
             ],
-            PLAY_ACTION_CARD: {
-              actions: ['setPlayerId', 'playActionCard', 'removePlayedCardFromHand'],
+            // Other actions
+            PLAY_ACTION_CARD_OTHERS: {
+              actions: ['setPlayerId', 'playActionCardOthers', 'removePlayedCardFromHand'],
               target: 'nextPlayer',
+              // cond: 'canPlayActionCard',
+            },
+            // Destroy or Map
+            PLAY_ACTION_CARD_MYSELF: {
+              actions: ['setPlayerId', 'playActionCardMyself', 'removePlayedCardFromHand'],
+              target: 'chooseCard',
               // cond: 'canPlayActionCard',
             },
             PASS: {
@@ -269,9 +278,34 @@ function createRoomMachine(roomId) {
           },
         }),
 
-        playActionCard: assign({
+        playActionCardOthers: assign({
           playerId: (_, event) => event.payload.playerId,
+
           /* update gameState with the played action card */
+          // find the selectedplayer from the payload and add the card to the blocks from the player
+          players: (context, event) => {
+            const { players } = context;
+            const { selectedPlayer, card } = event.payload;
+            const { code: cardCode } = card;
+
+            const playerIndex = players.findIndex((player) => player.email === selectedPlayer.email);
+
+            const newPlayers = JSON.parse(JSON.stringify(players)); // Create a deep copy of the players array
+            const isActionCard = getCardCondition(card, 1, Modes.Action);
+            const isSpecialCard =
+              getCardCondition(card, 2, Modes.AxeAndCart) ||
+              getCardCondition(card, 2, Modes.AxeAndLantern) ||
+              getCardCondition(card, 2, Modes.LanternAndCart);
+            const arr = newPlayers[playerIndex].blocks;
+            /* arr.map((card) => {
+              if (card.code === cardCode) {
+                card.count += 1;
+              }
+            }); */
+            newPlayers[playerIndex].blocks.push(card); // Add the card to the player's blocks
+
+            return newPlayers;
+          },
         }),
         revealRoles: assign({
           /* reveal the roles of all players */

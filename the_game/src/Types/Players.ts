@@ -22,7 +22,7 @@ export type ActionCardsTypes =
   | Modes.Cart
   | Modes.AxeAndLantern
   | Modes.AxeAndCart
-  | Modes.LanternAndCard
+  | Modes.LanternAndCart
   | Modes.Destroy
   | Modes.Map;
 export type ActionCardsTypesBlocks =
@@ -31,7 +31,7 @@ export type ActionCardsTypesBlocks =
   | Modes.Cart
   | Modes.AxeAndLantern
   | Modes.AxeAndCart
-  | Modes.LanternAndCard;
+  | Modes.LanternAndCart;
 
 export interface Block {
   type: ActionCardsTypesBlocks;

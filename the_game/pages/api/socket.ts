@@ -126,7 +126,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
         const { availablePaths, gameBoard } = roomMachine.state.context;
 
         const validCoordinates = getValidCoordinatesForCard(card, availablePaths, gameBoard);
-        socket.emit('validCoordinates', validCoordinates);
+        socket.emit('validCoordinates', { valid: validCoordinates, card });
       });
 
       socket.on('startNewGame', (roomIdObj) => {
@@ -134,6 +134,12 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
         const roomMachine = getOrCreateRoomMachine(roomId, io);
         roomMachine.send({ type: 'NEXT_ROUND' });
       });
+      socket.on('actionTurnOthers', (roomIdObj) => {
+        const { gameId: roomId } = roomIdObj;
+        const roomMachine = getOrCreateRoomMachine(roomId, io);
+        roomMachine.send({ type: 'PLAY_ACTION_CARD_OTHERS', payload: roomIdObj });
+      });
+
       socket.on('disconnecting', (reason) => {
         for (const room of socket.rooms) {
           if (room !== socket.id) {
