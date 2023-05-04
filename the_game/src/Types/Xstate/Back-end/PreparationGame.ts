@@ -1,10 +1,10 @@
 import { assign, createMachine } from 'xstate';
-import { howManyCardsEachPlayerCanHave, howManyDwarfs } from '../../../functions';
-import { Miners, Saboteurs } from '../../../BusinessLogic/Cards/Dwarfs';
-import { PathsAndActions } from '../../../BusinessLogic/Cards/Paths';
-import { InitialMatrix } from '../../../BusinessLogic/GameEngine/Matrix';
-import { ICardBasic, IMatrix, PlayerCard } from '../../DexType';
-import { fisherYatesShuffle } from './FisherYatesShuffle';
+import { howManyCardsEachPlayerCanHave, howManyDwarfs } from '@src/functions';
+import { Miners, Saboteurs } from '@cards/Dwarfs';
+import { PathsAndActions } from '@cards/Paths';
+import { InitialMatrix } from '@engine/Matrix';
+import { ICardBasic, IMatrix, PlayerCard } from '@src/Types/DexType';
+import { fisherYatesShuffle } from '../../../BusinessLogic/FisherYatesShuffle';
 
 interface Player {
   name: string;
@@ -129,6 +129,7 @@ const preparationMachine = createMachine<Context>(
           players: (context: Context) => context.players,
           deck: (context: Context) => context.deck,
           currentPlayer: (context: Context) => context.currentPlayer,
+          discardPile: [],
         },
         type: 'final',
       },

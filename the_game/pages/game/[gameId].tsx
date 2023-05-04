@@ -6,6 +6,7 @@ import ShowPlayer from '@components/ShowPlayer';
 import { changeOrientation } from '@src/BusinessLogic/ChangeOrientation';
 import Square from '@components/Square';
 import { CardTypes } from '@src/data/cards';
+import { Modes } from '@src/enums';
 import ShowBoard from '@components/ShowBoard';
 
 async function checkRoomExists(gameId: number) {
@@ -166,21 +167,37 @@ function GameId() {
       alert('Please select a card first to rotate it.');
     }
   };
-  const handleActionTurnYourself = () => {
+  const handleActionTurnYourself = (selectedPlayer) => {
     const theCard = selectedCard.current.card;
     if (theCard) {
-      if (getCardCondition(theCard, 1, 'A')) {
-        if (getCardCondition(theCard, 2, 'M')) {
+      if (getCardCondition(theCard, 1, Modes.Action)) {
+        if (getCardCondition(theCard, 2, Modes.Map)) {
           console.log('Map');
-        } else if (getCardCondition(theCard, 2, 'D')) {
+        } else if (getCardCondition(theCard, 2, Modes.Destroy)) {
           console.log('Destroy');
+        } else if (
+          getCardCondition(theCard, 3, Modes.True) ||
+          theCard.code.includes(Modes.AxeAndCart) ||
+          theCard.code.includes(Modes.AxeAndLantern) ||
+          theCard.code.includes(Modes.LanternAndCart)
+        ) {
+          // Here you have to check that the player have an entry in the blocks array
+          socket.emit('actionTurnOthers', {
+            gameId,
+            card: theCard,
+            handIndex: selectedCard.current.index,
+            playerId: context.currentPlayer,
+            selectedPlayer, // Add the selected player data here
+          });
+          // Reset the selected card
+          selectedCard.current = { card: null, index: -1 };
         } else {
           console.log('You selected an action card but not Map or Destroy');
           alert('You selected an action card but not Map or Destroy');
         }
-      } else {
-        alert('You can place only actions on Players');
       }
+    } else {
+      alert('You can place only actions on Players');
     }
   };
   const handleActionTurnOthers = (selectedPlayer) => {
@@ -197,7 +214,6 @@ function GameId() {
           });
           // Reset the selected card
           selectedCard.current = { card: null, index: -1 };
-          console.log(JSON.stringify(theCard));
         } else {
           alert("You can't play Map or Destroy on other players");
         }
@@ -263,7 +279,7 @@ function GameId() {
                   <Col key={index}>
                     <OverlayTrigger placement="top" delay={{ show: 100, hide: 200 }} overlay={renderTooltip('Map or Action')}>
                       <>
-                        <Button className="w-75" onClick={handleActionTurnYourself}>
+                        <Button className="w-75" onClick={() => handleActionTurnYourself(player)}>
                           Yourself
                         </Button>
                         <DisplayBlocks

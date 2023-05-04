@@ -26,7 +26,7 @@ function renderImage(Card, Occupied, row, column, isValidCoordinate) {
 function Square({ Card, onClick, Occupied, row, column, validCoordinates }) {
   const isValidCoordinate = validCoordinates?.some((coord) => coord.row === row && coord.column === column);
   return (
-    <Button className="square" onClick={onClick}>
+    <Button className="square" onClick={onClick} disabled={validCoordinates && !isValidCoordinate}>
       {renderImage(Card, Occupied, row, column, isValidCoordinate)}
     </Button>
   );

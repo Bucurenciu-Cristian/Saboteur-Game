@@ -10,16 +10,17 @@ import { getCardCondition } from '../../../../pages/game/[gameId]';
 import { Modes } from '../../../enums';
 
 assign((context, event) => ({ players: event.data }));
-// can't work
-// if (typeof window !== 'undefined') {
-//   inspect({
-//     url: 'https://statecharts.io/inspect', // The URL of the inspect server
-//     iframe: false, // Set to false if you want to use a separate browser window for the inspector
-//   });
-// }
 
 function checkCoordinates(param, availablePaths) {
   return availablePaths.some(({ column, row }) => row === param.row && column === param.column);
+}
+
+export function isThisCardSpecial(card) {
+  return (
+    getCardCondition(card, 2, Modes.AxeAndCart) ||
+    getCardCondition(card, 2, Modes.AxeAndLantern) ||
+    getCardCondition(card, 2, Modes.LanternAndCart)
+  );
 }
 
 function createRoomMachine(roomId) {
@@ -36,8 +37,9 @@ function createRoomMachine(roomId) {
       initial: 'room_id',
       context: {
         players: [], // Array of player objects with their roles, cards, and other relevant data
-        playerId: null, // Add playerId to store the ID of the player attempting the action
+        playerId: 0, // Add playerId to store the ID of the player attempting the action
         currentPlayer: 0,
+        blocks: [], // Array of block cards
         finishCards: [], // Array of finish cards (one treasure card and two stone cards)
         goldNuggetStock: [], // Stock  of gold nugget cards
         round: 1, // Current round of the game (1 to 3)
@@ -98,33 +100,32 @@ function createRoomMachine(roomId) {
           on: {
             PLAY_PATH_CARD: [
               {
-                cond: 'isEverythingOkay',
-                actions: ['setPlayerId', 'playPathCard', 'removePlayedCardFromHand'],
+                cond: 'checkingPath',
+                actions: ['playPathCard', 'removePlayedCardFromHand'],
                 target: 'nextPlayer',
               },
             ],
-            // Other actions
             PLAY_ACTION_CARD_OTHERS: {
-              actions: ['setPlayerId', 'playActionCardOthers', 'removePlayedCardFromHand'],
+              actions: ['playActionCardOthers', 'removePlayedCardFromHand'],
               target: 'nextPlayer',
               // cond: 'canPlayActionCard',
             },
             // Destroy or Map
             PLAY_ACTION_CARD_MYSELF: {
-              actions: ['setPlayerId', 'playActionCardMyself', 'removePlayedCardFromHand'],
-              target: 'chooseCard',
+              actions: ['playActionCardMyself', 'removePlayedCardFromHand'],
+              target: 'nextPlayer',
               // cond: 'canPlayActionCard',
             },
             PASS: {
-              actions: ['setPlayerId', 'discardCardFromPass'],
+              actions: ['discardCardFromPass'],
               target: 'nextPlayer',
-              // cond: 'hasPlayableCards',
             },
           },
         },
         nextPlayer: {
-          onEntry: ['GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths', 'findPathContinued'],
+          onEntry: ['setPlayerId', 'GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths', 'findPathContinued'],
           always: [
+            { target: 'score', cond: 'isAtLeastOnePlayerWithCard' },
             { target: 'chooseCard', cond: 'isRoundPlayable' },
             { target: 'score', actions: ['discoverFinalCards'], cond: 'isGoldFound' },
             { target: 'chooseCard', actions: ['discoverFinalCards'], cond: 'isRockFound' },
@@ -169,6 +170,7 @@ function createRoomMachine(roomId) {
           context.deck = event.data.deck;
           // Aici trebuie sa spui a cui e randul primului Jucator.
           context.currentPlayer = event.data.currentPlayer;
+          context.discardPile = event.data.discardPile;
         },
         setPlayers: assign((context, event) => ({ players: event.data })),
         setRoomId: assign({
@@ -253,20 +255,14 @@ function createRoomMachine(roomId) {
         playPathCard: assign({
           gameBoard: (context, event) => {
             const { row, column, card, playerId } = event.payload;
-            console.log('playerId', playerId);
             const { gameBoard } = context;
             // const newGameBoard = JSON.parse(JSON.stringify(context.gameBoard)); // Create a deep copy of the game board
             gameBoard[row][column] = { Card: card, Occupied: true, playerId }; // Place the card in the matrix
-            console.log(gameBoard[row][column]);
             return gameBoard;
           },
         }),
         setPlayerId: assign({
-          playerId: (_, event) => {
-            console.log('setPlayerId');
-            console.log(event.payload.playerId);
-            return event.payload.playerId;
-          },
+          playerId: (_, event) => event.payload.playerId,
         }),
         removePlayedCardFromHand: assign({
           players: (context, event) => {
@@ -286,23 +282,66 @@ function createRoomMachine(roomId) {
           players: (context, event) => {
             const { players } = context;
             const { selectedPlayer, card } = event.payload;
-            const { code: cardCode } = card;
-
-            const playerIndex = players.findIndex((player) => player.email === selectedPlayer.email);
+            const isActionCard = getCardCondition(card, 1, Modes.Action);
+            if (!isActionCard) {
+              return players;
+            }
 
             const newPlayers = JSON.parse(JSON.stringify(players)); // Create a deep copy of the players array
-            const isActionCard = getCardCondition(card, 1, Modes.Action);
-            const isSpecialCard =
-              getCardCondition(card, 2, Modes.AxeAndCart) ||
-              getCardCondition(card, 2, Modes.AxeAndLantern) ||
-              getCardCondition(card, 2, Modes.LanternAndCart);
-            const arr = newPlayers[playerIndex].blocks;
-            /* arr.map((card) => {
-              if (card.code === cardCode) {
-                card.count += 1;
+            const targetPlayer = newPlayers.findIndex((player) => player.email === selectedPlayer.email);
+
+            const isSpecialEventCard = isThisCardSpecial(card);
+
+            // Handle regular action cards
+            if (!isSpecialEventCard) {
+              console.log('Not special');
+              if (getCardCondition(card, 3, Modes.False)) {
+                // Check if the player already has a broken tool of the same type
+                const hasBrokenTool = newPlayers[targetPlayer].blocks.some(
+                  (cardBlock) =>
+                    (card.code.includes(Modes.Axe) && cardBlock.code.includes(Modes.Axe)) ||
+                    (card.code.includes(Modes.Cart) && cardBlock.code.includes(Modes.Cart)) ||
+                    (card.code.includes(Modes.Lantern) && cardBlock.code.includes(Modes.Lantern))
+                );
+
+                // Only add the broken tool if the player doesn't already have one of the same type
+                if (!hasBrokenTool) {
+                  newPlayers[targetPlayer].blocks.push(card);
+                }
+              } else {
+                // Handle regular "On" action cards
+                newPlayers[targetPlayer].blocks.forEach((cardBlock, index) => {
+                  if (
+                    (card.code.includes(Modes.Axe) && cardBlock.code.includes(Modes.Axe)) ||
+                    (card.code.includes(Modes.Cart) && cardBlock.code.includes(Modes.Cart)) ||
+                    (card.code.includes(Modes.Lantern) && cardBlock.code.includes(Modes.Lantern))
+                  ) {
+                    newPlayers[targetPlayer].blocks.splice(index, 1); // Remove the broken tool card
+                  }
+                });
               }
-            }); */
-            newPlayers[playerIndex].blocks.push(card); // Add the card to the player's blocks
+            } else {
+              // Handle special event cards
+              console.log('Special');
+
+              // Iterate through player's blocks
+              newPlayers[targetPlayer].blocks.forEach((cardBlock, index) => {
+                // Check if the special card can repair the broken tool
+                if (card.code.includes(Modes.LanternAndCart)) {
+                  if (cardBlock.code.includes(Modes.Lantern) || cardBlock.code.includes(Modes.Cart)) {
+                    newPlayers[targetPlayer].blocks.splice(index, 1); // Remove the broken tool card
+                  }
+                } else if (card.code.includes(Modes.AxeAndLantern)) {
+                  if (cardBlock.code.includes(Modes.Axe) || cardBlock.code.includes(Modes.Lantern)) {
+                    newPlayers[targetPlayer].blocks.splice(index, 1); // Remove the broken tool card
+                  }
+                } else if (card.code.includes(Modes.AxeAndCart)) {
+                  if (cardBlock.code.includes(Modes.Axe) || cardBlock.code.includes(Modes.Cart)) {
+                    newPlayers[targetPlayer].blocks.splice(index, 1); // Remove the broken tool card
+                  }
+                }
+              });
+            }
 
             return newPlayers;
           },
@@ -313,9 +352,6 @@ function createRoomMachine(roomId) {
         distributeGold: assign({
           /* distribute gold nuggets to the winning players */
         }),
-        prepareNextRound: assign({
-          /* set up the game for the next round */
-        }),
         announceWinners: (context) => {
           /* announce the winners based on gold nuggets count */
         },
@@ -323,77 +359,22 @@ function createRoomMachine(roomId) {
           round: (context) => context.round + 1,
         }),
         // From today 25.05
-        discardCard: assign({
-          discardPile: (context, event) =>
-            // Add the discarded card to the discard pile
-            [...context.discardPile, event.card],
-          players: (context, event) =>
-            // Remove the discarded card from the player's hand
-            context.players.map((player, index) => {
-              if (index === event.playerId) {
-                return {
-                  ...player,
-                  hand: player.hand.filter((card) => card.id !== event.card.id),
-                };
-              }
-              return player;
-            }),
-        }),
-        drawCard: assign({
-          players: (context, event) => {
-            // Draw a card from the deck and add it to the player's hand
-            const [drawnCard, ...remainingDeck] = context.deck;
-            context.deck = remainingDeck;
-
-            return context.players.map((player, index) => {
-              if (index === event.playerId) {
-                return {
-                  ...player,
-                  hand: [...player.hand, drawnCard],
-                };
-              }
-              return player;
-            });
-          },
-        }),
-        incrementRound: assign({
-          round: (context) => context.round + 1,
-        }),
-
-        resetGameBoard: assign({
-          gameBoard: (context) => {
-            // Reset the game board to the initial state
-          },
-        }),
-
-        resetPlayerStates: assign({
-          players: (context) => {
-            // Reset the players' states for a new round or game
-          },
-        }),
-
         updatePlayerScore: assign({
           players: (context, event) => {
             // Update the player's score based on the outcome of the round or game
           },
-        }),
-
-        removePlayer: assign({
-          players: (context, event) =>
-            // Remove a player from the game
-            context.players.filter((_, index) => index !== event.playerId),
-        }),
-
-        endTurn: assign({
-          currentPlayerIndex: (context) => (context.currentPlayerIndex + 1) % context.players.length,
         }),
       },
       guards: {
         // Add guards here
         /* guard implementations */
         isNotLastRound: (context) => context.round < 3,
-        isEverythingOkay: (context, event) => {
-          console.log('Guard isEverythingOkay');
+        checkingPath: (context, event) => {
+          console.log('Guard checkingPath');
+          console.log(context.playerId, event.payload.playerId);
+          const checkPlayer = context.playerId === event.payload.playerId;
+          console.log({ checkPlayer });
+          // if (!checkPlayer) return false;
           const checkCoord = checkCoordinates(
             {
               row: event.payload.row,
@@ -401,18 +382,18 @@ function createRoomMachine(roomId) {
             },
             context.availablePaths
           );
-          if (!checkCoord) {
-            return false;
-          }
+          if (!checkCoord) return false;
+
           const check = checkTheCurrentCardInTable({
             matrix: context.gameBoard,
             row: event.payload.row,
             column: event.payload.column,
             card: event.payload.card,
           });
+
           return check;
         },
-        isRoundPlayable: (context, event) => {
+        isRoundPlayable: (context) => {
           // Check if the round end condition is met
           const { endOfRound } = context;
           const { pathContinued } = endOfRound;
@@ -434,19 +415,20 @@ function createRoomMachine(roomId) {
             return code[8] === 'G';
           });
         },
-
+        isAtLeastOnePlayerWithCard: (context) => {
+          for (const player of context.players) {
+            if (player.hand.length > 0) {
+              return false;
+            }
+          }
+          return true;
+        },
+        isCurrentPlayer: (context, event) => context.playerId === event.payload.playerId,
         isMaxRoundsReached: (context, event) => {
           // Check if the maximum number of rounds has been played
         },
         isPlayerBlocked: (context, event) => {
           // Check if the player is blocked by a broken tool card
-        },
-        hasEnoughPlayers: (context, event) => {
-          // TODO: Change this 3 to the input from the form.
-          // Check if the room has enough players to start the game
-          const room = context.rooms[event.roomId];
-          if (!room) return false;
-          return room.users.length >= 3;
         },
         isPlayerTurn: (context, event) => context.currentPlayerIndex === event.playerId,
 
@@ -461,8 +443,6 @@ function createRoomMachine(roomId) {
         },
 
         hasEnoughCardsInDeck: (context, event) => context.deck.length > 0,
-
-        isDeckEmpty: (context, event) => context.deck.length === 0,
 
         isActionCardLimitReached: (context, event) => {
           // Implement the action card limit validation logic here

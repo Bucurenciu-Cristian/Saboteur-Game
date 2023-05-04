@@ -1,7 +1,7 @@
 import { Matrix, padding } from '@src/variables';
 import { ICardBasic, IMatrix } from '@src/Types/DexType';
 import { NESWC, normalPath, SpecialPath, StartCard } from '@cards/Paths';
-import { fisherYatesShuffle } from '@src/Types/Xstate/Back-end/FisherYatesShuffle';
+import { fisherYatesShuffle } from '@src/BusinessLogic/FisherYatesShuffle';
 import { getRandomizedArray } from './GetRandomizedArray';
 import { checkTheCurrentCardInTable } from './CheckTheCurrentCardInTable';
 

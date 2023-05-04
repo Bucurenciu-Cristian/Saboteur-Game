@@ -1,4 +1,4 @@
-import { fisherYatesShuffle } from '@src/Types/Xstate/Back-end/FisherYatesShuffle';
+import { fisherYatesShuffle } from '@src/BusinessLogic/FisherYatesShuffle';
 
 export function getRandomizedArray<T>(array: T[], excludeFirstElement: boolean = false): T[] {
   // Create a copy of the original array and remove the first element if excludeFirstElement is true
