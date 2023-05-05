@@ -29,20 +29,7 @@ const Maps: ActionCard[] = [
     code: [Modes.Base, Modes.Action, Modes.Map],
   },
 ];
-const TwoActions: ActionCard[] = [
-  {
-    src: CardTypes.ACTIONS.TWO_POWERS[0],
-    code: [Modes.Base, Modes.Action, Modes.LanternAndCart],
-  },
-  {
-    src: CardTypes.ACTIONS.TWO_POWERS[1],
-    code: [Modes.Base, Modes.Action, Modes.AxeAndLantern],
-  },
-  {
-    src: CardTypes.ACTIONS.TWO_POWERS[2],
-    code: [Modes.Base, Modes.Action, Modes.AxeAndCart],
-  },
-];
+
 const DestroyPath: ActionCard[] = [
   {
     src: CardTypes.ACTIONS.DESTROY,
@@ -55,6 +42,20 @@ const DestroyPath: ActionCard[] = [
   {
     src: CardTypes.ACTIONS.DESTROY,
     code: [Modes.Base, Modes.Action, Modes.Destroy],
+  },
+];
+const TwoActions: ActionCard[] = [
+  {
+    src: CardTypes.ACTIONS.TWO_POWERS[0],
+    code: [Modes.Base, Modes.Action, Modes.AxeAndCart, Modes.True],
+  },
+  {
+    src: CardTypes.ACTIONS.TWO_POWERS[1],
+    code: [Modes.Base, Modes.Action, Modes.AxeAndLantern, Modes.True],
+  },
+  {
+    src: CardTypes.ACTIONS.TWO_POWERS[2],
+    code: [Modes.Base, Modes.Action, Modes.LanternAndCart, Modes.True],
   },
 ];
 const Cart: ActionCard[] = [
@@ -126,4 +127,4 @@ const Lantern: ActionCard[] = [
     code: [Modes.Base, Modes.Action, Modes.Lantern, Modes.False],
   },
 ];
-export const Actions: ICardBasic[] = [...Maps, ...TwoActions, ...DestroyPath, ...Cart, ...Axe, ...Lantern];
+export const Actions: ICardBasic[] = [...TwoActions, ...Cart, ...Axe, ...Lantern];

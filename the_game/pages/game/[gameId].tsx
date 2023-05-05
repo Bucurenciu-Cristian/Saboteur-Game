@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useSocket from '@hooks/useSocket';
 import { Button, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import ShowPlayer from '@components/ShowPlayer';
@@ -7,7 +7,6 @@ import { changeOrientation } from '@src/BusinessLogic/ChangeOrientation';
 import Square from '@components/Square';
 import { CardTypes } from '@src/data/cards';
 import { Modes } from '@src/enums';
-import ShowBoard from '@components/ShowBoard';
 
 async function checkRoomExists(gameId: number) {
   const response = await fetch(`/api/room/${gameId}/players`);
@@ -23,6 +22,10 @@ function DisplayBlocks(props: { player: any; element: (item, i) => JSX.Element }
   return <p>{props.player?.blocks?.map(props.element)}</p>;
 }
 
+function getPlayerId(context) {
+  return context.currentPlayer;
+}
+
 function GameId() {
   const socket = useSocket();
 
@@ -30,7 +33,8 @@ function GameId() {
   const [hasJoined, setHasJoined] = useState(false);
   const [validCoordinates, setValidCoordinates] = useState([]);
   const [state, setState] = useState(null);
-  const selectedCard = useRef({ card: null, index: -1 });
+  // const selectedCard = useRef({ card: null, index: -1 });
+  const [selectedCard, setSelectedCard] = useState({ card: null, index: -1 });
 
   const router = useRouter();
   let { gameId } = router.query;
@@ -70,7 +74,7 @@ function GameId() {
       setValidCoordinates([]);
     });
     socket.on('validCoordinates', (coordinates) => {
-      if (getCardCondition(coordinates.card, 1, 'P')) {
+      if (getCardCondition(coordinates.card, 1, Modes.Path)) {
         setValidCoordinates(coordinates.valid);
       } else {
         setValidCoordinates([]);
@@ -91,21 +95,25 @@ function GameId() {
     }
   };
   const handlePathTurn = (row, column) => {
-    const theCard = selectedCard.current.card;
+    // const theCard = selectedCard.current.card;
+    const theCard = selectedCard.card;
+
     if (theCard) {
-      if (getCardCondition(theCard, 1, 'P')) {
+      if (getCardCondition(theCard, 1, Modes.Path)) {
         socket.emit(placeCardEvent, {
           gameId,
           card: theCard,
           row,
           column,
-          handIndex: selectedCard.current.index,
-          playerId: context.currentPlayer,
+          // handIndex: selectedCard.current.index,
+          handIndex: selectedCard.index,
+          playerId: getPlayerId(context),
         });
 
         // Reset the selected card
-        selectedCard.current = { card: null, index: -1 };
-      } else if (getCardCondition(theCard, 1, 'A')) {
+        // selectedCard.current = { card: null, index: -1 };
+        setSelectedCard({ card: null, index: -1 });
+      } else if (getCardCondition(theCard, 1, Modes.Action)) {
         alert("You can't place an action card the table.");
       }
     } else {
@@ -113,15 +121,18 @@ function GameId() {
     }
   };
   const handlePassTurn = () => {
-    if (selectedCard.current.card) {
+    if (selectedCard.card) {
+      // if (selectedCard.current.card) {
       // Emit the event to the server
       socket.emit('passTurn', {
         gameId,
-        handIndex: selectedCard.current.index,
+        handIndex: selectedCard.index,
+        // handIndex: selectedCard.current.index,
       });
 
       // Reset the selected card
-      selectedCard.current = { card: null, index: -1 };
+      // selectedCard.current = { card: null, index: -1 };
+      setSelectedCard({ card: null, index: -1 });
     } else {
       alert('Please select a card to discard first.');
     }
@@ -136,39 +147,50 @@ function GameId() {
     });
   };
   const handleRotateCard = () => {
-    const { card } = selectedCard.current;
+    // const { card } = selectedCard.current;
+    const { card } = selectedCard;
+
     if (card) {
-      if (getCardCondition(card, 1, 'A')) {
+      if (getCardCondition(card, 1, Modes.Action)) {
         alert("You can't rotate an action card.");
-        selectedCard.current = { card: null, index: -1 };
+        // selectedCard.current = { card: null, index: -1 };
+        setSelectedCard({ ...selectedCard, card: rotatedCard });
+
         return;
       }
 
       // Rotate the card
-      const rotatedCode = changeOrientation(selectedCard.current.card.code);
+      // const rotatedCode = changeOrientation(selectedCard.current.card.code);
+      const rotatedCode = changeOrientation(selectedCard.card.code);
       // Create a new object to avoid mutating the original card object
       const rotatedCard = {
-        ...selectedCard.current.card,
+        // ...selectedCard.current.card,
+        ...selectedCard.card,
         code: rotatedCode,
       };
 
       // Update the selected card and the player's hand
-      // setSelectedCard({ ...selectedCard, card: rotatedCard });
-      selectedCard.current = { ...selectedCard.current, card: rotatedCard };
+      // selectedCard.current = { ...selectedCard.current, card: rotatedCard };
+      setSelectedCard({ ...selectedCard, card: rotatedCard });
+
       // Make a copy of the game state and update the player's hand
       const newGameState = { ...context };
       newGameState.players[newGameState.currentPlayer].hand[selectedCard.current.index] = rotatedCard;
+      // newGameState.players[newGameState.currentPlayer].hand[selectedCard.index] = rotatedCard;
 
       // Update the game state
       setContext(newGameState);
       setValidCoordinates([]);
-      triggerEventToServer(rotatedCard, selectedCard.current.index);
+      // triggerEventToServer(rotatedCard, selectedCard.current.index);
+      triggerEventToServer(rotatedCard, selectedCard.index);
     } else {
       alert('Please select a card first to rotate it.');
     }
   };
   const handleActionTurnYourself = (selectedPlayer) => {
-    const theCard = selectedCard.current.card;
+    // const theCard = selectedCard.current.card;
+    const theCard = selectedCard.card;
+
     if (theCard) {
       if (getCardCondition(theCard, 1, Modes.Action)) {
         if (getCardCondition(theCard, 2, Modes.Map)) {
@@ -185,12 +207,14 @@ function GameId() {
           socket.emit('actionTurnOthers', {
             gameId,
             card: theCard,
-            handIndex: selectedCard.current.index,
-            playerId: context.currentPlayer,
+            handIndex: selectedCard.index,
+            // handIndex: selectedCard.current.index,
+            playerId: getPlayerId(context),
             selectedPlayer, // Add the selected player data here
           });
           // Reset the selected card
-          selectedCard.current = { card: null, index: -1 };
+          // selectedCard.current = { card: null, index: -1 };
+          setSelectedCard({ card: null, index: -1 });
         } else {
           console.log('You selected an action card but not Map or Destroy');
           alert('You selected an action card but not Map or Destroy');
@@ -201,19 +225,22 @@ function GameId() {
     }
   };
   const handleActionTurnOthers = (selectedPlayer) => {
-    const theCard = selectedCard.current.card;
+    // const theCard = selectedCard.current.card;
+    const theCard = selectedCard.card;
     if (theCard) {
-      if (getCardCondition(theCard, 1, 'A')) {
-        if (!(getCardCondition(theCard, 2, 'M') || getCardCondition(theCard, 2, 'D'))) {
+      if (getCardCondition(theCard, 1, Modes.Action)) {
+        if (!(getCardCondition(theCard, 2, Modes.Map) || getCardCondition(theCard, 2, Modes.Destroy))) {
           socket.emit('actionTurnOthers', {
             gameId,
             card: theCard,
-            handIndex: selectedCard.current.index,
-            playerId: context.currentPlayer,
+            // handIndex: selectedCard.current.index,
+            handIndex: selectedCard.index,
+            playerId: getPlayerId(context),
             selectedPlayer, // Add the selected player data here
           });
           // Reset the selected card
-          selectedCard.current = { card: null, index: -1 };
+          // selectedCard.current = { card: null, index: -1 };
+          setSelectedCard({ card: null, index: -1 });
         } else {
           alert("You can't play Map or Destroy on other players");
         }
@@ -232,7 +259,8 @@ function GameId() {
   };
   // Render the component based on the client state
   const onCardClick = (card, index) => {
-    selectedCard.current = { card, index };
+    // selectedCard.current = { card, index };
+    setSelectedCard({ card, index });
     triggerEventToServer(card, index);
   };
   const renderTooltip = (text) =>
@@ -248,7 +276,7 @@ function GameId() {
     <>
       <Row>
         <div>
-          Game ID: {gameId}, Status: {state}, Round: {context && context.round}, Turn: {context && context.currentPlayer + 1}
+          Game ID: {gameId}, Status: {state}, Round: {context && context.round}, Turn: {context && getPlayerId(context) + 1}
           {state === 'score' && <Button onClick={StartNewGame}>Start a new Game</Button>}{' '}
         </div>
       </Row>
@@ -258,14 +286,15 @@ function GameId() {
             Play Actions on: <br />
             <Row>
               {context.players.map((player, index) => {
-                if (index !== context.currentPlayer) {
+                if (index !== getPlayerId(context)) {
                   return (
                     <Col key={index}>
-                      <OverlayTrigger placement="top" delay={{ show: 100, hide: 200 }} overlay={renderTooltip('Other Actions')}>
+                      <OverlayTrigger placement="top" delay={{ show: 250, hide: 400 }} overlay={renderTooltip('Other Actions')}>
                         <>
-                          <Button className="w-75" onClick={() => handleActionTurnOthers(player)}>
+                          <Button className="w-75 mb-3" onClick={() => handleActionTurnOthers(player)}>
                             {player.username}
                           </Button>
+                          <br />
                           <DisplayBlocks
                             player={player}
                             element={(item, i) => <Square Card={item} key={i} row={i} column={0} Occupied />}
@@ -277,11 +306,12 @@ function GameId() {
                 }
                 return (
                   <Col key={index}>
-                    <OverlayTrigger placement="top" delay={{ show: 100, hide: 200 }} overlay={renderTooltip('Map or Action')}>
+                    <OverlayTrigger placement="top" delay={{ show: 250, hide: 400 }} overlay={renderTooltip('Map or Action')}>
                       <>
-                        <Button className="w-75" onClick={() => handleActionTurnYourself(player)}>
+                        <Button className="w-75 mb-3" onClick={() => handleActionTurnYourself(player)}>
                           Yourself
                         </Button>
+                        <br />
                         <DisplayBlocks
                           player={player}
                           element={(item, i) => <Square Card={item} key={i} row={i} column={0} Occupied />}
@@ -293,11 +323,11 @@ function GameId() {
               })}
             </Row>
             <br />
-            <ShowBoard
+            {/* <ShowBoard
               validCoordinates={validCoordinates}
               gameMatrix={context.gameBoard}
               onBoardSquareClick={(row, column) => handlePathTurn(row, column)}
-            />
+            /> */}
             <Row>
               <Col>
                 {context.deck.length > 0 && (
@@ -323,30 +353,21 @@ function GameId() {
             </Row>
           </Col>
           <Col xs>
-            <div>Players Turn {context.currentPlayer + 1}</div>
+            <div>Players Turn {getPlayerId(context) + 1}</div>
             <ShowPlayer
-              player={context.players[context.currentPlayer]}
+              player={context.players[getPlayerId(context)]}
               onCardClick={onCardClick}
-              currentCard={selectedCard.current.card}
+              // currentCard={selectedCard.current.card}
+              currentCard={selectedCard.card}
             />
             {/* <ShowPlayer items={context.players[0]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
             {/* <ShowPlayer items={context.players[1]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
             {/* <ShowPlayer items={context.players[2]} onCardClick={(card, index) => setSelectedCard({ card, index })} /> */}
             <br />
             <Row>
-              <Col>
-                <Button onClick={handleRotateCard}>Rotate Card</Button>
-              </Col>
-              <Col>
-                <Button onClick={handlePassTurn}>Pass Turn</Button>
-              </Col>
+              <Col>{selectedCard?.card?.code[1] === Modes.Path && <Button onClick={handleRotateCard}>Rotate Card</Button>}</Col>
+              <Col>{selectedCard?.card && <Button onClick={handlePassTurn}>Pass Turn</Button>}</Col>
             </Row>
-
-            <br />
-            <br />
-            <Row>{/* <Button onClick={handlePathTurn}>Play Path-Nope</Button> */}</Row>
-            <br />
-            <Row>{/* <Button onClick={handleActionTurn}>Play Action-Nope</Button> */}</Row>
           </Col>
         </Row>
       )}

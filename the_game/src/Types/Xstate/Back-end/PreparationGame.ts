@@ -129,7 +129,7 @@ const preparationMachine = createMachine<Context>(
           players: (context: Context) => context.players,
           deck: (context: Context) => context.deck,
           currentPlayer: (context: Context) => context.currentPlayer,
-          discardPile: [],
+          discardPile: () => [],
         },
         type: 'final',
       },

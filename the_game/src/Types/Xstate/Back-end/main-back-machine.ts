@@ -15,13 +15,111 @@ function checkCoordinates(param, availablePaths) {
   return availablePaths.some(({ column, row }) => row === param.row && column === param.column);
 }
 
-export function isThisCardSpecial(card) {
-  return (
-    getCardCondition(card, 2, Modes.AxeAndCart) ||
-    getCardCondition(card, 2, Modes.AxeAndLantern) ||
-    getCardCondition(card, 2, Modes.LanternAndCart)
-  );
-}
+const getToolsToRepair = (card) => {
+  const newCode = card.code.slice(2);
+
+  if (newCode.includes(Modes.AxeAndLantern)) {
+    return [Modes.Axe, Modes.Lantern];
+  }
+  if (newCode.includes(Modes.AxeAndCart)) {
+    return [Modes.Axe, Modes.Cart];
+  }
+  if (newCode.includes(Modes.LanternAndCart)) {
+    return [Modes.Lantern, Modes.Cart];
+  }
+  if (newCode.includes(Modes.Lantern)) {
+    return [Modes.Lantern];
+  }
+  if (newCode.includes(Modes.Cart)) {
+    return [Modes.Cart];
+  }
+  if (newCode.includes(Modes.Axe)) {
+    return [Modes.Axe];
+  }
+};
+const isMatchingTool = (blockCard, actionCard) => {
+  const toolsToRepair = getToolsToRepair(actionCard);
+  return toolsToRepair.some((tool) => blockCard.code.includes(tool) && blockCard.code.includes(Modes.False));
+};
+const playActionCardOthers = assign({
+  playerId: (_, event) => event.payload.playerId,
+
+  players: (context, event) => {
+    const { players } = context;
+    const { selectedPlayer, card } = event.payload;
+    const isActionCard = getCardCondition(card, 1, Modes.Action);
+    if (!isActionCard) {
+      return players;
+    }
+
+    const newPlayers = JSON.parse(JSON.stringify(players)); // Create a deep copy of the players array
+    const targetPlayer = newPlayers.findIndex((player) => player.email === selectedPlayer.email);
+
+    if (card.code[3] === Modes.False) {
+      // Only add the broken tool if there is no matching broken tool
+      const matchingBrokenTool = newPlayers[targetPlayer].blocks.find((blockCard) => isMatchingTool(blockCard, card));
+      if (!matchingBrokenTool) {
+        console.log('addBrokenTool');
+        newPlayers[targetPlayer].blocks.push(card);
+      }
+    } else if (card.code[3] === Modes.True) {
+      // Handle repair cards (True and special cards)
+      const matchingBrokenTools = newPlayers[targetPlayer].blocks.filter((blockCard) => isMatchingTool(blockCard, card));
+      console.log({ matchingBrokenTools });
+
+      // If there are matching broken tools, remove one at random and send it to the graveyard along with the repair card
+      if (matchingBrokenTools.length > 0) {
+        // Pick a random index from the matching broken tools
+        const randomIndex = Math.floor(Math.random() * matchingBrokenTools.length);
+        const randomBrokenTool = matchingBrokenTools[randomIndex];
+
+        // Find the index of the randomly selected broken tool in the target player's blocks
+        const blockIndex = newPlayers[targetPlayer].blocks.indexOf(randomBrokenTool);
+
+        // Remove the randomly selected broken tool from the target player's blocks
+        const removedItem = newPlayers[targetPlayer].blocks.splice(blockIndex, 1)[0];
+
+        // Send the removed broken tool and the repair card to the discard pile
+        context.discardPile.push(removedItem);
+        context.discardPile.push(card);
+      }
+    }
+    return newPlayers;
+  },
+});
+
+const canPlayRepairCardGuard = (context, event) => {
+  const { players } = context;
+  const { selectedPlayer, card } = event.payload;
+  const targetPlayer = players.find((player) => player.email === selectedPlayer.email);
+
+  if (card.code.includes(Modes.False)) {
+    return !targetPlayer.blocks.some((blockCard) => isMatchingTool(blockCard, card));
+  }
+
+  // Check if the player has a broken tool that can be repaired by the current card
+  const hasBrokenTool = targetPlayer.blocks.some((blockCard) => {
+    const matchingTools = isMatchingTool(blockCard, card);
+    console.log({ matchingTools });
+    const isBrokenTool = blockCard.code.includes(Modes.False);
+    console.log({ isBrokenTool });
+    const toolsToRepairBrokenTool = getToolsToRepair(blockCard);
+    const toolsToRepairCard = getToolsToRepair(card);
+
+    const toolsToRepairEqual = toolsToRepairCard.some((tool) => toolsToRepairBrokenTool.includes(tool));
+    console.log({ toolsToRepairBrokenTool, toolsToRepairCard, toolsToRepairEqual });
+    console.log({ matchingTools, isBrokenTool, toolsToRepairEqual });
+    return matchingTools && isBrokenTool && toolsToRepairEqual;
+  });
+
+  // If the selected card is a repair card and there is no broken tool to repair, return false to prevent the turn from ending
+  if (card.code.includes(Modes.True) && !hasBrokenTool) {
+    console.log('No broken tool to repair');
+    return false;
+  }
+
+  return true;
+};
 
 function createRoomMachine(roomId) {
   const urlWebsite = `http://localhost:3050`;
@@ -105,11 +203,14 @@ function createRoomMachine(roomId) {
                 target: 'nextPlayer',
               },
             ],
-            PLAY_ACTION_CARD_OTHERS: {
-              actions: ['playActionCardOthers', 'removePlayedCardFromHand'],
-              target: 'nextPlayer',
-              // cond: 'canPlayActionCard',
-            },
+            PLAY_ACTION_CARD_OTHERS: [
+              {
+                actions: ['playActionCardOthers', 'removePlayedCardFromHand'],
+                target: 'nextPlayer',
+                cond: 'canPlayRepairCardGuard',
+              },
+              { actions: 'wrongInput' },
+            ],
             // Destroy or Map
             PLAY_ACTION_CARD_MYSELF: {
               actions: ['playActionCardMyself', 'removePlayedCardFromHand'],
@@ -163,6 +264,7 @@ function createRoomMachine(roomId) {
         },
       },
       actions: {
+        playActionCardOthers,
         updateParentContext: (context, event) => {
           console.log('updateParentContext');
           context.gameBoard = event.data.matrix;
@@ -274,10 +376,10 @@ function createRoomMachine(roomId) {
           },
         }),
 
-        playActionCardOthers: assign({
+        /* playActionCardOthers: assign({
           playerId: (_, event) => event.payload.playerId,
 
-          /* update gameState with the played action card */
+          /!* update gameState with the played action card *!/
           // find the selectedplayer from the payload and add the card to the blocks from the player
           players: (context, event) => {
             const { players } = context;
@@ -345,7 +447,7 @@ function createRoomMachine(roomId) {
 
             return newPlayers;
           },
-        }),
+        }), */
         revealRoles: assign({
           /* reveal the roles of all players */
         }),
@@ -366,6 +468,7 @@ function createRoomMachine(roomId) {
         }),
       },
       guards: {
+        canPlayRepairCardGuard,
         // Add guards here
         /* guard implementations */
         isNotLastRound: (context) => context.round < 3,
