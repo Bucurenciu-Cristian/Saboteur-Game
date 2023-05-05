@@ -224,4 +224,4 @@ export const SpecialPath: ICardBasic[] = [StartCard, ...finishCards];
 
 export const allPaths: ICardBasic[] = [...SpecialPath, ...normalPath];
 
-export const PathsAndActions: ICardBasic[] = [...Actions];
+export const PathsAndActions: ICardBasic[] = [...Actions, ...normalPath];

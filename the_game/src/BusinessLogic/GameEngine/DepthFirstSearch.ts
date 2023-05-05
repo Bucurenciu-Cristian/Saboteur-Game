@@ -1,5 +1,6 @@
 import { IMatrix } from '@src/Types/DexType';
 import { FOT } from '@cards/Actions';
+import { Modes } from '@src/enums';
 import { isCodeAtIndex } from './IsCodeAtIndex';
 import { neighboursCards } from './NeighboursCards';
 
@@ -17,7 +18,7 @@ export function dfs(matrix: IMatrix[][], row: number, column: number, visited: b
   if (!isCodeAtIndex(matrix, row, column, 6)) {
     return false;
   }
-  if (code[8] === 'S') {
+  if (code[8] === Modes.Start) {
     // If we've reached a finish card.
     return true;
   }
@@ -82,7 +83,7 @@ function dfsRefactored(matrix, row, column, visited) {
   visited[row][column] = true;
   const { code } = matrix[row][column].Card;
 
-  if (code[8] === 'S') {
+  if (code[8] === Modes.Start) {
     // If we've reached a finish card.
     return true;
   }

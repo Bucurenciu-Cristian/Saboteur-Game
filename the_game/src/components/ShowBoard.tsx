@@ -6,15 +6,18 @@ function ShowBoard({
   gameMatrix,
   onBoardSquareClick,
   validCoordinates, // Add validCoordinates as a prop
+  selectedCard,
 }: {
   gameMatrix: IMatrix[][];
   onBoardSquareClick: any;
   validCoordinates: any;
+  selectedCard: any;
 }) {
-  const renderSquareUpdated = (i: number, j: number, validCoordinates: any) => {
+  const renderSquareUpdated = (i: number, j: number, validCoordinates: any, selectedCard: any) => {
     const onClick = () => {
-      onBoardSquareClick(i, j);
+      onBoardSquareClick(i, j, selectedCard);
     };
+
     return (
       <Square
         Card={gameMatrix[i][j]?.Card}
@@ -29,14 +32,16 @@ function ShowBoard({
 
   const memoizedGameMatrix = useMemo(() => gameMatrix, [gameMatrix]);
 
-  const memoizedRenderSquareUpdated = useMemo(() => renderSquareUpdated, [gameMatrix]);
-
+  const memoizedRenderSquareUpdated = useMemo(() => renderSquareUpdated, [renderSquareUpdated]);
+  // useEffect(() => {
+  //   console.log('ShowBoard - selectedCard prop changed:', selectedCard);
+  // }, [selectedCard]);
   return (
     <>
       {memoizedGameMatrix.map((row: any[], i) => (
         <div key={i} className="board-row">
           {row.map((column, j) => (
-            <div key={`${i}${j}`}>{memoizedRenderSquareUpdated(i, j, validCoordinates)}</div>
+            <div key={`${i}${j}`}>{memoizedRenderSquareUpdated(i, j, validCoordinates, selectedCard)}</div>
           ))}
         </div>
       ))}

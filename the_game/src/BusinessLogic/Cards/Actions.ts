@@ -127,4 +127,4 @@ const Lantern: ActionCard[] = [
     code: [Modes.Base, Modes.Action, Modes.Lantern, Modes.False],
   },
 ];
-export const Actions: ICardBasic[] = [...TwoActions, ...Cart, ...Axe, ...Lantern];
+export const Actions: ICardBasic[] = [...Maps, ...DestroyPath, ...TwoActions, ...Cart, ...Axe, ...Lantern];

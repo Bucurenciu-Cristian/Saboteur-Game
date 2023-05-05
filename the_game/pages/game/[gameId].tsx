@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useSocket from '@hooks/useSocket';
 import { Button, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import ShowPlayer from '@components/ShowPlayer';
@@ -7,6 +7,7 @@ import { changeOrientation } from '@src/BusinessLogic/ChangeOrientation';
 import Square from '@components/Square';
 import { CardTypes } from '@src/data/cards';
 import { Modes } from '@src/enums';
+import ShowBoard from '@components/ShowBoard';
 
 async function checkRoomExists(gameId: number) {
   const response = await fetch(`/api/room/${gameId}/players`);
@@ -94,32 +95,41 @@ function GameId() {
         break;
     }
   };
-  const handlePathTurn = (row, column) => {
-    // const theCard = selectedCard.current.card;
-    const theCard = selectedCard.card;
 
-    if (theCard) {
-      if (getCardCondition(theCard, 1, Modes.Path)) {
-        socket.emit(placeCardEvent, {
-          gameId,
-          card: theCard,
-          row,
-          column,
-          // handIndex: selectedCard.current.index,
-          handIndex: selectedCard.index,
-          playerId: getPlayerId(context),
-        });
+  const handlePathTurn = useCallback(
+    (row, column, card) => {
+      // const theCard = selectedCard.current.card;
+      const theCard = card.card; // Use selectedCard from state directly
+      // console.log('theCard', theCard);
+      // console.log(row, column, card, 'Yollo');
+      if (theCard) {
+        if (getCardCondition(theCard, 1, Modes.Path)) {
+          socket.emit(placeCardEvent, {
+            gameId,
+            card: theCard,
+            row,
+            column,
+            // handIndex: selectedCard.current.index,
+            handIndex: selectedCard.index,
+            playerId: getPlayerId(context),
+          });
 
-        // Reset the selected card
-        // selectedCard.current = { card: null, index: -1 };
+          // Reset the selected card
+          // selectedCard.current = { card: null, index: -1 };
+          setSelectedCard({ card: null, index: -1 });
+        } else if (getCardCondition(theCard, 1, Modes.Action)) {
+          alert("You can't place an action card the table.");
+        }
+      } else {
+        // helperAlert(placeCardEvent);
+        console.log("You're dumb");
+        console.log('Nu cred');
         setSelectedCard({ card: null, index: -1 });
-      } else if (getCardCondition(theCard, 1, Modes.Action)) {
-        alert("You can't place an action card the table.");
+        setValidCoordinates([]);
       }
-    } else {
-      helperAlert(placeCardEvent);
-    }
-  };
+    },
+    [selectedCard]
+  );
   const handlePassTurn = () => {
     if (selectedCard.card) {
       // if (selectedCard.current.card) {
@@ -154,7 +164,7 @@ function GameId() {
       if (getCardCondition(card, 1, Modes.Action)) {
         alert("You can't rotate an action card.");
         // selectedCard.current = { card: null, index: -1 };
-        setSelectedCard({ ...selectedCard, card: rotatedCard });
+        setSelectedCard({ card: null, index: -1 });
 
         return;
       }
@@ -175,8 +185,8 @@ function GameId() {
 
       // Make a copy of the game state and update the player's hand
       const newGameState = { ...context };
-      newGameState.players[newGameState.currentPlayer].hand[selectedCard.current.index] = rotatedCard;
-      // newGameState.players[newGameState.currentPlayer].hand[selectedCard.index] = rotatedCard;
+      // newGameState.players[newGameState.currentPlayer].hand[selectedCard.current.index] = rotatedCard;
+      newGameState.players[newGameState.currentPlayer].hand[selectedCard.index] = rotatedCard;
 
       // Update the game state
       setContext(newGameState);
@@ -271,7 +281,9 @@ function GameId() {
         </Tooltip>
       );
     };
-
+  // useEffect(() => {
+  //   console.log('selectedCard changed:', selectedCard);
+  // }, [selectedCard]);
   return (
     <>
       <Row>
@@ -283,6 +295,12 @@ function GameId() {
       {context && (
         <Row>
           <Col xs={8}>
+            <ShowBoard
+              validCoordinates={validCoordinates}
+              gameMatrix={context.gameBoard}
+              onBoardSquareClick={(row, column) => handlePathTurn(row, column, selectedCard)}
+              selectedCard={selectedCard}
+            />
             Play Actions on: <br />
             <Row>
               {context.players.map((player, index) => {
@@ -322,12 +340,6 @@ function GameId() {
                 );
               })}
             </Row>
-            <br />
-            {/* <ShowBoard
-              validCoordinates={validCoordinates}
-              gameMatrix={context.gameBoard}
-              onBoardSquareClick={(row, column) => handlePathTurn(row, column)}
-            /> */}
             <Row>
               <Col>
                 {context.deck.length > 0 && (

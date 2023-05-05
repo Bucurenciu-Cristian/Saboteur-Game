@@ -312,7 +312,6 @@ function createRoomMachine(roomId) {
           availablePaths: ({ gameBoard, finishCards }) => findAvailablePath(gameBoard, finishCards),
         }),
         findPathContinued: assign({
-          // ? TODO: Think very good about this
           endOfRound: ({ gameBoard, finishCards }) => {
             const isContinued = [];
             const isNotContinued = [];
@@ -507,7 +506,7 @@ function createRoomMachine(roomId) {
           const { gameBoard, endOfRound } = ctx;
           return endOfRound.isContinued.some(([row, column]) => {
             const { code } = gameBoard[row][column].Card;
-            return code[8] === 'R';
+            return code[8] === Modes.Rock;
           });
         },
         isGoldFound: (context) => {
@@ -515,7 +514,7 @@ function createRoomMachine(roomId) {
           const { gameBoard, endOfRound } = context;
           return endOfRound.isContinued.some(([row, column]) => {
             const { code } = gameBoard[row][column].Card;
-            return code[8] === 'G';
+            return code[8] === Modes.Gold;
           });
         },
         isAtLeastOnePlayerWithCard: (context) => {

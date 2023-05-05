@@ -43,5 +43,4 @@ export enum Modes {
   Discard = 'DiscardPath',
   playAction = 'PlayAction',
   Start = 'Start',
-  Special = 'S',
 }
