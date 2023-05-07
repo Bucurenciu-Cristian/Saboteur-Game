@@ -301,11 +301,11 @@ function GameId() {
     }
   }, [selectedSquare]);
   useEffect(() => {
-    if(selectedCard.card === null && selectedCard.index === -1) {
+    if (selectedCard.card === null && selectedCard.index === -1) {
       setValidCoordinates([]);
     }
   }, [selectedCard]);
-
+  
   return (
     <>
       <div>
@@ -315,7 +315,7 @@ function GameId() {
       {context && (
         <>
           <Row>
-            <Col xxl={2}></Col>
+            <Col className="d-none d-xxl-block" xxl={2}></Col>
             <Col xs={10} md={8} lg={6} xl={6} xxl={6}>
               <ShowBoard
                 validCoordinates={validCoordinates}
@@ -383,11 +383,11 @@ function GameId() {
                           </Button>
                         </OverlayTrigger>
                         <Row>
-                        <DisplayBlocks
-                          player={player}
-                          element={(item, i) => <Col xs={3}><Square Card={item} key={i} row={i} column={0} Occupied
-                                                           style={"square-actions"}/></Col>}
-                        />
+                          <DisplayBlocks
+                            player={player}
+                            element={(item, i) => <Col xs={2}><Square Card={item} key={i} row={i} column={0} Occupied
+                                                                      style={"square-actions"} /></Col>}
+                          />
                         </Row>
                       </Col>
                     );
@@ -402,11 +402,11 @@ function GameId() {
                         </Button>
                       </OverlayTrigger>
                       <Row>
-                      <DisplayBlocks
-                        player={player}
-                        element={(item, i) => <Col xs={3}><Square Card={item} key={i} row={i} column={0} Occupied
-                                                         style={"square-actions"}/></Col>}
-                      />
+                        <DisplayBlocks
+                          player={player}
+                          element={(item, i) => <Col xs={2}><Square Card={item} key={i} row={i} column={0} Occupied
+                                                                    style={"square-actions"} /></Col>}
+                        />
                       </Row>
                     </Col>
                   );

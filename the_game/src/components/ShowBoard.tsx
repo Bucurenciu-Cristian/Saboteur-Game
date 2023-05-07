@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Col, Row } from 'react-bootstrap';
 import Square from './Square';
 import { IMatrix } from '../Types/DexType';
 
@@ -44,11 +45,13 @@ function ShowBoard({
   return (
     <>
       {memoizedGameMatrix.map((row: any[], i) => (
-        <div key={i} className="board-row">
+        <Row key={i}>
           {row.map((column, j) => (
-            <div key={`${i}${j}`}>{memoizedRenderSquareUpdated(i, j, validCoordinates, selectedCard)}</div>
+            <Col xs="auto" className="px-0" key={`${i}${j}`}>
+              {memoizedRenderSquareUpdated(i, j, validCoordinates, selectedCard)}
+            </Col>
           ))}
-        </div>
+        </Row>
       ))}
     </>
   );
