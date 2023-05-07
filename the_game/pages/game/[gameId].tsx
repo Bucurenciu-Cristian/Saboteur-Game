@@ -20,7 +20,7 @@ export function getCardCondition(card, index: number, mode: Modes) {
 }
 
 function DisplayBlocks(props: { player: any; element: (item, i) => JSX.Element }) {
-  return <p>{props.player?.blocks?.map(props.element)}</p>;
+  return <>{props.player?.blocks?.map(props.element)}</>;
 }
 
 function getPlayerId(context) {
@@ -300,6 +300,12 @@ function GameId() {
       };
     }
   }, [selectedSquare]);
+  useEffect(() => {
+    if(selectedCard.card === null && selectedCard.index === -1) {
+      setValidCoordinates([]);
+    }
+  }, [selectedCard]);
+
   return (
     <>
       <div>
@@ -309,8 +315,8 @@ function GameId() {
       {context && (
         <>
           <Row>
-            
-            <Col xs={12} md={10} lg={8} xl={8} xxl={8}>
+            <Col xxl={2}></Col>
+            <Col xs={10} md={8} lg={6} xl={6} xxl={6}>
               <ShowBoard
                 validCoordinates={validCoordinates}
                 gameMatrix={context.gameBoard}
@@ -327,6 +333,7 @@ function GameId() {
                 player={context.players[getPlayerId(context)]}
                 onCardClick={onCardClick}
                 currentCard={selectedCard.card}
+                resetSelectedCard={resetSelectedCard}
               />
               <Row>
                 <Col>
@@ -375,11 +382,13 @@ function GameId() {
                             {player.username}
                           </Button>
                         </OverlayTrigger>
+                        <Row>
                         <DisplayBlocks
                           player={player}
-                          element={(item, i) => <Square Card={item} key={i} row={i} column={0} Occupied
-                                                        style={"square-deck"} />}
+                          element={(item, i) => <Col xs={3}><Square Card={item} key={i} row={i} column={0} Occupied
+                                                           style={"square-actions"}/></Col>}
                         />
+                        </Row>
                       </Col>
                     );
                   }
@@ -392,12 +401,13 @@ function GameId() {
                           Yourself
                         </Button>
                       </OverlayTrigger>
-                      <br />
+                      <Row>
                       <DisplayBlocks
                         player={player}
-                        element={(item, i) => <Square Card={item} key={i} row={i} column={0} Occupied
-                                                      style={"square-deck"} />}
+                        element={(item, i) => <Col xs={3}><Square Card={item} key={i} row={i} column={0} Occupied
+                                                         style={"square-actions"}/></Col>}
                       />
+                      </Row>
                     </Col>
                   );
                 })}

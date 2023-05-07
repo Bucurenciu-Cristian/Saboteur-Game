@@ -65,6 +65,7 @@ ul {
     --width-role: 70px;
     --width-selected-card: 85px;
     --width-cards-hand: 70px;
+    --width-square-actions: 100px;
 }
 
 .square-matrix {
@@ -94,7 +95,12 @@ ul {
     max-width: var(--width-selected-card);
     max-height: calc(var(--width-selected-card) * 2);
 }
-
+.square-actions{
+    width: 10vw;
+    height: 20vw;
+    max-width: var(--width-square-actions);
+    max-height: calc(var(--width-square-actions) * 2);
+}
 .square-hands {
     width: 10vw;
     height: 20vw;

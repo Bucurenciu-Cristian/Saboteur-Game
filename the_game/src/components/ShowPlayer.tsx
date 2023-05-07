@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Square from '@components/Square';
 import { Col, Row } from 'react-bootstrap';
 
-function ShowPlayer({ player, onCardClick, currentCard }) {
+function ShowPlayer({ player, onCardClick, currentCard, resetSelectedCard }) {
   const [showBack, setShowBack] = useState(true);
 
   const roleCard = showBack ? player?.role : { ...player?.role, back: undefined };
@@ -41,7 +41,15 @@ function ShowPlayer({ player, onCardClick, currentCard }) {
             <Col>
               {currentCard && (
                 <div className="board-row">
-                  <Square Card={currentCard} key={0} row={0} column={0} Occupied style="square-current-card" />
+                  <Square
+                    onClick={resetSelectedCard}
+                    Card={currentCard}
+                    key={0}
+                    row={0}
+                    column={0}
+                    Occupied
+                    style="square-current-card"
+                  />
                 </div>
               )}
             </Col>
