@@ -2,6 +2,8 @@ import { Server } from 'socket.io';
 import { instrument } from '@socket.io/admin-ui';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { checkTheCurrentCardInTable } from '@engine/CheckTheCurrentCardInTable';
+import { IMatrix } from '@src/Types/DexType';
+import { Modes } from '@src/enums';
 import joinLobby from '../../src/BusinessLogic/events/joinLobby';
 import joinRoom from '../../src/BusinessLogic/events/joinRoom';
 import leaveRoom from '../../src/BusinessLogic/events/leaveRoom';
@@ -10,11 +12,24 @@ import createRoom from '../../src/BusinessLogic/events/createRoom';
 import getActiveGames from '../../src/BusinessLogic/events/getActiveGames';
 import startGame from '../../src/BusinessLogic/events/StartGame';
 import createRoomMachine from '../../src/Types/Xstate/Back-end/main-back-machine';
+import { getCardCondition } from '../game/[gameId]';
 
 // Here you are on the back-end side:
 // const serverService = interpret(parentMachine).start();
 
 const roomMachines = new Map();
+
+function removeCodeFromCards(matrix: IMatrix[][]): IMatrix[][] {
+  return matrix.map((row) =>
+    row.map((cell) => {
+      if (cell.Card !== '#' && 'code' in cell.Card) {
+        const { code, ...cardWithoutCode } = cell.Card;
+        return { ...cell, Card: cardWithoutCode };
+      }
+      return cell;
+    })
+  );
+}
 
 function setupRoomMachineOnTransition(roomMachine, roomId, io1) {
   roomMachine.onTransition((state) => {
@@ -113,19 +128,55 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
         const roomMachine = getOrCreateRoomMachine(roomId, io);
         roomMachine.send({ type: 'PASS', payload: { handIndex } });
       });
+
       socket.on('placeCard', (roomIdObj) => {
         const { gameId: roomId } = roomIdObj;
         const roomMachine = getOrCreateRoomMachine(roomId, io);
         roomMachine.send({ type: 'PLAY_PATH_CARD', payload: roomIdObj });
       });
+
+      socket.on('placeActionOnTable', (roomIdObj) => {
+        const { gameId: roomId } = roomIdObj;
+        const roomMachine = getOrCreateRoomMachine(roomId, io);
+        roomMachine.send({ type: 'PLAY_ACTION_CARD_MYSELF', payload: roomIdObj });
+      });
+
       socket.on('selectCard', (roomIdObj) => {
         const { gameId, card } = roomIdObj;
         const roomMachine = getOrCreateRoomMachine(gameId, io);
         if (roomMachine.state.value === 'score') return;
 
-        const { availablePaths, gameBoard } = roomMachine.state.context;
+        const { gameBoard } = roomMachine.state.context;
+        let validCoordinates = [];
+        if (getCardCondition(card, 2, Modes.Map)) {
+          const { finishCards } = roomMachine.state.context;
+          console.log('finishCards', finishCards);
+          validCoordinates = finishCards.map((card) => ({ row: card[0], column: card[1] }));
+        } else if (getCardCondition(card, 2, Modes.Destroy)) {
+          const { finishCards, startCard } = roomMachine.state.context;
 
-        const validCoordinates = getValidCoordinatesForCard(card, availablePaths, gameBoard);
+          // Iterate over the whole board and give me the coordinates of the cards that can be destroyed, which is any occupied card
+          validCoordinates = [];
+          // Iterate through each row
+          for (let row = 0; row < gameBoard.length; row += 1) {
+            // Iterate through each column
+            for (let col = 0; col < gameBoard[row].length; col += 1) {
+              // Check if the current cell is occupied
+              if (gameBoard[row][col]?.Occupied) {
+                // Check if the current cell is not the startCard and not a finishCard
+                const isStartCard = startCard[0][0] === row && startCard[0][1] === col;
+                const isFinishCard = finishCards.some((finishCard) => finishCard[0] === row && finishCard[1] === col);
+
+                if (!isStartCard && !isFinishCard) {
+                  validCoordinates.push({ row, column: col });
+                }
+              }
+            }
+          }
+        } else {
+          const { availablePaths } = roomMachine.state.context;
+          validCoordinates = getValidCoordinatesForCard(card, availablePaths, gameBoard);
+        }
         socket.emit('validCoordinates', { valid: validCoordinates, card });
       });
 

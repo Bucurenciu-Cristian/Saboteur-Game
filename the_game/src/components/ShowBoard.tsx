@@ -7,25 +7,30 @@ function ShowBoard({
   onBoardSquareClick,
   validCoordinates, // Add validCoordinates as a prop
   selectedCard,
+  selectedSquare,
 }: {
   gameMatrix: IMatrix[][];
   onBoardSquareClick: any;
   validCoordinates: any;
   selectedCard: any;
+  selectedSquare: any;
 }) {
   const renderSquareUpdated = (i: number, j: number, validCoordinates: any, selectedCard: any) => {
     const onClick = () => {
       onBoardSquareClick(i, j, selectedCard);
     };
-
+    const isCurrentSelectedSquare = i === selectedSquare.row && j === selectedSquare.column;
+    const card = gameMatrix[i][j]?.Card;
+    const updatedCard = isCurrentSelectedSquare ? { ...card, back: undefined } : card;
     return (
       <Square
-        Card={gameMatrix[i][j]?.Card}
+        Card={updatedCard}
         Occupied={gameMatrix[i][j]?.Occupied}
         onClick={onClick}
         row={i}
         column={j}
         validCoordinates={validCoordinates} // Pass validCoordinates to Square
+        style="square-matrix"
       />
     );
   };

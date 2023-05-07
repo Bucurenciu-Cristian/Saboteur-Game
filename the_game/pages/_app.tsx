@@ -17,9 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         </Col>
         <Col xs={11}>
           <Provider store={store}>
-            <Container>
-              <Component {...pageProps} />
-            </Container>
+            <Component {...pageProps} />
           </Provider>
         </Col>
       </Row>

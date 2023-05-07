@@ -48,7 +48,7 @@ export type CharTuple = [
 ];
 
 export interface ICardBasic {
-  code: CharTuple | string;
+  code?: CharTuple | string;
   src: string;
 }
 

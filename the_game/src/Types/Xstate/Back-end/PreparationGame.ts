@@ -44,7 +44,10 @@ const shuffleAndDealDwarfCards = assign((context: Context, event) => {
 
 const shuffleDeck = assign((context: Context, event) => {
   const deck = [...PathsAndActions];
-  const matrix = [...InitialMatrix];
+  // const matrix = [...InitialMatrix];
+  const matrix = JSON.parse(JSON.stringify(InitialMatrix));
+
+  console.log('matrix', matrix[3][2]);
   const shuffledCards = fisherYatesShuffle(deck);
   return {
     ...context,

@@ -53,12 +53,53 @@ ul {
     font-size: 24px;
     font-weight: bold;
     line-height: 34px;
-    height: 100px;
     margin-right: -1px;
     margin-top: -1px;
     padding: 0;
     text-align: center;
-    width: 50px;
+
+}
+
+:root {
+    --base-width: 50px;
+    --width-role: 70px;
+    --width-selected-card: 85px;
+    --width-cards-hand: 70px;
+}
+
+.square-matrix {
+    width: 5vw;
+    height: 10vw;
+    max-width: var(--base-width);
+    max-height: calc(var(--base-width) * 2);
+}
+
+.square-deck {
+    width: 5vw;
+    height: 10vw;
+    max-width: var(--base-width);
+    max-height: calc(var(--base-width) * 2);
+}
+
+.square-role {
+    width: 10vw;
+    height: 20vw;
+    max-width: var(--width-role);
+    max-height: calc(var(--width-role) * 2);
+}
+
+.square-current-card {
+    width: 7.5vw;
+    height: 15vw;
+    max-width: var(--width-selected-card);
+    max-height: calc(var(--width-selected-card) * 2);
+}
+
+.square-hands {
+    width: 10vw;
+    height: 20vw;
+    max-width: var(--width-cards-hand);
+    max-height: calc(var(--width-cards-hand) * 2);
 }
 
 .square:focus {

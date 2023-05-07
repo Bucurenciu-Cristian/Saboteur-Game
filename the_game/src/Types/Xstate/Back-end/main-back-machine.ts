@@ -4,7 +4,7 @@ import { checkTheCurrentCardInTable } from '@engine/CheckTheCurrentCardInTable';
 import { findAvailablePath } from '@engine/FindAvailablePath';
 import { findTheCard } from '@src/BusinessLogic/Logic';
 import { findCardActions, NeighboursActions } from '@src/enums';
-import { isPathToFinish } from '@engine/DepthFirstSearch';
+import { isPathFinishedRefactored } from '@engine/DepthFirstSearch';
 import preparationMachine from './PreparationGame';
 import { getCardCondition } from '../../../../pages/game/[gameId]';
 import { Modes } from '../../../enums';
@@ -120,6 +120,7 @@ const canPlayRepairCardGuard = (context, event) => {
 
   return true;
 };
+const canPlayPathCardGuard = (context, event): boolean => true;
 
 function createRoomMachine(roomId) {
   const urlWebsite = `http://localhost:3050`;
@@ -139,6 +140,7 @@ function createRoomMachine(roomId) {
         currentPlayer: 0,
         blocks: [], // Array of block cards
         finishCards: [], // Array of finish cards (one treasure card and two stone cards)
+        startCard: [], // Array of start cards
         goldNuggetStock: [], // Stock  of gold nugget cards
         round: 1, // Current round of the game (1 to 3)
         gameBoard: [], // Array representing the game board with played path cards
@@ -213,9 +215,9 @@ function createRoomMachine(roomId) {
             ],
             // Destroy or Map
             PLAY_ACTION_CARD_MYSELF: {
-              actions: ['playActionCardMyself', 'removePlayedCardFromHand'],
+              actions: ['placeActionOnTable', 'removePlayedCardFromHand'],
               target: 'nextPlayer',
-              // cond: 'canPlayActionCard',
+              cond: 'canPlayActionOnTable',
             },
             PASS: {
               actions: ['discardCardFromPass'],
@@ -264,6 +266,19 @@ function createRoomMachine(roomId) {
         },
       },
       actions: {
+        placeActionOnTable: assign((context, event) => {
+          const { card, playerId, row, column } = event.payload;
+          const { gameBoard } = context;
+
+          if (getCardCondition(card, 2, Modes.Destroy)) {
+            console.log('Destroy');
+            gameBoard[row][column] = { Card: '#', Occupied: false, Player: playerId };
+          } else {
+            console.log('Map');
+            // gameBoard[row][column] = { Card: '*', Occupied: false, Player: playerId };
+          }
+          // const player = players.find((player) => player.email === playerId);
+        }),
         playActionCardOthers,
         updateParentContext: (context, event) => {
           console.log('updateParentContext');
@@ -307,6 +322,7 @@ function createRoomMachine(roomId) {
         }),
         findFinalCards: assign({
           finishCards: ({ gameBoard }) => findTheCard(gameBoard, findCardActions.Final),
+          startCard: ({ gameBoard }) => findTheCard(gameBoard, findCardActions.Start),
         }),
         findAvailablePaths: assign({
           availablePaths: ({ gameBoard, finishCards }) => findAvailablePath(gameBoard, finishCards),
@@ -318,7 +334,7 @@ function createRoomMachine(roomId) {
             finishCards.forEach(([row, column]) => {
               if (checkTheCurrentCardInTable({ matrix: gameBoard, row, column, action: NeighboursActions.ONE })) {
                 console.log('Start DFS');
-                const x = isPathToFinish(gameBoard, row, column);
+                const x = isPathFinishedRefactored(gameBoard, row, column);
                 if (x) isContinued.push([row, column]);
                 else isNotContinued.push([row, column]);
                 console.log('END DFS');
@@ -470,6 +486,14 @@ function createRoomMachine(roomId) {
         canPlayRepairCardGuard,
         // Add guards here
         /* guard implementations */
+        canPlayActionOnTable: (context, event) => {
+          const { card } = event.payload;
+          const isActionCard = getCardCondition(card, 1, Modes.Action);
+          if (!isActionCard) {
+            return false;
+          }
+          return getCardCondition(card, 2, Modes.Map) || getCardCondition(card, 2, Modes.Destroy);
+        },
         isNotLastRound: (context) => context.round < 3,
         checkingPath: (context, event) => {
           console.log('Guard checkingPath');
@@ -493,7 +517,7 @@ function createRoomMachine(roomId) {
             card: event.payload.card,
           });
 
-          return check;
+          return check && canPlayPathCardGuard(context, event);
         },
         isRoundPlayable: (context) => {
           // Check if the round end condition is met
