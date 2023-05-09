@@ -34,9 +34,9 @@ function removeCodeFromCards(matrix: IMatrix[][]): IMatrix[][] {
 function setupRoomMachineOnTransition(roomMachine, roomId, io1) {
   roomMachine.onTransition((state) => {
     if (state.changed) {
-      console.log('State changed to:', state.value);
+      // console.log('State changed to:', state.value);
       io1.to(roomId).emit('GAME_STATE_UPDATE', { context: state.context, value: state.value });
-      console.log('State sent to clients');
+      // console.log('State sent to clients');
       // console.log('State event:', state.event);
     }
   });
@@ -47,7 +47,7 @@ function getOrCreateRoomMachine(roomId: number, io) {
     return roomMachines.get(roomId);
   }
   const newRoomMachine = createRoomMachine(roomId);
-  console.log('Room machine created');
+  // console.log('Room machine created');
   roomMachines.set(roomId, newRoomMachine);
   setupRoomMachineOnTransition(newRoomMachine, roomId, io);
   return newRoomMachine;
@@ -71,7 +71,7 @@ const getValidCoordinatesForCard = (card, availablePaths, gameBoard) => {
 // You have to restart the server for the changes to take effect
 const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
   if (!res.socket.server.io) {
-    console.log('Socket is initializing');
+    // console.log('Socket is initializing');
     const optionsServer = {
       cors: {
         origin: ['https://admin.socket.io'],
@@ -116,7 +116,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
         assignSocketName(roomId); // Assign a custom name to the socket when it joins a room
 
         if (io.sockets.adapter.rooms.has(roomId)) {
-          console.log(`${socket.namePlayer} connected`);
+          // console.log(`${socket.namePlayer} connected`);
         }
 
         const roomMachine = getOrCreateRoomMachine(roomId, io);
@@ -132,6 +132,8 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
       socket.on('placeCard', (roomIdObj) => {
         const { gameId: roomId } = roomIdObj;
         const roomMachine = getOrCreateRoomMachine(roomId, io);
+        // console.log('server-player_id-context', roomMachine.state.context.playerId);
+        // console.log('server-player_id', roomIdObj.playerId);
         roomMachine.send({ type: 'PLAY_PATH_CARD', payload: roomIdObj });
       });
 
@@ -150,7 +152,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
         let validCoordinates = [];
         if (getCardCondition(card, 2, Modes.Map)) {
           const { finishCards } = roomMachine.state.context;
-          console.log('finishCards', finishCards);
+          // console.log('finishCards', finishCards);
           validCoordinates = finishCards.map((card) => ({ row: card[0], column: card[1] }));
         } else if (getCardCondition(card, 2, Modes.Destroy)) {
           const { finishCards, startCard } = roomMachine.state.context;
@@ -195,12 +197,12 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
         for (const room of socket.rooms) {
           if (room !== socket.id) {
             socket.to(room).emit('leftRoom');
-            console.log(`user has left ${socket.namePlayer} because off this ->`, reason);
+            // console.log(`user has left ${socket.namePlayer} because off this ->`, reason);
           }
         }
       });
       socket.on('disconnect', (reason) => {
-        console.log(`socket ${socket.id} disconnected due to ${reason}`);
+        // console.log(`socket ${socket.id} disconnected due to ${reason}`);
       });
     });
   }

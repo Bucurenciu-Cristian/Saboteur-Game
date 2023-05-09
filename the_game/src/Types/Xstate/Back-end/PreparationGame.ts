@@ -35,6 +35,7 @@ const shuffleAndDealDwarfCards = assign((context: Context, event) => {
   const playersWithRole = context.players.map((player, index) => ({
     ...player,
     role: shuffledCards[index],
+    playerIdGame: index,
   }));
   return {
     ...context,

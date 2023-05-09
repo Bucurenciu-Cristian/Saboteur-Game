@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import useSocket from "@hooks/useSocket";
-import { Button, Col, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
+import { Alert, Button, Col, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
 import ShowPlayer from "@components/ShowPlayer";
 import { changeOrientation } from "@src/BusinessLogic/ChangeOrientation";
 import { Modes } from "@src/enums";
@@ -34,14 +34,13 @@ function GameId() {
   const [hasJoined, setHasJoined] = useState(false);
   const [validCoordinates, setValidCoordinates] = useState([]);
   const [state, setState] = useState(null);
-  // const selectedCard = useRef({ card: null, index: -1 });
   const [selectedCard, setSelectedCard] = useState({ card: null, index: -1 });
   const [selectedSquare, setSelectedSquare] = useState({ row: -1, column: -1 });
+  
   
   const router = useRouter();
   let { gameId } = router.query;
   gameId = Number(gameId);
-  const placeCardEvent = "placeCard";
   const rotateCardEvent = "rotateCard";
   const passTurnEvent = "passTurn";
   useEffect(() => {
@@ -100,12 +99,11 @@ function GameId() {
       // console.log(row, column, card, 'Yollo');
       if (theCard) {
         if (getCardCondition(theCard, 1, Modes.Path)) {
-          socket.emit(placeCardEvent, {
+          socket.emit("placeCard", {
             gameId,
             card: theCard,
             row,
             column,
-            // handIndex: selectedCard.current.index,
             handIndex: selectedCard.index,
             playerId: getPlayerId(context)
           });
@@ -315,8 +313,8 @@ function GameId() {
       {context && (
         <>
           <Row>
-            <Col className="d-none d-xxl-block" xxl={2}></Col>
-            <Col xs={10} md={8} lg={6} xl={6} xxl={6}>
+            <Col className="d-none d-xxl-block" xl={1} xxl={1}></Col>
+            <Col xs={12} md={12} lg={9} xl={9} xxl={7}>
               <ShowBoard
                 validCoordinates={validCoordinates}
                 gameMatrix={context.gameBoard}
@@ -325,7 +323,7 @@ function GameId() {
                 selectedSquare={selectedSquare}
               />
             </Col>
-            <Col>
+            <Col xxl={4} xs md lg xl>
               <div>Players Turn {getPlayerId(context) + 1}</div>
               <div>{state === "score" && <p>This round is finished</p> &&
                 <Button onClick={StartNewGame}>Start a new Game</Button>} </div>
@@ -365,6 +363,10 @@ function GameId() {
                 <Col>{selectedCard?.card?.code[1] === Modes.Path &&
                   <Button onClick={handleRotateCard}>Rotate Card</Button>}</Col>
                 <Col>{selectedCard?.card && <Button onClick={handlePassTurn}>Pass Turn</Button>}</Col>
+              </Row>
+              <Row>
+                {context.serverText !== "" &&
+                  <Col> <Alert variant={"danger"}>Feedback from the server: <p>{context.serverText}</p></Alert></Col>}
               </Row>
             </Col>
           </Row>

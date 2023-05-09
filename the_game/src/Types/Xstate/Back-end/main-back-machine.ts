@@ -120,7 +120,13 @@ const canPlayRepairCardGuard = (context, event) => {
 
   return true;
 };
-const canPlayPathCardGuard = (context, event): boolean => true;
+const canPlayPathCardGuard = (context, event): boolean => {
+  const { players } = context;
+  const { playerId } = event.payload;
+  const targetPlayer = players.find((player) => player.playerIdGame === playerId);
+  const hasBlockingCard = targetPlayer.blocks.length > 0;
+  return !hasBlockingCard;
+};
 
 function createRoomMachine(roomId) {
   const urlWebsite = `http://localhost:3050`;
@@ -148,6 +154,7 @@ function createRoomMachine(roomId) {
         deck: [], // Array of cards in the deck
         roomId: 0, // Add roomId to the context
         availablePaths: [], // Array of available paths
+        serverText: '', // Text to display on the server
         endOfRound: { pathContinued: false, isContinued: [], isNotContinued: [] }, // Object to check if the round is over
       },
       states: {
@@ -204,6 +211,7 @@ function createRoomMachine(roomId) {
                 actions: ['playPathCard', 'removePlayedCardFromHand'],
                 target: 'nextPlayer',
               },
+              { actions: 'wrongInput' },
             ],
             PLAY_ACTION_CARD_OTHERS: [
               {
@@ -266,6 +274,22 @@ function createRoomMachine(roomId) {
         },
       },
       actions: {
+        wrongInput: assign((context, event) => {
+          context.serverText = 'Wrong input';
+          const { type } = event;
+          console.log({ type });
+          switch (type) {
+            case 'PLAY_PATH_CARD':
+              context.serverText = "You can't play path cards while you are blocked, only actions or pass the card";
+              break;
+            case 'PLAY_ACTION_CARD_OTHERS':
+              context.serverText = "You didn't played an action corectly";
+              break;
+            default:
+              context.serverText = 'Wrong input';
+              break;
+          }
+        }),
         placeActionOnTable: assign((context, event) => {
           const { card, playerId, row, column } = event.payload;
           const { gameBoard } = context;
@@ -389,80 +413,9 @@ function createRoomMachine(roomId) {
             newPlayers[currentPlayer].hand.splice(handIndex, 1); // Remove the card from the player's hand
             return newPlayers;
           },
+          serverText: '',
         }),
 
-        /* playActionCardOthers: assign({
-          playerId: (_, event) => event.payload.playerId,
-
-          /!* update gameState with the played action card *!/
-          // find the selectedplayer from the payload and add the card to the blocks from the player
-          players: (context, event) => {
-            const { players } = context;
-            const { selectedPlayer, card } = event.payload;
-            const isActionCard = getCardCondition(card, 1, Modes.Action);
-            if (!isActionCard) {
-              return players;
-            }
-
-            const newPlayers = JSON.parse(JSON.stringify(players)); // Create a deep copy of the players array
-            const targetPlayer = newPlayers.findIndex((player) => player.email === selectedPlayer.email);
-
-            const isSpecialEventCard = isThisCardSpecial(card);
-
-            // Handle regular action cards
-            if (!isSpecialEventCard) {
-              console.log('Not special');
-              if (getCardCondition(card, 3, Modes.False)) {
-                // Check if the player already has a broken tool of the same type
-                const hasBrokenTool = newPlayers[targetPlayer].blocks.some(
-                  (cardBlock) =>
-                    (card.code.includes(Modes.Axe) && cardBlock.code.includes(Modes.Axe)) ||
-                    (card.code.includes(Modes.Cart) && cardBlock.code.includes(Modes.Cart)) ||
-                    (card.code.includes(Modes.Lantern) && cardBlock.code.includes(Modes.Lantern))
-                );
-
-                // Only add the broken tool if the player doesn't already have one of the same type
-                if (!hasBrokenTool) {
-                  newPlayers[targetPlayer].blocks.push(card);
-                }
-              } else {
-                // Handle regular "On" action cards
-                newPlayers[targetPlayer].blocks.forEach((cardBlock, index) => {
-                  if (
-                    (card.code.includes(Modes.Axe) && cardBlock.code.includes(Modes.Axe)) ||
-                    (card.code.includes(Modes.Cart) && cardBlock.code.includes(Modes.Cart)) ||
-                    (card.code.includes(Modes.Lantern) && cardBlock.code.includes(Modes.Lantern))
-                  ) {
-                    newPlayers[targetPlayer].blocks.splice(index, 1); // Remove the broken tool card
-                  }
-                });
-              }
-            } else {
-              // Handle special event cards
-              console.log('Special');
-
-              // Iterate through player's blocks
-              newPlayers[targetPlayer].blocks.forEach((cardBlock, index) => {
-                // Check if the special card can repair the broken tool
-                if (card.code.includes(Modes.LanternAndCart)) {
-                  if (cardBlock.code.includes(Modes.Lantern) || cardBlock.code.includes(Modes.Cart)) {
-                    newPlayers[targetPlayer].blocks.splice(index, 1); // Remove the broken tool card
-                  }
-                } else if (card.code.includes(Modes.AxeAndLantern)) {
-                  if (cardBlock.code.includes(Modes.Axe) || cardBlock.code.includes(Modes.Lantern)) {
-                    newPlayers[targetPlayer].blocks.splice(index, 1); // Remove the broken tool card
-                  }
-                } else if (card.code.includes(Modes.AxeAndCart)) {
-                  if (cardBlock.code.includes(Modes.Axe) || cardBlock.code.includes(Modes.Cart)) {
-                    newPlayers[targetPlayer].blocks.splice(index, 1); // Remove the broken tool card
-                  }
-                }
-              });
-            }
-
-            return newPlayers;
-          },
-        }), */
         revealRoles: assign({
           /* reveal the roles of all players */
         }),
