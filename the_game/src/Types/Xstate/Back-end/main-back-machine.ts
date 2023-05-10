@@ -3,11 +3,10 @@ import { assign, createMachine, interpret } from 'xstate';
 import { checkTheCurrentCardInTable } from '@engine/CheckTheCurrentCardInTable';
 import { findAvailablePath } from '@engine/FindAvailablePath';
 import { findTheCard } from '@src/BusinessLogic/Logic';
-import { findCardActions, NeighboursActions } from '@src/enums';
+import { findCardActions, NeighboursActions, Modes } from '@src/enums';
 import { isPathFinishedRefactored } from '@engine/DepthFirstSearch';
 import preparationMachine from './PreparationGame';
 import { getCardCondition } from '../../../../pages/game/[gameId]';
-import { Modes } from '../../../enums';
 
 assign((context, event) => ({ players: event.data }));
 
@@ -155,6 +154,8 @@ function createRoomMachine(roomId) {
         roomId: 0, // Add roomId to the context
         availablePaths: [], // Array of available paths
         serverText: '', // Text to display on the server
+        gameLogs: [],
+        logMessage: '',
         endOfRound: { pathContinued: false, isContinued: [], isNotContinued: [] }, // Object to check if the round is over
       },
       states: {
@@ -199,7 +200,16 @@ function createRoomMachine(roomId) {
             src: preparationMachine,
             onDone: {
               target: 'chooseCard',
-              actions: ['updateParentContext', 'findFinalCards', 'findAvailablePaths'],
+              actions: [
+                'updateParentContext',
+                'findFinalCards',
+                'findAvailablePaths',
+                {
+                  type: 'updateLogMessage',
+                  message: 'Game started.',
+                },
+                'addLogEntry',
+              ],
             },
           },
         },
@@ -208,27 +218,53 @@ function createRoomMachine(roomId) {
             PLAY_PATH_CARD: [
               {
                 cond: 'checkingPath',
-                actions: ['playPathCard', 'removePlayedCardFromHand'],
+                actions: [
+                  'playPathCard',
+                  'removePlayedCardFromHand',
+                  (context, event) => ({
+                    type: 'addLogEntry',
+                    message: `${context.players[context.currentPlayer].name} played a path card`,
+                  }),
+                ],
                 target: 'nextPlayer',
               },
               { actions: 'wrongInput' },
             ],
             PLAY_ACTION_CARD_OTHERS: [
               {
-                actions: ['playActionCardOthers', 'removePlayedCardFromHand'],
+                actions: [
+                  'playActionCardOthers',
+                  'removePlayedCardFromHand',
+                  {
+                    type: 'addLogEntry',
+                    message: (context, event) => `${context.players[context.currentPlayer].name} played an action card`,
+                  },
+                ],
                 target: 'nextPlayer',
                 cond: 'canPlayRepairCardGuard',
               },
               { actions: 'wrongInput' },
             ],
-            // Destroy or Map
             PLAY_ACTION_CARD_MYSELF: {
-              actions: ['placeActionOnTable', 'removePlayedCardFromHand'],
+              actions: [
+                'placeActionOnTable',
+                'removePlayedCardFromHand',
+                {
+                  type: 'addLogEntry',
+                  message: (context, event) => `${context.players[context.currentPlayer].name} played Map or Destroy card`,
+                },
+              ],
               target: 'nextPlayer',
               cond: 'canPlayActionOnTable',
             },
             PASS: {
-              actions: ['discardCardFromPass'],
+              actions: [
+                'discardCardFromPass',
+                {
+                  type: 'addLogEntry',
+                  message: (context, event) => `${context.players[context.currentPlayer].name} passed a card`,
+                },
+              ],
               target: 'nextPlayer',
             },
           },
@@ -274,6 +310,18 @@ function createRoomMachine(roomId) {
         },
       },
       actions: {
+        addLogEntry: assign({
+          gameLogs: (context) => {
+            const newLogEntry = {
+              timestamp: new Date(),
+              message: context.logMessage,
+            };
+            return context.gameLogs.concat(newLogEntry);
+          },
+        }),
+        updateLogMessage: assign({
+          logMessage: (context, event) => event.message,
+        }),
         wrongInput: assign((context, event) => {
           context.serverText = 'Wrong input';
           const { type } = event;
