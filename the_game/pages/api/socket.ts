@@ -2,7 +2,6 @@ import { Server } from 'socket.io';
 import { instrument } from '@socket.io/admin-ui';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { checkTheCurrentCardInTable } from '@engine/CheckTheCurrentCardInTable';
-import { IMatrix } from '@src/Types/DexType';
 import { Modes } from '@src/enums';
 import joinLobby from '../../src/BusinessLogic/events/joinLobby';
 import joinRoom from '../../src/BusinessLogic/events/joinRoom';
@@ -19,16 +18,22 @@ import { getCardCondition } from '../game/[gameId]';
 
 const roomMachines = new Map();
 
-function removeCodeFromCards(matrix: IMatrix[][]): IMatrix[][] {
-  return matrix.map((row) =>
-    row.map((cell) => {
-      if (cell.Card !== '#' && 'code' in cell.Card) {
-        const { code, ...cardWithoutCode } = cell.Card;
-        return { ...cell, Card: cardWithoutCode };
-      }
-      return cell;
-    })
-  );
+function extractRelevantData(state) {
+  switch (state) {
+    case 'someState1':
+      return {
+        key1: state.context.key1,
+        key2: state.context.key2,
+      };
+    case 'someState2':
+      return {
+        key3: state.context.key3,
+        key4: state.context.key4,
+      };
+    // Add more cases as needed for other states
+    default:
+      return state.context;
+  }
 }
 
 function setupRoomMachineOnTransition(roomMachine, roomId, io1) {

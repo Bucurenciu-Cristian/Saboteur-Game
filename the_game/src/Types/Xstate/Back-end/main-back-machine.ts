@@ -3,7 +3,7 @@ import { assign, createMachine, interpret } from 'xstate';
 import { checkTheCurrentCardInTable } from '@engine/CheckTheCurrentCardInTable';
 import { findAvailablePath } from '@engine/FindAvailablePath';
 import { findTheCard } from '@src/BusinessLogic/Logic';
-import { findCardActions, NeighboursActions, Modes } from '@src/enums';
+import { findCardActions, Modes, NeighboursActions } from '@src/enums';
 import { isPathFinishedRefactored } from '@engine/DepthFirstSearch';
 import preparationMachine from './PreparationGame';
 import { getCardCondition } from '../../../../pages/game/[gameId]';
@@ -42,7 +42,7 @@ const isMatchingTool = (blockCard, actionCard) => {
 };
 const playActionCardOthers = assign({
   playerId: (_, event) => event.payload.playerId,
-
+  logMessage: (context, event) => 'Action Card',
   players: (context, event) => {
     const { players } = context;
     const { selectedPlayer, card } = event.payload;
@@ -218,53 +218,26 @@ function createRoomMachine(roomId) {
             PLAY_PATH_CARD: [
               {
                 cond: 'checkingPath',
-                actions: [
-                  'playPathCard',
-                  'removePlayedCardFromHand',
-                  (context, event) => ({
-                    type: 'addLogEntry',
-                    message: `${context.players[context.currentPlayer].name} played a path card`,
-                  }),
-                ],
+                actions: ['playPathCard', 'removePlayedCardFromHand', 'addLogEntry'],
                 target: 'nextPlayer',
               },
               { actions: 'wrongInput' },
             ],
             PLAY_ACTION_CARD_OTHERS: [
               {
-                actions: [
-                  'playActionCardOthers',
-                  'removePlayedCardFromHand',
-                  {
-                    type: 'addLogEntry',
-                    message: (context, event) => `${context.players[context.currentPlayer].name} played an action card`,
-                  },
-                ],
+                actions: ['playActionCardOthers', 'removePlayedCardFromHand', 'addLogEntry'],
                 target: 'nextPlayer',
                 cond: 'canPlayRepairCardGuard',
               },
               { actions: 'wrongInput' },
             ],
             PLAY_ACTION_CARD_MYSELF: {
-              actions: [
-                'placeActionOnTable',
-                'removePlayedCardFromHand',
-                {
-                  type: 'addLogEntry',
-                  message: (context, event) => `${context.players[context.currentPlayer].name} played Map or Destroy card`,
-                },
-              ],
+              actions: ['placeActionOnTable', 'removePlayedCardFromHand', 'addLogEntry'],
               target: 'nextPlayer',
               cond: 'canPlayActionOnTable',
             },
             PASS: {
-              actions: [
-                'discardCardFromPass',
-                {
-                  type: 'addLogEntry',
-                  message: (context, event) => `${context.players[context.currentPlayer].name} passed a card`,
-                },
-              ],
+              actions: ['discardCardFromPass', 'addLogEntry'],
               target: 'nextPlayer',
             },
           },
@@ -319,9 +292,6 @@ function createRoomMachine(roomId) {
             return context.gameLogs.concat(newLogEntry);
           },
         }),
-        updateLogMessage: assign({
-          logMessage: (context, event) => event.message,
-        }),
         wrongInput: assign((context, event) => {
           context.serverText = 'Wrong input';
           const { type } = event;
@@ -341,32 +311,29 @@ function createRoomMachine(roomId) {
         placeActionOnTable: assign((context, event) => {
           const { card, playerId, row, column } = event.payload;
           const { gameBoard } = context;
-
           if (getCardCondition(card, 2, Modes.Destroy)) {
-            console.log('Destroy');
             gameBoard[row][column] = { Card: '#', Occupied: false, Player: playerId };
+            context.logMessage = `Player ${playerId} played a destroy card on ${row} ${column}`;
           } else {
-            console.log('Map');
-            // gameBoard[row][column] = { Card: '*', Occupied: false, Player: playerId };
+            context.logMessage = `Player ${playerId} played a map card on ${row} ${column}`;
           }
-          // const player = players.find((player) => player.email === playerId);
         }),
         playActionCardOthers,
         updateParentContext: (context, event) => {
-          console.log('updateParentContext');
           context.gameBoard = event.data.matrix;
           context.players = event.data.players;
           context.deck = event.data.deck;
           // Aici trebuie sa spui a cui e randul primului Jucator.
           context.currentPlayer = event.data.currentPlayer;
           context.discardPile = event.data.discardPile;
+          context.logMessage = 'Game started.';
         },
         setPlayers: assign((context, event) => ({ players: event.data })),
         setRoomId: assign({
           roomId: (_, event) => event.roomId,
         }),
         discoverFinalCards: assign({
-          gameBoard: (context, event) => {
+          gameBoard: (context) => {
             const { gameBoard, endOfRound } = context;
             const { isContinued } = endOfRound;
             isContinued.forEach(([row, column]) => {
@@ -391,6 +358,7 @@ function createRoomMachine(roomId) {
             // Add the card to the discard pile
             return [...context.discardPile, card];
           },
+          logMessage: (context, event) => `Player ${context.players[context.currentPlayer].name} discarded a card`,
         }),
         findFinalCards: assign({
           finishCards: ({ gameBoard }) => findTheCard(gameBoard, findCardActions.Final),
@@ -445,10 +413,10 @@ function createRoomMachine(roomId) {
           gameBoard: (context, event) => {
             const { row, column, card, playerId } = event.payload;
             const { gameBoard } = context;
-            // const newGameBoard = JSON.parse(JSON.stringify(context.gameBoard)); // Create a deep copy of the game board
             gameBoard[row][column] = { Card: card, Occupied: true, playerId }; // Place the card in the matrix
             return gameBoard;
           },
+          logMessage: (context, event) => `Player ${context.players[context.currentPlayer].name} played a path card`,
         }),
         setPlayerId: assign({
           playerId: (_, event) => event.payload.playerId,

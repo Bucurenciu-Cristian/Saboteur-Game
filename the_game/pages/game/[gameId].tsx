@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import useSocket from "@hooks/useSocket";
-import {Alert, Button, Col, Offcanvas, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
+import { Alert, Button, Col, Offcanvas, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
 import ShowPlayer from "@components/ShowPlayer";
 import { changeOrientation } from "@src/BusinessLogic/ChangeOrientation";
 import { Modes } from "@src/enums";
@@ -36,16 +36,13 @@ function GameId() {
   const [state, setState] = useState(null);
   const [selectedCard, setSelectedCard] = useState({ card: null, index: -1 });
   const [selectedSquare, setSelectedSquare] = useState({ row: -1, column: -1 });
-
-
+  
+  
   const canvasRef = useRef();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  function handleToggleGamelog() {
-    canvasRef.current.toggle();
-  }
+  
   const router = useRouter();
   let { gameId } = router.query;
   gameId = Number(gameId);
@@ -311,9 +308,8 @@ function GameId() {
       setValidCoordinates([]);
     }
   }, [selectedCard]);
-
-
-
+  
+  
   return (
     <>
       {/*<div>*/}
@@ -345,8 +341,8 @@ function GameId() {
                      {context.gameLogs.map((log, index) => (
                        <p key={index}>{JSON.stringify(log)}</p>
                       ))}
-                   </Offcanvas.Body>
-                 </Offcanvas></Col></Row>
+                    </Offcanvas.Body>
+                  </Offcanvas></Col></Row>
               <div>{state === "score" && <p>This round is finished</p> &&
                 <Button onClick={StartNewGame}>Start a new Game</Button>} </div>
               <ShowPlayer
