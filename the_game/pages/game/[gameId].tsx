@@ -316,10 +316,10 @@ function GameId() {
 
   return (
     <>
-      <div>
-        Game ID: {gameId}, Status: {state}, Round: {context && context.round},
-        Turn: {context && getPlayerId(context) + 1}
-      </div>
+      {/*<div>*/}
+        {/*Game ID: {gameId}, Status: {state}, Round: {context && context.round},*/}
+        {/*Turn: {context && getPlayerId(context) + 1}*/}
+      {/*</div>*/}
       {context && (
         <>
           <Row>
@@ -336,9 +336,7 @@ function GameId() {
             <Col xxl={4} xs md lg xl>
               <Row>
                 <Col>Players Turn {getPlayerId(context) + 1}</Col>
-               <Col><Button variant="primary" onClick={handleShow} className="me-2">
-                 GameLog
-               </Button>
+               <Col>
                  <Offcanvas show={show} onHide={handleClose}>
                    <Offcanvas.Header closeButton>
                      <Offcanvas.Title>GameLog</Offcanvas.Title>

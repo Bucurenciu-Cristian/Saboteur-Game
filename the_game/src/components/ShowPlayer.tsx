@@ -10,6 +10,16 @@ function ShowPlayer({ player, onCardClick, currentCard, resetSelectedCard }) {
   return (
     <Row>
       <Col>
+        <p>Your Hand</p>
+        <Row>
+          {player?.hand?.map((item, i) => (
+            <Col xs={4}>
+              <Square Card={item} key={i} row={i} column={0} Occupied onClick={() => onCardClick(item, i)} style="square-hands" />
+            </Col>
+          ))}
+        </Row>
+      </Col>
+      <Col>
         <>
           {!currentCard && <span>Your name is</span>}
           <h1>{player?.username}</h1>
@@ -54,16 +64,6 @@ function ShowPlayer({ player, onCardClick, currentCard, resetSelectedCard }) {
               )}
             </Col>
           </>
-        </Row>
-      </Col>
-      <Col>
-        <p>Your Hand</p>
-        <Row>
-          {player?.hand?.map((item, i) => (
-            <Col xs={4}>
-              <Square Card={item} key={i} row={i} column={0} Occupied onClick={() => onCardClick(item, i)} style="square-hands" />
-            </Col>
-          ))}
         </Row>
       </Col>
     </Row>
