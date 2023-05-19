@@ -417,7 +417,7 @@ function GameId() {
                     <Col key={index}>
                       <OverlayTrigger placement="top" delay={{ show: 250, hide: 400 }}
                                       overlay={renderTooltip("Play Actions")}>
-                        <Button className="w-75 my-3" onClick={() => handleActionTurnYourself(player)}>
+                        <Button className="w-75 my-3" variant={"success"} onClick={() => handleActionTurnYourself(player)}>
                           Yourself
                         </Button>
                       </OverlayTrigger>
