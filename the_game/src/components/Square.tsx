@@ -12,16 +12,12 @@ function renderImage(Card, Occupied, row, column, isValidCoordinate) {
     }
     return <Image src={Card?.src} quality={10} layout="fill" alt="The rest" className={isRotated ? 'rotated-image' : ''} />;
   }
-  /* return (
-     <p style={{ color: isValidCoordinate ? 'lime' : '' }}>
-       {row}:{column}
-     </p>
-   ); */
-  return isValidCoordinate ? (
-    <p style={{ color: 'green' }}>
-      {row}:{column}
-    </p>
-  ) : null;
+  // return (
+  //   <p style={{ color: isValidCoordinate ? 'lime' : '' }}>
+  //     {row}:{column}
+  //   </p>
+  // );
+  return isValidCoordinate ? <p style={{ color: 'green' }}>X</p> : null;
 }
 
 function Square({ Card, onClick, Occupied, row, column, validCoordinates, style }) {
