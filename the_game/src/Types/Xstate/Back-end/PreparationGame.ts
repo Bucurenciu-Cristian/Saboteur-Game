@@ -4,7 +4,7 @@ import { Miners, Saboteurs } from '@cards/Dwarfs';
 import { PathsAndActions } from '@cards/Paths';
 import { InitialMatrix } from '@engine/Matrix';
 import { ICardBasic, IMatrix, PlayerCard } from '@src/Types/DexType';
-import { fisherYatesShuffle } from '../../../BusinessLogic/FisherYatesShuffle';
+import { fisherYatesShuffle } from '@src/BusinessLogic/FisherYatesShuffle';
 
 interface Player {
   name: string;

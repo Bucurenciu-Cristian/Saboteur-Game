@@ -1,21 +1,20 @@
-import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/globals.scss';
 import { Provider } from 'react-redux';
 import { createWrapper } from 'next-redux-wrapper';
 import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import store from '../redux/store';
-import { ShowLinks } from './showLinks';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Container fluid>
+    <Container fluid className="bg-opacity-25 py-3">
       <Row>
-        <Col className="d-none d-xxl-block" xs={1}>
-          <ShowLinks />
-        </Col>
-        <Col xs={11}>
+        {/* <Col className="d-none d-xxl-block" xxl={1}> */}
+        {/*  <ShowLinks /> */}
+        {/* </Col> */}
+        <Col>
           <Provider store={store}>
             <Component {...pageProps} />
           </Provider>

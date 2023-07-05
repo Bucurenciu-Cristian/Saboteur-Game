@@ -1,4 +1,5 @@
-import { IMatrix } from "@src/Types/DexType";
+import { IMatrix } from '@src/Types/DexType';
+import { Modes } from '@src/enums';
 
 /**
  * Checks if the code at the specified index in the matrix cell has a specific value.
@@ -18,7 +19,7 @@ export function isCodeAtIndex(matrix: IMatrix[][], row: number, col: number, cod
   if (Occupied) {
     const { code } = matrix[row][col].Card;
     if (Array.isArray(code)) {
-      return code[codeIndex] === 'T';
+      return code[codeIndex] === Modes.True;
     }
   }
   console.log("You'll not get here");

@@ -1,17 +1,13 @@
 import React, { useEffect } from 'react';
+import { checkMyCards } from '@src/BusinessLogic/CheckMyCards';
 import Board from '../../src/components/Board';
-import { checkMyCards } from '../../src/BusinessLogic/CheckMyCards';
 
-const Page = () => {
+function Page() {
   useEffect(() => {
     checkMyCards();
   }, []);
 
-  return (
-    <>
-      <Board />
-    </>
-  );
-};
+  return <Board />;
+}
 
 export default Page;

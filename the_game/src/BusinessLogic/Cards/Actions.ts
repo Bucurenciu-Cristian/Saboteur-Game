@@ -1,8 +1,7 @@
-import { ActionCard, FOTType, ICardBasic } from '@src/Types/DexType';
+import { ActionCard, ICardBasic } from '@src/Types/DexType';
 import { Modes } from '@src/enums';
 import { CardTypes } from '@src/data/cards';
 
-export const FOT: FOTType = { F: 'F', T: 'T' };
 const Maps: ActionCard[] = [
   {
     src: CardTypes.ACTIONS.MAP,

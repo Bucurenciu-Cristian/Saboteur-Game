@@ -1,7 +1,5 @@
-export const noOfPlayers = 3;
-
-const width = 50;
-const height = width * 1.45;
+const width = 200;
+const height = width * 2;
 export const imageSize = {
   width,
   height,

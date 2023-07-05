@@ -53,6 +53,5 @@ export function findTheCard(matrix: IMatrix[][], action: string): number[][] {
       }
     }
   }
-
   return cardsFound;
 }

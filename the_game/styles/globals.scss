@@ -1,0 +1,118 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+$btn-disabled-opacity: 0.9;
+$btn-border-width: 1.5px;
+
+@import "~bootstrap/scss/bootstrap";
+$multiplier: 2;
+$base-width: 60px;
+$width-role: 80px;
+$width-selected-card: 80px;
+$width-cards-hand: 80px;
+$width-square-actions: 80px;
+
+$font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+@mixin square-sizing($width, $height, $maxWidth, $maxHeight) {
+  width: $width;
+  height: $height;
+  max-width: $maxWidth;
+  max-height: $maxHeight;
+}
+
+body {
+  font: 14px 'Century Gothic', Futura, sans-serif;
+  margin: 20px;
+
+  &,
+  html {
+    padding: 0;
+    margin: 0;
+    font-family: $font-family;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    color: white;
+    background: $gray-700;
+  }
+}
+
+ol,
+ul {
+  padding-left: 30px;
+}
+
+.board-row:after {
+  clear: both;
+  content: '';
+  display: table;
+}
+
+.status {
+  margin-bottom: 10px;
+}
+
+.square {
+  //background: #aaa;
+  font-size: 1rem;
+  font-weight: bold;
+  //margin-right: -1px;
+  //margin-top: -1px;
+  padding: 0;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+  }
+
+  .kbd-navigation & {
+    &:focus {
+      background: #ddd;
+    }
+  }
+
+  &-matrix {
+    @include square-sizing(5vw, 10vw, $base-width, calc(#{$base-width} * #{$multiplier}));
+  }
+
+  &-deck {
+    @include square-sizing(5vw, 10vw, $base-width, calc(#{$base-width} * #{$multiplier}));
+  }
+
+  &-role {
+    @include square-sizing(10vw, 20vw, $width-role, calc(#{$width-role} * #{$multiplier}));
+  }
+
+  &-current-card {
+    @include square-sizing(7.5vw, 15vw, $width-selected-card, calc(#{$width-selected-card} * #{$multiplier}));
+  }
+
+  &-actions {
+    @include square-sizing(10vw, 20vw, $width-square-actions, calc(#{$width-square-actions} * #{$multiplier}));
+  }
+
+  &-hands {
+    @include square-sizing(10vw, 20vw, $width-cards-hand, calc(#{$width-cards-hand} * #{$multiplier}));
+  }
+}
+
+.rotated-image {
+  transform: rotate(180deg);
+}
+

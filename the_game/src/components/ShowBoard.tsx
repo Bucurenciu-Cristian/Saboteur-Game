@@ -30,7 +30,7 @@ function ShowBoard({
         onClick={onClick}
         row={i}
         column={j}
-        validCoordinates={validCoordinates} // Pass validCoordinates to Square
+        validCoordinates={validCoordinates}
         style="square-matrix"
       />
     );
@@ -42,18 +42,21 @@ function ShowBoard({
   // useEffect(() => {
   //   console.log('ShowBoard - selectedCard prop changed:', selectedCard);
   // }, [selectedCard]);
+  /*
+   *
+   * */
   return (
-    <>
+    <div style={{ overflow: 'auto', maxHeight: '70vh' }}>
       {memoizedGameMatrix.map((row: any[], i) => (
-        <Row key={i}>
+        <Row key={i} className="justify-content-center">
           {row.map((column, j) => (
-            <Col xs="auto" className="px-0" key={`${i}${j}`}>
+            <Col xs="auto" className="px-0 py-0" key={`${i}${j}`}>
               {memoizedRenderSquareUpdated(i, j, validCoordinates, selectedCard)}
             </Col>
           ))}
         </Row>
       ))}
-    </>
+    </div>
   );
 }
 

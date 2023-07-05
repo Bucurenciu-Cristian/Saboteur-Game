@@ -1,12 +1,15 @@
-import { assign, createMachine, interpret } from 'xstate';
+import { assign, createMachine, interpret, send } from 'xstate';
 
 import { checkTheCurrentCardInTable } from '@engine/CheckTheCurrentCardInTable';
 import { findAvailablePath } from '@engine/FindAvailablePath';
 import { findTheCard } from '@src/BusinessLogic/Logic';
-import { findCardActions, Modes, NeighboursActions } from '@src/enums';
+import { conDirections, findCardActions, Modes, NeighboursActions } from '@src/enums';
 import { isPathFinishedRefactored } from '@engine/DepthFirstSearch';
+import { findOccupiedEdge } from '@engine/FindOccupiedEdge';
+import { fisherYatesShuffle } from '@src/BusinessLogic/FisherYatesShuffle';
 import preparationMachine from './PreparationGame';
 import { getCardCondition } from '../../../../pages/game/[gameId]';
+import { getValidCoordinatesForCard } from '../../../../pages/api/socket';
 
 assign((context, event) => ({ players: event.data }));
 
@@ -58,13 +61,11 @@ const playActionCardOthers = assign({
       // Only add the broken tool if there is no matching broken tool
       const matchingBrokenTool = newPlayers[targetPlayer].blocks.find((blockCard) => isMatchingTool(blockCard, card));
       if (!matchingBrokenTool) {
-        console.log('addBrokenTool');
         newPlayers[targetPlayer].blocks.push(card);
       }
     } else if (card.code[3] === Modes.True) {
       // Handle repair cards (True and special cards)
       const matchingBrokenTools = newPlayers[targetPlayer].blocks.filter((blockCard) => isMatchingTool(blockCard, card));
-      console.log({ matchingBrokenTools });
 
       // If there are matching broken tools, remove one at random and send it to the graveyard along with the repair card
       if (matchingBrokenTools.length > 0) {
@@ -99,21 +100,16 @@ const canPlayRepairCardGuard = (context, event) => {
   // Check if the player has a broken tool that can be repaired by the current card
   const hasBrokenTool = targetPlayer.blocks.some((blockCard) => {
     const matchingTools = isMatchingTool(blockCard, card);
-    console.log({ matchingTools });
     const isBrokenTool = blockCard.code.includes(Modes.False);
-    console.log({ isBrokenTool });
     const toolsToRepairBrokenTool = getToolsToRepair(blockCard);
     const toolsToRepairCard = getToolsToRepair(card);
 
     const toolsToRepairEqual = toolsToRepairCard.some((tool) => toolsToRepairBrokenTool.includes(tool));
-    console.log({ toolsToRepairBrokenTool, toolsToRepairCard, toolsToRepairEqual });
-    console.log({ matchingTools, isBrokenTool, toolsToRepairEqual });
     return matchingTools && isBrokenTool && toolsToRepairEqual;
   });
 
   // If the selected card is a repair card and there is no broken tool to repair, return false to prevent the turn from ending
   if (card.code.includes(Modes.True) && !hasBrokenTool) {
-    console.log('No broken tool to repair');
     return false;
   }
 
@@ -243,18 +239,28 @@ function createRoomMachine(roomId) {
           },
         },
         nextPlayer: {
-          onEntry: ['setPlayerId', 'GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths', 'findPathContinued'],
+          entry: ['setPlayerId', 'GiveCurrentUserANewCardFromTheDeck', 'passTurn', 'findAvailablePaths', 'findPathContinued'],
           always: [
-            { target: 'score', cond: 'isAtLeastOnePlayerWithCard' },
-            { target: 'chooseCard', cond: 'isRoundPlayable' },
-            { target: 'score', actions: ['discoverFinalCards'], cond: 'isGoldFound' },
-            { target: 'chooseCard', actions: ['discoverFinalCards'], cond: 'isRockFound' },
+            { cond: 'isGoldFound', actions: ['discoverFinalCards'], target: 'score' },
+            {
+              cond: 'isEdgeDetected',
+              actions: ['updateTheMatrix', 'findFinalCards', 'findAvailablePaths'],
+              target: 'chooseCard',
+            },
+            {
+              cond: 'isAITurn',
+              actions: ['sendAITurnToChooseCardEvent', 'addLogEntry'],
+              target: 'chooseCard',
+            },
+            { cond: 'isAtLeastOnePlayerWithCard', target: 'score' },
+            { cond: 'isRoundPlayable', target: 'chooseCard' },
+            { cond: 'isRockFound', actions: ['discoverFinalCards'], target: 'chooseCard' },
           ],
           // cond: 'isRoundEndConditionMet',
           // ROUND_END: `#room-${roomId}`.score',
         },
         score: {
-          onEntry: ['revealRoles', 'distributeGold'],
+          entry: ['revealRoles', 'distributeGold'],
           on: {
             NEXT_ROUND: [
               {
@@ -270,7 +276,7 @@ function createRoomMachine(roomId) {
         },
         end: {
           type: 'final',
-          onEntry: 'announceWinners',
+          entry: 'announceWinners',
         },
       },
     },
@@ -295,13 +301,12 @@ function createRoomMachine(roomId) {
         wrongInput: assign((context, event) => {
           context.serverText = 'Wrong input';
           const { type } = event;
-          console.log({ type });
           switch (type) {
             case 'PLAY_PATH_CARD':
               context.serverText = "You can't play path cards while you are blocked, only actions or pass the card";
               break;
             case 'PLAY_ACTION_CARD_OTHERS':
-              context.serverText = "You didn't played an action corectly";
+              context.serverText = "You didn't played an action correctly";
               break;
             default:
               context.serverText = 'Wrong input';
@@ -342,8 +347,68 @@ function createRoomMachine(roomId) {
             return gameBoard;
           },
         }),
-
-        // NEW STUFF
+        updateTheMatrix: assign({
+          gameBoard: (context) => {
+            let { gameBoard } = context;
+            const lengthColumns = gameBoard.length;
+            const lengthRows = gameBoard[0].length;
+            const [_, position] = findOccupiedEdge(gameBoard);
+            const { direction } = position[0];
+            const newColumn = Array(lengthColumns).fill({ Card: '#', Occupied: false });
+            const newRow = Array(lengthRows).fill({ Card: '#', Occupied: false });
+            switch (direction) {
+              case conDirections.EAST:
+                gameBoard = gameBoard.map((row, i) => [...row, newColumn[i]]);
+                break;
+              case conDirections.WEST:
+                gameBoard = gameBoard.map((row, i) => [newColumn[i], ...row]);
+                break;
+              case conDirections.SOUTH:
+                gameBoard.push(newRow);
+                break;
+              case conDirections.NORTH:
+                gameBoard.unshift(newRow);
+                break;
+              default:
+                break;
+            }
+            return gameBoard;
+          },
+        }),
+        sendAITurnToChooseCardEvent: send(({ players, availablePaths, currentPlayer, gameBoard }) => {
+          // console.log('AI will do something');
+          const aiPlayer = players[currentPlayer];
+          const cards = aiPlayer.hand.filter((card) => card.code[1] === Modes.Path);
+          const discardACard = {
+            type: 'PASS',
+            payload: { handIndex: 0 },
+          };
+          if (cards.length > 0) {
+            // console.log(cards.length, JSON.stringify(cards));
+            const [card] = fisherYatesShuffle(cards);
+            let validcoords = getValidCoordinatesForCard(card, availablePaths, gameBoard);
+            // if (validcoords.length === 0) {
+            //   [card] = fisherYatesShuffle(cards);
+            //   validcoords = getValidCoordinatesForCard(card, availablePaths, gameBoard);
+            // }
+            validcoords = fisherYatesShuffle(validcoords);
+            if (validcoords.length === 0) {
+              // console.log(validcoords);
+              return discardACard;
+            }
+            return {
+              type: 'PLAY_PATH_CARD',
+              payload: {
+                card,
+                playerId: currentPlayer,
+                row: validcoords[0].row,
+                column: validcoords[0].column,
+              },
+            };
+          }
+          // console.log('AI will drop a card');
+          return discardACard;
+        }),
         passTurn: assign({
           currentPlayer: (context) => (context.currentPlayer + 1) % context.players.length,
         }),
@@ -358,7 +423,7 @@ function createRoomMachine(roomId) {
             // Add the card to the discard pile
             return [...context.discardPile, card];
           },
-          logMessage: (context, event) => `Player ${context.players[context.currentPlayer].name} discarded a card`,
+          logMessage: (context) => `Player ${context.players[context.currentPlayer].name} discarded a card`,
         }),
         findFinalCards: assign({
           finishCards: ({ gameBoard }) => findTheCard(gameBoard, findCardActions.Final),
@@ -373,12 +438,19 @@ function createRoomMachine(roomId) {
             const isNotContinued = [];
             finishCards.forEach(([row, column]) => {
               if (checkTheCurrentCardInTable({ matrix: gameBoard, row, column, action: NeighboursActions.ONE })) {
-                console.log('Start DFS');
+                // console.log('Start DFS');
                 const x = isPathFinishedRefactored(gameBoard, row, column);
                 if (x) isContinued.push([row, column]);
                 else isNotContinued.push([row, column]);
-                console.log('END DFS');
               }
+              /* let { code } = gameBoard[row][column].Card;
+              code = changeOrientation(code);
+              if (checkTheCurrentCardInTable({ matrix: gameBoard, row, column, action: NeighboursActions.ONE })) {
+                const y = isPathFinishedRefactored(gameBoard, row, column);
+                if (y) isContinued.push([row, column]);
+                else isNotContinued.push([row, column]);
+              }
+              code = changeOrientation(code); */
             });
             return {
               pathContinued: isContinued.length > 0,
@@ -431,7 +503,6 @@ function createRoomMachine(roomId) {
           },
           serverText: '',
         }),
-
         revealRoles: assign({
           /* reveal the roles of all players */
         }),
@@ -465,10 +536,7 @@ function createRoomMachine(roomId) {
         },
         isNotLastRound: (context) => context.round < 3,
         checkingPath: (context, event) => {
-          console.log('Guard checkingPath');
-          console.log(context.playerId, event.payload.playerId);
-          const checkPlayer = context.playerId === event.payload.playerId;
-          console.log({ checkPlayer });
+          // const checkPlayer = context.playerId === event.payload.playerId;
           // if (!checkPlayer) return false;
           const checkCoord = checkCoordinates(
             {
@@ -478,14 +546,13 @@ function createRoomMachine(roomId) {
             context.availablePaths
           );
           if (!checkCoord) return false;
-
           const check = checkTheCurrentCardInTable({
             matrix: context.gameBoard,
             row: event.payload.row,
             column: event.payload.column,
             card: event.payload.card,
           });
-
+          // console.log(check);
           return check && canPlayPathCardGuard(context, event);
         },
         isRoundPlayable: (context) => {
@@ -495,7 +562,6 @@ function createRoomMachine(roomId) {
           return !pathContinued;
         },
         isRockFound: (ctx) => {
-          console.log('Guard isRockFound');
           const { gameBoard, endOfRound } = ctx;
           return endOfRound.isContinued.some(([row, column]) => {
             const { code } = gameBoard[row][column].Card;
@@ -503,20 +569,32 @@ function createRoomMachine(roomId) {
           });
         },
         isGoldFound: (context) => {
-          console.log('Guard isGoldFound');
           const { gameBoard, endOfRound } = context;
           return endOfRound.isContinued.some(([row, column]) => {
             const { code } = gameBoard[row][column].Card;
             return code[8] === Modes.Gold;
           });
         },
-        isAtLeastOnePlayerWithCard: (context) => {
-          for (const player of context.players) {
+        isAtLeastOnePlayerWithCard: ({ players, deck }) => {
+          if (deck.length > 0) {
+            return false;
+          }
+
+          for (const player of players) {
             if (player.hand.length > 0) {
               return false;
             }
           }
           return true;
+        },
+        isEdgeDetected: (context, event) => {
+          const { gameBoard } = context;
+          const [edgeDetected] = findOccupiedEdge(gameBoard);
+          return edgeDetected;
+        },
+        isAITurn: ({ currentPlayer, players }) => {
+          const player = players[currentPlayer];
+          return player.username === 'AI';
         },
         isCurrentPlayer: (context, event) => context.playerId === event.payload.playerId,
         isMaxRoundsReached: (context, event) => {

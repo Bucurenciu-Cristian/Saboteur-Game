@@ -13,36 +13,12 @@ import startGame from '../../src/BusinessLogic/events/StartGame';
 import createRoomMachine from '../../src/Types/Xstate/Back-end/main-back-machine';
 import { getCardCondition } from '../game/[gameId]';
 
-// Here you are on the back-end side:
-// const serverService = interpret(parentMachine).start();
-
 const roomMachines = new Map();
-
-function extractRelevantData(state) {
-  switch (state) {
-    case 'someState1':
-      return {
-        key1: state.context.key1,
-        key2: state.context.key2,
-      };
-    case 'someState2':
-      return {
-        key3: state.context.key3,
-        key4: state.context.key4,
-      };
-    // Add more cases as needed for other states
-    default:
-      return state.context;
-  }
-}
 
 function setupRoomMachineOnTransition(roomMachine, roomId, io1) {
   roomMachine.onTransition((state) => {
     if (state.changed) {
-      // console.log('State changed to:', state.value);
       io1.to(roomId).emit('GAME_STATE_UPDATE', { context: state.context, value: state.value });
-      // console.log('State sent to clients');
-      // console.log('State event:', state.event);
     }
   });
 }
@@ -58,13 +34,20 @@ function getOrCreateRoomMachine(roomId: number, io) {
   return newRoomMachine;
 }
 
-const getValidCoordinatesForCard = (card, availablePaths, gameBoard) => {
+export const getValidCoordinatesForCard = (card, availablePaths, gameBoard) => {
   const validCoordinates = [];
+
   // Logic to determine if the card can be placed at each coordinate in availablePaths
   // If the card can be placed at a coordinate, push the coordinate to the validCoordinates array
   for (const availablePath of availablePaths) {
     const { row, column } = availablePath;
-    const cardCanBePlaced = checkTheCurrentCardInTable({ matrix: gameBoard, row, column, card, simulation: true });
+    const cardCanBePlaced = checkTheCurrentCardInTable({
+      matrix: gameBoard,
+      row,
+      column,
+      card,
+      simulation: true,
+    });
     if (cardCanBePlaced) {
       validCoordinates.push(availablePath);
     }

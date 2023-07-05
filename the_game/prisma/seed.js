@@ -38,7 +38,7 @@ const userData = [
     birthDate: new Date(1992, 0, 1),
   },
   {
-    username: 'Charlie',
+    username: 'AI',
     email: 'charlie@example.com',
     birthDate: new Date(1993, 5, 15),
   },

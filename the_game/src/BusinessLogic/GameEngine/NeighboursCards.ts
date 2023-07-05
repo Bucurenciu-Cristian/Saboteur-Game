@@ -1,5 +1,5 @@
 import { IMatrix } from '@src/Types/DexType';
-import { conDirections } from '@src/enums';
+import { conDirections, Modes } from '@src/enums';
 
 export function neighboursCards(matrix: IMatrix[][], row: number, column: number) {
   const { Card } = matrix[row][column];
@@ -12,83 +12,83 @@ export function neighboursCards(matrix: IMatrix[][], row: number, column: number
   let WestOfEastCard;
   let NorthOfSouthCard;
   let EastOfWestCard;
-  const north = row - 1;
-  const south = row + 1;
-  const west = column - 1;
-  const east = column + 1;
-  const [, , third, fourth, fifth, sixth] = Card.code;
+  const northRow = row - 1;
+  const southRow = row + 1;
+  const westColumn = column - 1;
+  const eastColumn = column + 1;
+  const [, , north, east, south, west] = Card.code;
+
+  function isValidCell({ Card, Occupied }) {
+    return Occupied && !Card.code.includes(Modes.Gold, 6) && !Card.code.includes(Modes.Rock, 6);
+  }
+
   if (row > 0) {
-    const { Card: CardNorth, Occupied: OccupiedNorth } = matrix[north][column];
-    if (OccupiedNorth) {
-      NorthCenter = third;
-      const [, , , , fifth1] = CardNorth.code;
-      SouthOfNorthCard = fifth1;
+    const cellNorth = matrix[northRow][column];
+    if (isValidCell(cellNorth)) {
+      NorthCenter = north;
+      SouthOfNorthCard = cellNorth.Card.code[4];
     }
   }
 
   if (column < matrix[row].length - 1) {
-    const { Card: CardEast, Occupied: OccupiedEast } = matrix[row][east];
-    if (OccupiedEast) {
-      EastCenter = fourth;
-      const { code } = CardEast;
-      const [, , , , , sixth1] = code;
-      WestOfEastCard = sixth1;
+    const cellEast = matrix[row][eastColumn];
+    if (isValidCell(cellEast)) {
+      EastCenter = east;
+      WestOfEastCard = cellEast.Card.code[5];
     }
   }
 
   if (row < matrix.length - 1) {
-    const { Card: CardSouth, Occupied: OccupiedSouth } = matrix[south][column];
-    if (OccupiedSouth) {
-      SouthCenter = fifth;
-      const [, , third1] = CardSouth.code;
-      NorthOfSouthCard = third1;
+    const cellSouth = matrix[southRow][column];
+    if (isValidCell(cellSouth)) {
+      SouthCenter = south;
+      NorthOfSouthCard = cellSouth.Card.code[2];
     }
   }
 
   if (column > 0) {
-    const { Card: CardWest, Occupied: OccupiedWest } = matrix[row][west];
-    if (OccupiedWest) {
-      WestCenter = sixth;
-      const [, , , fourth1] = CardWest.code;
-      EastOfWestCard = fourth1;
+    const cellWest = matrix[row][westColumn];
+    if (isValidCell(cellWest)) {
+      WestCenter = west;
+      EastOfWestCard = cellWest.Card.code[3];
     }
   }
 
   const directions = [];
 
-  if (NorthCenter !== undefined && SouthOfNorthCard !== undefined) {
+  if (NorthCenter && SouthOfNorthCard) {
     directions.push({
       center: NorthCenter,
       adjacent: SouthOfNorthCard,
       name: conDirections.NORTH,
-      coordinate: { row: north, column },
+      coordinate: { row: northRow, column },
     });
   }
 
-  if (EastCenter !== undefined && WestOfEastCard !== undefined) {
+  if (EastCenter && WestOfEastCard) {
     directions.push({
       center: EastCenter,
       adjacent: WestOfEastCard,
       name: conDirections.EAST,
-      coordinate: { row, column: east },
+      coordinate: { row, column: eastColumn },
     });
   }
 
-  if (SouthCenter !== undefined && NorthOfSouthCard !== undefined) {
+  if (SouthCenter && NorthOfSouthCard) {
     directions.push({
       center: SouthCenter,
       adjacent: NorthOfSouthCard,
       name: conDirections.SOUTH,
-      coordinate: { row: south, column },
+      coordinate: { row: southRow, column },
     });
   }
 
-  if (WestCenter !== undefined && EastOfWestCard !== undefined) {
+  if (WestCenter && EastOfWestCard) {
     directions.push({
       center: WestCenter,
       adjacent: EastOfWestCard,
       name: conDirections.WEST,
-      coordinate: { row, column: west },
+      coordinate: { row, column: westColumn },
     });
   }
   return directions;

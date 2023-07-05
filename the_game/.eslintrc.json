@@ -1,15 +1,26 @@
 {
-  "extends": ["next/core-web-vitals", "airbnb", "prettier"],
-  "plugins": ["prettier"],
+  "extends": [
+    "next/core-web-vitals",
+    "airbnb",
+    "prettier"
+  ],
+  "plugins": [
+    "prettier"
+  ],
   "rules": {
     "prettier/prettier": "error",
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [
       "warn",
       {
-        "extensions": [".jsx", ".tsx"]
+        "extensions": [
+          ".jsx",
+          ".tsx"
+        ]
       }
     ],
+    "react/no-unescaped-entities": "off",
+    "@next/next/no-page-custom-font": "off",
     "react/jsx-props-no-spreading": "off",
     "import/extensions": [
       "error",
@@ -26,13 +37,20 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       }
     }
   },
   "overrides": [
     {
-      "files": ["**/*.tsx"],
+      "files": [
+        "**/*.tsx"
+      ],
       "rules": {
         "react/prop-types": "off"
       }

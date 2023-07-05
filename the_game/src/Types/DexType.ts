@@ -1,44 +1,6 @@
 import { StaticImageData } from 'next/image';
-import { FOT } from '../BusinessLogic/Cards/Actions';
 import { Modes } from '../enums';
 import { ActionCardsTypes } from './Players';
-
-export interface dexType {
-  Base: 'B';
-  Path: 'P';
-  N: typeof FOT;
-  S: typeof FOT;
-  E: typeof FOT;
-  W: typeof FOT;
-  C: typeof FOT;
-  R: typeof FOT;
-  Gold: 'G';
-  Rock: 'R';
-  Start: 'S';
-
-  Axe: typeof FOT;
-  Cart: typeof FOT;
-  Lantern: typeof FOT;
-
-  AxeCart: 'G';
-  AxeLantern: 'B';
-  CartLantern: 'E';
-  AxeS: 'A';
-  CartS: 'C';
-  LanternS: 'L';
-  Action: 'A';
-  Destroy: 'D';
-  Map: 'M';
-  Miner: 'M';
-  Player: 'L';
-  Reward: 'R';
-  Saboteur: 'S';
-}
-
-export interface FOTType {
-  F: 'F';
-  T: 'T';
-}
 
 export type CharTuple = [
   first: Modes.Base | Modes.Expansion,

@@ -15,16 +15,16 @@ export const findOccupiedEdge = (matrix: IMatrix[][]) => {
         if (matrix[row][col].Occupied) {
           if (row === 0) {
             location = conDirections.NORTH;
-            locations.push({ direction: conDirections.NORTH });
+            locations.push({ direction: location });
           } else if (col === numCols - 1) {
             location = conDirections.EAST;
-            locations.push({ direction: conDirections.EAST });
+            locations.push({ direction: location });
           } else if (row === numRows - 1) {
             location = conDirections.SOUTH;
-            locations.push({ direction: conDirections.SOUTH });
+            locations.push({ direction: location });
           } else if (col === 0) {
             location = conDirections.WEST;
-            locations.push({ direction: conDirections.WEST });
+            locations.push({ direction: location });
           }
         }
       }

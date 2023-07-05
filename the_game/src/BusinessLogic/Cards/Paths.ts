@@ -42,7 +42,7 @@ export const Blocks: PathCard[] = [
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.False, Modes.False, Modes.False],
   },
 ];
-const SWC: ICardBasic[] = [
+const SWC: PathCard[] = [
   {
     src: CardTypes.PATH[36],
     code: [Modes.Base, Modes.Path, Modes.False, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False],
@@ -65,7 +65,7 @@ const SWC: ICardBasic[] = [
     code: [Modes.Base, Modes.Path, Modes.False, Modes.False, Modes.True, Modes.True, Modes.True, Modes.False],
   },
 ];
-const NESC: ICardBasic[] = [
+const NESC: PathCard[] = [
   {
     src: CardTypes.PATH[18],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False],
@@ -89,7 +89,7 @@ const NESC: ICardBasic[] = [
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False],
   },
 ];
-const NEWC: ICardBasic[] = [
+const NEWC: PathCard[] = [
   {
     src: CardTypes.PATH[23],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False],
@@ -111,7 +111,7 @@ const NEWC: ICardBasic[] = [
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False],
   },
 ];
-const NSC: ICardBasic[] = [
+export const NSC: PathCard[] = [
   {
     src: CardTypes.PATH[0],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.True, Modes.False, Modes.True, Modes.False],
@@ -129,7 +129,7 @@ const NSC: ICardBasic[] = [
     code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.True, Modes.False, Modes.True, Modes.False],
   },
 ];
-const EWC: ICardBasic[] = [
+const EWC: PathCard[] = [
   {
     src: CardTypes.PATH[3],
     code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False],
@@ -143,7 +143,7 @@ const EWC: ICardBasic[] = [
     code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.False, Modes.True, Modes.True, Modes.False],
   },
 ];
-export const NESWC: ICardBasic[] = [
+export const NESWC: PathCard[] = [
   {
     src: CardTypes.PATH[10],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False],
@@ -167,7 +167,7 @@ export const NESWC: ICardBasic[] = [
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False],
   },
 ];
-const ESC: ICardBasic[] = [
+const ESC: PathCard[] = [
   {
     src: CardTypes.PATH[8],
     code: [Modes.Base, Modes.Path, Modes.False, Modes.True, Modes.True, Modes.False, Modes.True, Modes.False],
@@ -186,16 +186,7 @@ const ESC: ICardBasic[] = [
   },
 ];
 
-export const normalPath: ICardBasic[] = [
-  ...Blocks, // Done
-  ...SWC, // Done
-  ...NESC, // Done
-  ...NEWC, // Done
-  ...NSC, // Done
-  ...EWC, // Done
-  ...NESWC, // Done
-  ...ESC, // Done
-];
+export const normalPath: ICardBasic[] = [...Blocks, ...SWC, ...NESC, ...NEWC, ...NSC, ...EWC, ...NESWC, ...ESC];
 
 export const StartCard: ICardBasic = {
   src: CardTypes.PATH_SPECIAL[0],
@@ -204,19 +195,17 @@ export const StartCard: ICardBasic = {
 export const finishCards: ISpecialPath[] = [
   {
     src: CardTypes.PATH_SPECIAL[1],
-    // code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.True, Modes.True, Modes.False, Modes.Rock],
-    code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Rock],
+    code: [Modes.Base, Modes.Path, Modes.True, Modes.False, Modes.False, Modes.True, Modes.True, Modes.False, Modes.Rock],
+    back: CardTypes.BACK_OF_CARDS.WINNING,
+  },
+  {
+    src: CardTypes.PATH_SPECIAL[2],
+    code: [Modes.Base, Modes.Path, Modes.False, Modes.False, Modes.True, Modes.True, Modes.True, Modes.True, Modes.Rock],
     back: CardTypes.BACK_OF_CARDS.WINNING,
   },
   {
     src: CardTypes.PATH_SPECIAL[3],
     code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Gold],
-    back: CardTypes.BACK_OF_CARDS.WINNING,
-  },
-  {
-    src: CardTypes.PATH_SPECIAL[2],
-    // code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.False, Modes.False, Modes.True, Modes.False, Modes.Rock],
-    code: [Modes.Base, Modes.Path, Modes.True, Modes.True, Modes.True, Modes.True, Modes.True, Modes.False, Modes.Rock],
     back: CardTypes.BACK_OF_CARDS.WINNING,
   },
 ];

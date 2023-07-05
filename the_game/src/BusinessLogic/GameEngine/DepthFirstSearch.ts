@@ -1,4 +1,3 @@
-import { FOT } from '@cards/Actions';
 import { Modes } from '@src/enums';
 import { isCodeAtIndex } from './IsCodeAtIndex';
 import { neighboursCards } from './NeighboursCards';
@@ -39,7 +38,7 @@ function dfsRefactored(matrix, row, column, visited) {
   const { code } = matrix[row][column].Card;
 
   if (code[8] === Modes.Start) {
-    // If we've reached a finish card.
+    // If we've reached a start card.
     return true;
   }
 
@@ -47,7 +46,7 @@ function dfsRefactored(matrix, row, column, visited) {
 
   return neighbours.some(({ coordinate, center, adjacent }) => {
     const { row: newRow, column: newCol } = coordinate;
-    if (center === FOT.T && adjacent === FOT.T) {
+    if (center === Modes.True && adjacent === Modes.True) {
       return dfsRefactored(matrix, newRow, newCol, visited);
     }
     return false;
